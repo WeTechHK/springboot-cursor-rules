@@ -10,21 +10,21 @@
 
 ```
 springboot-cursor-rules/
-├── .cursorrules                    # Core rules (main reference for AI)
-├── 01-code-standards.mdc           # Code standards (naming, structure, style, coding)
-├── 02-spring-boot-standards.mdc    # Spring Boot development standards
-├── 03-api-design-standards.mdc     # API design standards
-├── 04-code-quality-standards.mdc   # Code quality and best practices
-├── code-templates/                 # Code templates
+├── 01-code-standards.mdc           # Code standards (copy to .cursor/rules/)
+├── 02-spring-boot-standards.mdc    # Spring Boot standards (copy to .cursor/rules/)
+├── 03-api-design-standards.mdc     # API design standards (copy to .cursor/rules/)
+├── 04-code-quality-standards.mdc   # Code quality standards (copy to .cursor/rules/)
+├── design-pattern-templates.mdc    # Design pattern templates (copy to .cursor/rules/)
+├── code-templates/                 # Code templates (organized by standard directory structure)
 ├── 00-introduction.mdc             # Project introduction
-├── faq.mdc                         # FAQ
-└── changelog.mdc                   # Version history
+├── faq.md                          # FAQ
+└── changelog.md                    # Version history
 ```
 
 ## 📋 核心文件内容
 
-### `.cursorrules` - 核心规则
-Cursor AI 的主要参考文件，包含项目概述、技术栈、开发原则、代码生成规则等。
+### 核心规范文件
+这些 `.mdc` 文件包含了 Spring Boot 开发的核心规范，需要复制到 `.cursor/rules/` 目录下供 AI 参考使用。
 
 ### `01-code-standards.mdc` - Code Standards
 - Code structure standards (package structure, class organization, layered architecture)
@@ -32,15 +32,16 @@ Cursor AI 的主要参考文件，包含项目概述、技术栈、开发原则�
 - Code style standards (formatting, comments, imports, code layout)
 - Coding standards (exception handling, logging, performance, security)
 - Quality standards (code review, testing requirements, documentation)
+- Copy to `.cursor/rules/` directory for AI reference
 
 ### `02-spring-boot-standards.mdc` - Spring Boot Standards
-Spring Boot development standards, including annotation usage, dependency injection, configuration management, exception handling, transaction management, etc.
+Spring Boot development standards, including annotation usage, dependency injection, configuration management, exception handling, transaction management, etc. Copy to `.cursor/rules/` directory for AI reference.
 
 ### `03-api-design-standards.mdc` - API Design Standards
-API interface design standards, including RESTful design principles, URL design, HTTP method usage, status code standards, etc.
+API interface design standards, including RESTful design principles, URL design, HTTP method usage, status code standards, etc. Copy to `.cursor/rules/` directory for AI reference.
 
 ### `04-code-quality-standards.mdc` - Code Quality Standards
-Code quality and best practices, including design principles, code organization, quality checks, performance optimization, security coding, etc.
+Code quality and best practices, including design principles, code organization, quality checks, performance optimization, security coding, etc. Copy to `.cursor/rules/` directory for AI reference.
 
 ### `code-templates/` - Code Templates
 Reference template files, mainly for AI learning and reference, developers do not need to manually copy and use.
@@ -58,14 +59,8 @@ cd srpingboot-cursor-rules
 # 2. 在你的 Spring Boot 项目根目录创建 .cursor/rules 目录
 mkdir -p /path/to/your/springboot-project/.cursor/rules
 
-# 3. 将 .cursorrules 文件复制到 .cursor/rules 目录
-cp .cursorrules /path/to/your/springboot-project/.cursor/rules/
-
-# 4. 将详细规范文件复制到 .cursor/rules 目录（可选，用于 AI 深度参考）
-cp 01-code-standards.mdc /path/to/your/springboot-project/.cursor/rules/
-cp 02-spring-boot-standards.mdc /path/to/your/springboot-project/.cursor/rules/
-cp 03-api-design-standards.mdc /path/to/your/springboot-project/.cursor/rules/
-cp 04-code-quality-standards.mdc /path/to/your/springboot-project/.cursor/rules/
+# 3. 将所有规范文件复制到 .cursor/rules 目录
+cp *.mdc /path/to/your/springboot-project/.cursor/rules/
 ```
 
 #### 2. 开启 Auto Attached
@@ -153,14 +148,16 @@ AI：好的，我会参考 01-code-standards.mdc 中的详细异常处理规范�
 - **Code quality issues** → Reference `04-code-quality-standards.mdc`
 
 ### 重要说明
-- **文件位置**：所有规则文件必须放在 `.cursor/rules` 目录下
+- **文件位置**：所有规范文件必须放在 `.cursor/rules` 目录下
 - **开启 Auto Attached**：必须在 Cursor 设置中开启 Auto Attached 选项
 - **自动读取**：开启后，Cursor 会自动读取 `.cursor/rules` 目录下的所有文件
+- **版本控制**：建议将 `.cursor/rules` 目录加入 Git 版本控制，方便团队共享
+- **官方推荐**：这是 Cursor 官方推荐的使用方式
 
 ## 🤝 贡献指南
 
 ### 如何贡献
-1. **发现问题**：在 `faq.mdc` 中查看是否已有解答
+1. **发现问题**：在 `faq.md` 中查看是否已有解答
 2. **提出建议**：通过 Issue 或 PR 提出改进建议
 3. **提交代码**：遵循现有的代码风格和规范
 4. **更新文档**：确保文档与代码同步更新
@@ -182,7 +179,4 @@ AI：好的，我会参考 01-code-standards.mdc 中的详细异常处理规范�
 - **问题反馈**：[Issues](https://github.com/WeTechHK/srpingboot-cursor-rules/issues)
 - **功能请求**：[Feature Requests](https://github.com/WeTechHK/srpingboot-cursor-rules/issues/new?template=feature_request.md)
 
----
 
-**版本**：v3.0.0  
-**最后更新**：2024年1月

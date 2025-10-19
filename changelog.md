@@ -255,15 +255,4 @@ cursor-rules/
 
 本项目采用 MIT 许可证，详见 [LICENSE](LICENSE) 文件。
 
----
 
-## 联系方式
-
-- **项目仓库**：https://github.com/your-org/cursor-rules
-- **问题反馈**：https://github.com/your-org/cursor-rules/issues
-- **讨论区**：https://github.com/your-org/cursor-rules/discussions
-
----
-
-*最后更新时间：2024年1月*
-*当前版本：v1.0.0*

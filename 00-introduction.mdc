@@ -2,10 +2,10 @@
 
 > **文件说明**：本文档是 Spring Boot 项目的 Cursor Rules 使用指南，详细介绍了整个规范体系，包括以下内容：
 > - 目的与愿景（为什么需要 Cursor Rules、愿景目标）
-> - 规范体系结构（项目约定、Spring Boot 指南、API 设计、数据库设计、服务层、安全规范、AI 编程指南）
-> - 核心特性（通用性、模块化、自然语言描述、检查清单）
+> - 规范体系结构（代码规范、Spring Boot 规范、API 设计规范、代码质量规范）
+> - 核心特性（通用性、模块化、AI 辅助开发、检查清单）
 > - 适用项目（Web 应用、API 服务、企业级应用）
-> - 使用方法（标准提示模板、模块描述、AI 交互模板）
+> - 使用方法（.cursor/rules 配置、Auto Attached 设置、AI 交互）
 > - 最佳实践（团队协作、代码审查、持续改进）
 > - 常见问题（FAQ）
 > 
@@ -56,10 +56,10 @@
 
 ### 在 Cursor 中加载规则
 
-1. **项目规则**：在项目根目录创建 `.cursorrules` 文件（推荐方式）
-2. **全局规则**：将 `cursor-rules/` 目录复制到用户主目录下的 `.cursor/` 文件夹
+1. **项目规则**：在项目根目录创建 `.cursor/rules` 目录，将所有规则文件放入其中（推荐方式）
+2. **全局规则**：将规则文件复制到用户主目录下的 `.cursor/rules/` 文件夹
 3. **团队规则**：在团队共享的代码仓库中维护规则文件
-4. **AI 上下文**：Cursor 会自动识别项目根目录的 `.cursorrules` 文件
+4. **AI 上下文**：开启 Auto Attached 后，Cursor 会自动读取 `.cursor/rules` 目录下的所有规则文件
 
 ### 日常使用流程
 
@@ -123,49 +123,60 @@
 
 ### 文件结构
 ```
-cursor-rules/
-├── .cursorrules                # 核心 Cursor Rules 配置
-├── 00-introduction.md          # 本文件
-├── 01-项目约定/                # 项目通用约定
-├── 02-Spring-Boot指南/         # Spring Boot 框架规范
-├── 03-API设计/                # API 设计规范
-│   └── restful-client-integration.md  # RESTful API 客户端集成
-├── 04-领域建模/               # 领域模型规范
-├── 05-服务层/                 # 业务逻辑层规范
-│   └── external-service-integration.md  # 外部服务集成
-├── 06-代码质量/               # 代码质量规范
-│   └── design-patterns.md     # 设计模式规范
-├── 07-AI编程指南/             # AI 编程指南
-│   └── ai-interaction-templates.md  # AI 交互模板库
-├── 08-最佳实践/               # 最佳实践
-│   └── design-patterns-best-practices.md  # 设计模式最佳实践
-├── 09-工具自动化/             # 工具和自动化
-├── 10-数据库规范/             # 数据库设计和使用规范
-├── 11-团队协作/               # 团队协作指南
-│   └── team-collaboration-guide.md  # 团队协作最佳实践
-├── 12-性能监控/               # 性能监控指南
-│   └── performance-monitoring-guide.md  # 性能监控最佳实践
-├── 代码模板/                  # 代码模板
-│   └── design-pattern-templates.md  # 设计模式代码模板
-├── changelog.md               # 变更日志
-└── faq.md                     # 常见问题
+springboot-cursor-rules/
+├── 00-introduction.mdc         # 项目介绍（本文件）
+├── 01-code-standards.mdc       # 代码规范（复制到 .cursor/rules/）
+├── 02-spring-boot-standards.mdc # Spring Boot 规范（复制到 .cursor/rules/）
+├── 03-api-design-standards.mdc # API 设计规范（复制到 .cursor/rules/）
+├── 04-code-quality-standards.mdc # 代码质量规范（复制到 .cursor/rules/）
+├── design-pattern-templates.mdc # 设计模式模板（复制到 .cursor/rules/）
+├── code-templates/             # 代码模板库（按标准目录结构组织）
+│   └── src/
+│       ├── main/java/com/example/user/
+│       │   ├── controller/
+│       │   │   └── controller-template.java        # 控制器模板
+│       │   ├── service/
+│       │   │   ├── service-interface-template.java # 服务接口模板
+│       │   │   └── impl/
+│       │   │       └── service-impl-template.java  # 服务实现模板
+│       │   ├── dao/
+│       │   │   ├── entity/
+│       │   │   │   └── entity-template.java        # 实体类模板
+│       │   │   └── mapper/
+│       │   │       └── mapper-template.java        # Mapper接口模板（注解模式）
+│       │   ├── vo/
+│       │   │   ├── request/
+│       │   │   │   ├── CommonRequest.java          # 通用请求基类
+│       │   │   │   └── request-vo-template.java    # 请求VO模板
+│       │   │   └── response/
+│       │   │       └── response-vo-template.java   # 响应VO模板
+│       │   ├── exception/
+│       │   │   ├── GlobalExceptionAdvice.java      # 全局异常处理
+│       │   │   └── exception-handler-template.java # 异常处理器模板
+│       │   ├── util/
+│       │   │   └── util-template.java              # 工具类模板
+│       │   └── application-template.java           # 启动类模板
+│       ├── main/resources/
+│       │   └── application.yml-template.yml        # 配置文件模板
+│       └── test/java/
+│           └── test-template.java                  # 测试类模板
+├── changelog.md                # 版本历史
+└── faq.md                      # 常见问题
 ```
 
 ### 阅读顺序建议
 
-1. **新团队成员**：先阅读本文件，然后按顺序阅读 01-06 章节
-2. **有经验开发者**：重点关注 07-ai-coding-guidelines 和 templates
-3. **架构师**：重点关注 02-spring-boot-guidelines 和 04-domain-modeling
-4. **前端开发者**：重点关注 03-api-design
+1. **新团队成员**：先阅读本文件，然后按顺序阅读 01-04 章节
+2. **有经验开发者**：重点关注 02-spring-boot-standards.mdc 和 code-templates/
+3. **架构师**：重点关注 02-spring-boot-standards.mdc 和 03-api-design-standards.mdc
+4. **前端开发者**：重点关注 03-api-design-standards.mdc
+5. **代码质量关注者**：重点关注 04-code-quality-standards.mdc
 
 ### 快速参考
 
-- **开发新功能时**：查阅 templates/ 中的代码模板
-- **代码审查时**：使用 07-ai-coding-guidelines/ 中的检查清单
+- **开发新功能时**：查阅 code-templates/ 中的代码模板
+- **代码审查时**：使用 04-code-quality-standards.mdc 中的检查清单
 - **遇到问题时**：查阅 faq.md 中的常见问题解答
-- **学习最佳实践**：阅读 06-code-quality/ 中的性能和安全规范
-
----
-
-*最后更新时间：2024年1月*
-*版本：v1.0.0*
+- **学习最佳实践**：阅读 04-code-quality-standards.mdc 中的性能和安全规范
+- **API 设计时**：参考 03-api-design-standards.mdc
+- **Spring Boot 开发时**：参考 02-spring-boot-standards.mdc

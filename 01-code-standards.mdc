@@ -381,7 +381,3 @@ public interface UserService {
 </plugin>
 ```
 
----
-
-*最后更新时间：2024年1月*  
-*版本：v2.0.0*
