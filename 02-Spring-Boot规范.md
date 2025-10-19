@@ -1,0 +1,324 @@
+# Spring Boot 开发规范
+
+> **文件说明**：本文档定义了 Spring Boot 项目的开发规范，包括以下内容：
+> - Spring 注解使用（@Component、@Service、@Repository、@Controller）
+> - 依赖注入规范（构造器注入、字段注入、方法注入）
+> - 配置管理规范（@ConfigurationProperties、环境配置、敏感信息处理）
+> - 异常处理规范（全局异常处理、自定义异常、异常响应）
+> - 事务管理规范（@Transactional、事务传播、事务隔离）
+> 
+> 遵循 Spring Boot 开发规范有助于提高代码质量和应用稳定性。
+
+## Spring 注解使用
+
+### 组件注解
+```java
+// 服务层
+@Service
+public class UserServiceImpl implements UserService {
+    // 业务逻辑实现
+}
+
+// 数据访问层
+@Repository
+public class UserMapper {
+    // 数据访问方法
+}
+
+// 控制器层
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+    // 控制器方法
+}
+
+// 配置类
+@Configuration
+public class UserConfig {
+    // 配置方法
+}
+```
+
+### 依赖注入注解
+```java
+@Service
+public class UserService {
+    
+    // 构造器注入（推荐）
+    private final UserMapper userMapper;
+    private final UserValidator userValidator;
+    
+    public UserService(UserMapper userMapper, UserValidator userValidator) {
+        this.userMapper = userMapper;
+        this.userValidator = userValidator;
+    }
+    
+    // 字段注入（不推荐）
+    @Autowired
+    private UserProcessor userProcessor;
+}
+```
+
+## 配置管理规范
+
+### 配置属性定义
+```java
+@ConfigurationProperties(prefix = "app.user")
+@Validated
+@Data
+public class UserProperties {
+    
+    @NotBlank(message = "用户模块名称不能为空")
+    private String name;
+    
+    @Min(value = 1, message = "超时时间必须大于0")
+    @Max(value = 300, message = "超时时间不能超过300秒")
+    private Integer timeout = 30;
+    
+    @Valid
+    private Database database = new Database();
+    
+    @Data
+    public static class Database {
+        @NotBlank(message = "数据库URL不能为空")
+        private String url;
+        
+        private String username;
+        private String password;
+    }
+}
+```
+
+### 配置属性使用
+```java
+@Configuration
+@EnableConfigurationProperties(UserProperties.class)
+public class UserConfig {
+    
+    private final UserProperties properties;
+    
+    public UserConfig(UserProperties properties) {
+        this.properties = properties;
+    }
+    
+    @Bean
+    public UserService userService() {
+        return new UserServiceImpl(properties);
+    }
+}
+```
+
+### 环境配置
+```yaml
+# application.yml
+spring:
+  application:
+    name: user-service
+  profiles:
+    active: dev
+
+# application-dev.yml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/user_dev
+    username: dev_user
+    password: dev_password
+
+# application-prod.yml
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+```
+
+## 异常处理规范
+
+### 全局异常处理
+```java
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException e) {
+        log.warn("参数错误: {}", e.getMessage());
+        return ResponseEntity.badRequest()
+            .body(ErrorResponse.builder()
+                .code("INVALID_PARAMETER")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build());
+    }
+    
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        log.error("系统异常", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ErrorResponse.builder()
+                .code("SYSTEM_ERROR")
+                .message("系统内部错误")
+                .timestamp(LocalDateTime.now())
+                .build());
+    }
+}
+```
+
+### 自定义异常
+```java
+public class UserNotFoundException extends RuntimeException {
+    
+    public UserNotFoundException(Long userId) {
+        super("用户不存在: " + userId);
+    }
+    
+    public UserNotFoundException(String message) {
+        super(message);
+    }
+}
+
+// 使用示例
+@Service
+public class UserService {
+    
+    public UserResponse getUserById(Long userId) {
+        UserEntity user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new UserNotFoundException(userId);
+        }
+        return convertToResponse(user);
+    }
+}
+```
+
+## 事务管理规范
+
+### 事务注解使用
+```java
+@Service
+@Transactional
+public class UserService {
+    
+    @Transactional(readOnly = true)
+    public UserResponse getUserById(Long userId) {
+        // 只读事务
+        return userMapper.selectById(userId);
+    }
+    
+    @Transactional(rollbackFor = Exception.class)
+    public UserResponse createUser(CreateUserRequest request) {
+        // 写事务，任何异常都回滚
+        UserEntity user = convertToEntity(request);
+        userMapper.insert(user);
+        return convertToResponse(user);
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void logUserOperation(Long userId, String operation) {
+        // 新事务，独立于调用方事务
+        log.info("用户操作: userId={}, operation={}", userId, operation);
+    }
+}
+```
+
+### 事务传播行为
+```java
+@Service
+public class UserService {
+    
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void updateUser(UserEntity user) {
+        // 如果存在事务则加入，否则创建新事务
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void createUserLog(UserEntity user) {
+        // 总是创建新事务，挂起当前事务
+    }
+    
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public void sendNotification(String message) {
+        // 以非事务方式执行，挂起当前事务
+    }
+}
+```
+
+## 最佳实践
+
+### 接口编程
+```java
+// 定义接口
+public interface UserService {
+    UserResponse getUserById(Long userId);
+    UserResponse createUser(CreateUserRequest request);
+}
+
+// 实现接口
+@Service
+public class UserServiceImpl implements UserService {
+    
+    @Override
+    public UserResponse getUserById(Long userId) {
+        // 实现逻辑
+    }
+    
+    @Override
+    public UserResponse createUser(CreateUserRequest request) {
+        // 实现逻辑
+    }
+}
+```
+
+### 单一职责
+```java
+// 好的设计：每个类只负责一个功能
+@Service
+public class UserValidationService {
+    public boolean validateUser(CreateUserRequest request) {
+        // 只负责验证
+    }
+}
+
+@Service
+public class UserProcessingService {
+    public UserResponse processUser(CreateUserRequest request) {
+        // 只负责处理
+    }
+}
+
+// 不好的设计：一个类负责多个功能
+@Service
+public class UserService {
+    public boolean validateUser(CreateUserRequest request) {
+        // 验证逻辑
+    }
+    
+    public UserResponse processUser(CreateUserRequest request) {
+        // 处理逻辑
+    }
+    
+    public void saveUser(UserEntity user) {
+        // 保存逻辑
+    }
+}
+```
+
+## 检查清单
+
+### 开发检查
+- [ ] 是否使用了合适的Spring注解
+- [ ] 依赖注入是否使用构造器方式
+- [ ] 配置属性是否有适当的验证
+- [ ] 异常处理是否完善
+- [ ] 事务管理是否正确
+
+### 代码质量检查
+- [ ] 是否遵循单一职责原则
+- [ ] 是否使用接口编程
+- [ ] 是否有适当的日志记录
+- [ ] 是否有完整的单元测试
+
+---
+
+*最后更新时间：2024年1月*
+*版本：v1.0.0*
