@@ -9,17 +9,17 @@
 ## 📁 文件结构
 
 ```
-cursor-rules/
-├── .cursorrules                    # 核心规则（AI主要参考）
-├── 01-代码规范.mdc                 # 代码规范（命名、结构、风格、编码规范）
-├── 02-Spring-Boot规范.mdc          # Spring Boot开发规范
-├── 03-API设计规范.mdc              # API设计规范
-├── 04-代码质量规范.mdc             # 代码质量和最佳实践
-├── 代码模板/                       # 代码模板
-├── 00-introduction.mdc             # 项目介绍
-├── 模块选择指南.mdc                # 模块选择指南
-├── faq.mdc                         # 常见问题
-└── changelog.mdc                   # 版本历史
+springboot-cursor-rules/
+├── .cursorrules                    # Core rules (main reference for AI)
+├── 01-code-standards.mdc           # Code standards (naming, structure, style, coding)
+├── 02-spring-boot-standards.mdc    # Spring Boot development standards
+├── 03-api-design-standards.mdc     # API design standards
+├── 04-code-quality-standards.mdc   # Code quality and best practices
+├── code-templates/                 # Code templates
+├── 00-introduction.mdc             # Project introduction
+├── module-selection-guide.mdc      # Module selection guide
+├── faq.mdc                         # FAQ
+└── changelog.mdc                   # Version history
 ```
 
 ## 📋 核心文件内容
@@ -27,24 +27,24 @@ cursor-rules/
 ### `.cursorrules` - 核心规则
 Cursor AI 的主要参考文件，包含项目概述、技术栈、开发原则、代码生成规则等。
 
-### `01-代码规范.mdc` - 代码规范
-- 代码结构规范（包结构、类组织、分层架构）
-- 命名规范（包命名、类命名、方法命名、变量命名）
-- 代码风格规范（格式化、注释、导入语句、代码布局）
-- 编码规范（异常处理、日志记录、性能优化、安全编码）
-- 质量规范（代码审查、测试要求、文档规范）
+### `01-code-standards.mdc` - Code Standards
+- Code structure standards (package structure, class organization, layered architecture)
+- Naming conventions (package, class, method, variable naming)
+- Code style standards (formatting, comments, imports, code layout)
+- Coding standards (exception handling, logging, performance, security)
+- Quality standards (code review, testing requirements, documentation)
 
-### `02-Spring-Boot规范.mdc` - Spring Boot规范
-Spring Boot 开发规范，包含注解使用、依赖注入、配置管理、异常处理、事务管理等。
+### `02-spring-boot-standards.mdc` - Spring Boot Standards
+Spring Boot development standards, including annotation usage, dependency injection, configuration management, exception handling, transaction management, etc.
 
-### `03-API设计规范.mdc` - API设计规范
-API 接口设计规范，包含 RESTful 设计原则、URL 设计、HTTP 方法使用、状态码规范等。
+### `03-api-design-standards.mdc` - API Design Standards
+API interface design standards, including RESTful design principles, URL design, HTTP method usage, status code standards, etc.
 
-### `04-代码质量规范.mdc` - 代码质量规范
-代码质量和最佳实践，包含设计原则、代码组织、质量检查、性能优化、安全编码等。
+### `04-code-quality-standards.mdc` - Code Quality Standards
+Code quality and best practices, including design principles, code organization, quality checks, performance optimization, security coding, etc.
 
-### `代码模板/` - 代码模板
-提供参考模板文件，主要用于 AI 学习和参考，开发者无需手动复制使用。
+### `code-templates/` - Code Templates
+Reference template files, mainly for AI learning and reference, developers do not need to manually copy and use.
 
 ## 🚀 使用方法
 
@@ -63,10 +63,10 @@ mkdir -p /path/to/your/springboot-project/.cursor/rules
 cp .cursorrules /path/to/your/springboot-project/.cursor/rules/
 
 # 4. 将详细规范文件复制到 .cursor/rules 目录（可选，用于 AI 深度参考）
-cp 01-代码规范.mdc /path/to/your/springboot-project/.cursor/rules/
-cp 02-Spring-Boot规范.mdc /path/to/your/springboot-project/.cursor/rules/
-cp 03-API设计规范.mdc /path/to/your/springboot-project/.cursor/rules/
-cp 04-代码质量规范.mdc /path/to/your/springboot-project/.cursor/rules/
+cp 01-code-standards.mdc /path/to/your/springboot-project/.cursor/rules/
+cp 02-spring-boot-standards.mdc /path/to/your/springboot-project/.cursor/rules/
+cp 03-api-design-standards.mdc /path/to/your/springboot-project/.cursor/rules/
+cp 04-code-quality-standards.mdc /path/to/your/springboot-project/.cursor/rules/
 ```
 
 #### 2. 开启 Auto Attached
@@ -122,8 +122,8 @@ AI：我会参考 .cursorrules 文件中的指导原则为您创建用户管理 
 开发者：这个 Service 层的异常处理是否符合规范？
 AI：让我检查一下异常处理部分...
 
-开发者：请参考 @01-代码规范.mdc 中的异常处理规范，重新生成这个 Service
-AI：好的，我会参考 01-代码规范.mdc 中的详细异常处理规范来重新生成代码...
+开发者：请参考 @01-code-standards.mdc 中的异常处理规范，重新生成这个 Service
+AI：好的，我会参考 01-code-standards.mdc 中的详细异常处理规范来重新生成代码...
 ```
 
 ### 优势
@@ -147,16 +147,16 @@ AI：好的，我会参考 01-代码规范.mdc 中的详细异常处理规范来
 ### 引导 AI 使用详细规范的示例
 ```
 # 使用 @ 符号引用特定规范文件
-开发者：请参考 @02-Spring-Boot规范.mdc 中的事务管理规范，优化这个 Service 方法
-开发者：根据 @03-API设计规范.mdc 重新设计这个 REST API
-开发者：按照 @04-代码质量规范.mdc 中的性能优化规范，优化这个查询方法
+开发者：请参考 @02-spring-boot-standards.mdc 中的事务管理规范，优化这个 Service 方法
+开发者：根据 @03-api-design-standards.mdc 重新设计这个 REST API
+开发者：按照 @04-code-quality-standards.mdc 中的性能优化规范，优化这个查询方法
 ```
 
 ### 规范文件选择指南
-- **代码结构问题** → 参考 `01-代码规范.mdc`
-- **Spring Boot 特性** → 参考 `02-Spring-Boot规范.mdc`
-- **API 设计问题** → 参考 `03-API设计规范.mdc`
-- **代码质量问题** → 参考 `04-代码质量规范.mdc`
+- **Code structure issues** → Reference `01-code-standards.mdc`
+- **Spring Boot features** → Reference `02-spring-boot-standards.mdc`
+- **API design issues** → Reference `03-api-design-standards.mdc`
+- **Code quality issues** → Reference `04-code-quality-standards.mdc`
 
 ### 重要说明
 - **文件位置**：所有规则文件必须放在 `.cursor/rules` 目录下
