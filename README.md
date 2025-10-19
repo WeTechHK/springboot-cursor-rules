@@ -17,6 +17,10 @@ springboot-cursor-rules/
 ├── 04-code-quality-standards.mdc   # Code quality and best practices
 ├── code-templates/                 # Code templates
 ├── 00-introduction.mdc             # Project introduction
+<<<<<<< HEAD
+=======
+├── module-selection-guide.mdc      # Module selection guide
+>>>>>>> 41bbb622dc468ab84c4495f31624c8ace479c501
 ├── faq.mdc                         # FAQ
 └── changelog.mdc                   # Version history
 ```
