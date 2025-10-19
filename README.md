@@ -44,7 +44,7 @@ API 接口设计规范，包含 RESTful 设计原则、URL 设计、HTTP 方法�
 代码质量和最佳实践，包含设计原则、代码组织、质量检查、性能优化、安全编码等。
 
 ### `代码模板/` - 代码模板
-提供常用的代码模板，包括 Controller、Service、Entity、DTO 等模板文件。
+提供参考模板文件，主要用于 AI 学习和参考，开发者无需手动复制使用。
 
 ## 🚀 使用方法
 
@@ -59,51 +59,108 @@ cd srpingboot-cursor-rules
 # 2. 将 .cursorrules 文件复制到你的 Spring Boot 项目根目录
 cp .cursorrules /path/to/your/springboot-project/
 
-# 3. 将代码模板复制到项目中使用
-cp -r 代码模板/ /path/to/your/springboot-project/templates/
+# 3. 将详细规范文件复制到项目根目录（可选，用于 AI 深度参考）
+cp 01-代码规范.md /path/to/your/springboot-project/
+cp 02-Spring-Boot规范.md /path/to/your/springboot-project/
+cp 03-API设计规范.md /path/to/your/springboot-project/
+cp 04-代码质量规范.md /path/to/your/springboot-project/
+
+# 4. 在 Cursor IDE 中打开你的 Spring Boot 项目
+# Cursor 会自动读取 .cursorrules 文件并应用规则
 ```
 
-#### 2. IDE 配置
+#### 2. 开始使用
 ```bash
-# 配置 Cursor AI
+# 使用 Cursor
 # 1. 确保 .cursorrules 文件在项目根目录
-# 2. 重启 Cursor IDE
-# 3. 在 Cursor 中打开项目，AI 会自动识别规则
-
-# 配置其他 IDE（可选）
-# 1. 导入代码格式化规则
-# 2. 配置代码检查工具（Checkstyle、SpotBugs）
-# 3. 设置代码模板
+# 2. 在 Cursor 中打开项目
+# 3. 开始与 Cursor AI 对话
+# 4. AI 会自动参考 .cursorrules 文件中的指导原则来生成代码
 ```
 
 ### 使用步骤
 
 #### 开发者使用
-1. **阅读规范文件**：根据开发任务选择对应的规范文件
-   - 新项目：先阅读 `01-代码规范.md`
-   - Spring Boot 开发：参考 `02-Spring-Boot规范.md`
-   - API 设计：参考 `03-API设计规范.md`
-   - 代码质量：参考 `04-代码质量规范.md`
+1. **AI 辅助开发**：与 Cursor AI 对话，描述你的需求
+   - AI 会参考 `.cursorrules` 文件中的指导原则来生成代码
+   - 无需手动复制模板或编写代码，AI 会根据项目规范处理细节
 
-2. **使用代码模板**：
+2. **智能代码生成示例**：
    ```bash
-   # 复制模板到项目
-   cp 代码模板/controller-template.java src/main/java/com/example/controller/
-   cp 代码模板/service-impl-template.java src/main/java/com/example/service/impl/
+   # 在 Cursor 中与 AI 对话
+   开发者："创建一个用户管理的 Controller，包含增删改查功能"
+   # AI 会参考 .cursorrules 文件中的规范，生成符合项目标准的代码
    ```
 
-3. **遵循检查清单**：使用文件中的检查清单确保代码质量
+3. **引用详细规范**：需要更详细的规范时，可以引导 AI 查看 `.md` 文件
 
-#### Cursor AI 使用
-1. **AI 自动识别**：Cursor 会自动读取 `.cursorrules` 文件
-2. **详细规范**：需要详细规范时，参考对应的 `.md` 文件
-3. **代码生成**：AI 会根据规范生成符合标准的代码
-4. **代码审查**：AI 会按照规范检查生成的代码
+#### Cursor AI 工作机制
+1. **自动读取规则**：Cursor 会自动读取项目根目录下的 `.cursorrules` 文件
+2. **提供上下文**：`.cursorrules` 文件为 AI 提供项目特定的上下文和指导原则
+3. **智能代码生成**：AI 参考 `.cursorrules` 中的指导原则来生成代码
+4. **访问其他文件**：当需要更详细的规范时，AI 可以访问项目中的 `.md` 文件
 
 #### 团队使用
-1. **统一配置**：所有团队成员使用相同的配置文件
-2. **代码审查**：使用检查清单进行代码审查
-3. **持续改进**：根据项目需要更新规范
+1. **统一规范文件**：所有团队成员使用相同的 `.cursorrules` 文件
+2. **一致的代码风格**：AI 参考相同的指导原则，确保团队代码风格一致
+3. **协作开发**：通过共享 `.cursorrules` 文件，实现团队开发规范的统一
+
+## 🤖 AI 使用示例
+
+### 基本使用流程
+1. **描述需求**：在 Cursor 中与 AI 对话，描述你想要实现的功能
+2. **AI 参考规则**：AI 会参考 `.cursorrules` 文件中的指导原则
+3. **生成代码**：AI 根据指导原则生成符合项目规范的代码
+4. **迭代优化**：根据需要继续与 AI 对话，优化生成的代码
+
+### 示例对话
+```
+开发者：创建一个用户管理的 Controller，包含增删改查功能
+AI：我会参考 .cursorrules 文件中的指导原则为您创建用户管理 Controller...
+
+开发者：这个 Service 层的异常处理是否符合规范？
+AI：让我检查一下异常处理部分...
+
+开发者：请参考 @01-代码规范.md 中的异常处理规范，重新生成这个 Service
+AI：好的，我会参考 01-代码规范.md 中的详细异常处理规范来重新生成代码...
+```
+
+### 优势
+- ✅ **零学习成本**：无需记忆复杂的规范细节
+- ✅ **AI 辅助开发**：AI 参考 `.cursorrules` 文件中的指导原则来生成代码
+- ✅ **智能代码生成**：AI 根据项目规范自动生成符合标准的代码
+- ✅ **团队一致性**：通过共享 `.cursorrules` 文件，确保团队代码风格统一
+
+## 📚 如何使用详细规范文件
+
+### 规范文件的作用
+- **`.cursorrules`**：为 AI 提供项目特定的上下文和指导原则
+- **`.md` 文件**：详细的规范文档，用于特定场景的深度参考
+
+### 使用方式
+1. **自动读取**：Cursor 会自动读取项目根目录下的 `.cursorrules` 文件
+2. **AI 参考**：AI 在生成代码时会参考 `.cursorrules` 文件中的指导原则
+3. **主动引用**：通过 `@文件名` 的方式，可以引导 AI 参考特定的 `.md` 文件
+
+### 引导 AI 使用详细规范的示例
+```
+# 使用 @ 符号引用特定规范文件
+开发者：请参考 @02-Spring-Boot规范.md 中的事务管理规范，优化这个 Service 方法
+开发者：根据 @03-API设计规范.md 重新设计这个 REST API
+开发者：按照 @04-代码质量规范.md 中的性能优化规范，优化这个查询方法
+```
+
+### 规范文件选择指南
+- **代码结构问题** → 参考 `01-代码规范.md`
+- **Spring Boot 特性** → 参考 `02-Spring-Boot规范.md`
+- **API 设计问题** → 参考 `03-API设计规范.md`
+- **代码质量问题** → 参考 `04-代码质量规范.md`
+
+### 重要说明
+- **必需文件**：`.cursorrules` 文件必须放在项目根目录
+- **可选文件**：`.md` 文件可以放在项目根目录，通过 `@文件名` 引用
+- **自动读取**：Cursor 会自动读取 `.cursorrules` 文件
+- **文件位置**：确保所有规范文件都在同一个项目根目录下
 
 ## 🤝 贡献指南
 
