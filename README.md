@@ -56,26 +56,27 @@ API 接口设计规范，包含 RESTful 设计原则、URL 设计、HTTP 方法�
 git clone git@github.com:WeTechHK/srpingboot-cursor-rules.git
 cd srpingboot-cursor-rules
 
-# 2. 将 .cursorrules 文件复制到你的 Spring Boot 项目根目录
-cp .cursorrules /path/to/your/springboot-project/
+# 2. 在你的 Spring Boot 项目根目录创建 .cursor/rules 目录
+mkdir -p /path/to/your/springboot-project/.cursor/rules
 
-# 3. 将详细规范文件复制到项目根目录（可选，用于 AI 深度参考）
-cp 01-代码规范.md /path/to/your/springboot-project/
-cp 02-Spring-Boot规范.md /path/to/your/springboot-project/
-cp 03-API设计规范.md /path/to/your/springboot-project/
-cp 04-代码质量规范.md /path/to/your/springboot-project/
+# 3. 将 .cursorrules 文件复制到 .cursor/rules 目录
+cp .cursorrules /path/to/your/springboot-project/.cursor/rules/
 
-# 4. 在 Cursor IDE 中打开你的 Spring Boot 项目
-# Cursor 会自动读取 .cursorrules 文件并应用规则
+# 4. 将详细规范文件复制到 .cursor/rules 目录（可选，用于 AI 深度参考）
+cp 01-代码规范.md /path/to/your/springboot-project/.cursor/rules/
+cp 02-Spring-Boot规范.md /path/to/your/springboot-project/.cursor/rules/
+cp 03-API设计规范.md /path/to/your/springboot-project/.cursor/rules/
+cp 04-代码质量规范.md /path/to/your/springboot-project/.cursor/rules/
 ```
 
-#### 2. 开始使用
+#### 2. 开启 Auto Attached
 ```bash
-# 使用 Cursor
-# 1. 确保 .cursorrules 文件在项目根目录
-# 2. 在 Cursor 中打开项目
-# 3. 开始与 Cursor AI 对话
-# 4. AI 会自动参考 .cursorrules 文件中的指导原则来生成代码
+# 在 Cursor 中配置
+# 1. 在 Cursor 中打开你的 Spring Boot 项目
+# 2. 打开 Cursor Settings（设置）
+# 3. 找到 Rules 设置
+# 4. 开启 "Auto Attached" 选项
+# 5. Cursor 会自动读取 .cursor/rules 目录下的规则文件
 ```
 
 ### 使用步骤
@@ -95,15 +96,15 @@ cp 04-代码质量规范.md /path/to/your/springboot-project/
 3. **引用详细规范**：需要更详细的规范时，可以引导 AI 查看 `.md` 文件
 
 #### Cursor AI 工作机制
-1. **自动读取规则**：Cursor 会自动读取项目根目录下的 `.cursorrules` 文件
-2. **提供上下文**：`.cursorrules` 文件为 AI 提供项目特定的上下文和指导原则
-3. **智能代码生成**：AI 参考 `.cursorrules` 中的指导原则来生成代码
-4. **访问其他文件**：当需要更详细的规范时，AI 可以访问项目中的 `.md` 文件
+1. **自动读取规则**：开启 Auto Attached 后，Cursor 会自动读取 `.cursor/rules` 目录下的规则文件
+2. **提供上下文**：规则文件为 AI 提供项目特定的上下文和指导原则
+3. **智能代码生成**：AI 参考规则文件中的指导原则来生成代码
+4. **访问其他文件**：AI 可以访问 `.cursor/rules` 目录下的所有 `.md` 文件
 
 #### 团队使用
-1. **统一规范文件**：所有团队成员使用相同的 `.cursorrules` 文件
-2. **一致的代码风格**：AI 参考相同的指导原则，确保团队代码风格一致
-3. **协作开发**：通过共享 `.cursorrules` 文件，实现团队开发规范的统一
+1. **统一规范文件**：所有团队成员将规则文件放在 `.cursor/rules` 目录下
+2. **开启 Auto Attached**：每个团队成员都需要开启 Auto Attached 选项
+3. **一致的代码风格**：AI 参考相同的指导原则，确保团队代码风格一致
 
 ## 🤖 AI 使用示例
 
@@ -138,9 +139,10 @@ AI：好的，我会参考 01-代码规范.md 中的详细异常处理规范来�
 - **`.md` 文件**：详细的规范文档，用于特定场景的深度参考
 
 ### 使用方式
-1. **自动读取**：Cursor 会自动读取项目根目录下的 `.cursorrules` 文件
-2. **AI 参考**：AI 在生成代码时会参考 `.cursorrules` 文件中的指导原则
-3. **主动引用**：通过 `@文件名` 的方式，可以引导 AI 参考特定的 `.md` 文件
+1. **放置文件**：将所有规则文件放在 `.cursor/rules` 目录下
+2. **开启 Auto Attached**：在 Cursor 设置中开启 Auto Attached 选项
+3. **自动读取**：Cursor 会自动读取 `.cursor/rules` 目录下的所有规则文件
+4. **主动引用**：通过 `@文件名` 的方式，可以引导 AI 参考特定的 `.md` 文件
 
 ### 引导 AI 使用详细规范的示例
 ```
@@ -157,10 +159,10 @@ AI：好的，我会参考 01-代码规范.md 中的详细异常处理规范来�
 - **代码质量问题** → 参考 `04-代码质量规范.md`
 
 ### 重要说明
-- **必需文件**：`.cursorrules` 文件必须放在项目根目录
-- **可选文件**：`.md` 文件可以放在项目根目录，通过 `@文件名` 引用
-- **自动读取**：Cursor 会自动读取 `.cursorrules` 文件
-- **文件位置**：确保所有规范文件都在同一个项目根目录下
+- **文件位置**：所有规则文件必须放在 `.cursor/rules` 目录下
+- **开启 Auto Attached**：必须在 Cursor 设置中开启 Auto Attached 选项
+- **自动读取**：开启后，Cursor 会自动读取 `.cursor/rules` 目录下的所有文件
+- **版本控制**：建议将 `.cursor/rules` 目录加入 Git 版本控制，方便团队共享
 
 ## 🤝 贡献指南
 
