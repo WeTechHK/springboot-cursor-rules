@@ -1,5 +1,9 @@
 # Spring Boot Cursor Rules
 
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![GitHub stars](https://img.shields.io/github/stars/WeTechHK/srpingboot-cursor-rules.svg)](https://github.com/WeTechHK/srpingboot-cursor-rules/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/WeTechHK/srpingboot-cursor-rules.svg)](https://github.com/WeTechHK/srpingboot-cursor-rules/network)
+
 > **项目说明**：这是一个精简、实用的 Spring Boot 开发规范体系，专为 Cursor AI 和团队开发设计。遵循 80/20 原则，只保留最核心、最常用的开发规范。
 
 ## 📁 文件结构
@@ -49,8 +53,8 @@ API 接口设计规范，包含 RESTful 设计原则、URL 设计、HTTP 方法�
 #### 1. 项目配置
 ```bash
 # 1. 克隆或下载项目到本地
-git clone <repository-url>
-cd springboot-cursor-rules
+git clone git@github.com:WeTechHK/srpingboot-cursor-rules.git
+cd srpingboot-cursor-rules
 
 # 2. 将 .cursorrules 文件复制到你的 Spring Boot 项目根目录
 cp .cursorrules /path/to/your/springboot-project/
@@ -115,6 +119,16 @@ cp -r 代码模板/ /path/to/your/springboot-project/templates/
 3. 提交更改
 4. 创建 Pull Request
 5. 等待代码审查
+
+## 📄 许可证
+
+本项目采用 [Apache License 2.0](LICENSE)。
+
+## 🔗 相关链接
+
+- **GitHub 仓库**：[WeTechHK/srpingboot-cursor-rules](https://github.com/WeTechHK/srpingboot-cursor-rules)
+- **问题反馈**：[Issues](https://github.com/WeTechHK/srpingboot-cursor-rules/issues)
+- **功能请求**：[Feature Requests](https://github.com/WeTechHK/srpingboot-cursor-rules/issues/new?template=feature_request.md)
 
 ---
 
