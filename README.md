@@ -24,15 +24,23 @@
 
 ### 1. 安装配置
 
+#### 克隆项目到本地
 ```bash
-# 克隆项目
 git clone git@github.com:WeTechHK/srpingboot-cursor-rules.git
+```
+
+#### 进入项目目录
+```bash
 cd srpingboot-cursor-rules
+```
 
-# 在你的 Spring Boot 项目中创建规则目录
+#### 在你的 Spring Boot 项目中创建规则目录
+```bash
 mkdir -p /path/to/your/springboot-project/.cursor/rules
+```
 
-# 复制所有规则文件（保持目录结构）
+#### 复制所有规则文件（保持目录结构）
+```bash
 rsync -av --include '*/' --include '*.mdc' --exclude '*' \
   00-project-structure 01-design-standards 02-coding-standards 03-code-file-convertions \
   /path/to/your/springboot-project/.cursor/rules/
