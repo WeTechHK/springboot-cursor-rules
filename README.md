@@ -26,7 +26,7 @@
 
 克隆项目到本地
 ```bash
-git clone git@github.com:WeTechHK/srpingboot-cursor-rules.git
+git clone git@github.com:WeTechHK/springboot-cursor-rules.git
 ```
 
 进入项目目录
