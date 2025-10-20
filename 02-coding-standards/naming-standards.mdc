@@ -4,8 +4,6 @@ globs:
 alwaysApply: true
 ---
 
-# 命名规范
-
 ## 包命名
 - 格式：全小写字母，使用点分隔符
 - 规则：`com.{company}.{project}.{layer}`
@@ -39,4 +37,19 @@ alwaysApply: true
   - 请求：`com.{company}.{project}.vo.request.{Domain}.{Action}{Domain}Request`
   - 响应：`com.{company}.{project}.vo.response.{Domain}.{Domain}Response`
   - 示例：`com.example.app.vo.request.user.CreateUserRequest`、`com.example.app.vo.response.user.UserResponse`
+
+## 进一步阅读
+- 命名在具体类型中的体现：
+  - `03-code-file-convertions/controller-class-conventions.mdc`
+  - `03-code-file-convertions/service-interface-conventions.mdc`
+  - `03-code-file-convertions/service-impl-conventions.mdc`
+  - `03-code-file-convertions/entity-class-conventions.mdc`
+  - `03-code-file-convertions/mapper-interface-conventions.mdc`
+  - `03-code-file-convertions/dto-class-conventions.mdc`
+  - `03-code-file-convertions/request-class-conventions.mdc`
+  - `03-code-file-convertions/response-class-conventions.mdc`
+  - `03-code-file-convertions/exception-class-conventions.mdc`
+  - `03-code-file-convertions/utility-class-conventions.mdc`
+  - `03-code-file-convertions/constants-class-conventions.mdc`
+  - `03-code-file-convertions/enum-class-conventions.mdc`
 

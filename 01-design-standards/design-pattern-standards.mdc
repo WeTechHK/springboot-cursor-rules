@@ -1,0 +1,70 @@
+---
+description: 设计模式与实践规范（SOLID/DRY/KISS、分层、对象转换、校验、缓存、异步、错误处理），适用于所有 Spring Boot 项目。
+globs:
+alwaysApply: true
+---
+
+## 设计原则（必须遵循）
+- SOLID：
+  - SRP：类与方法职责单一，按职能拆分校验/处理/转换
+  - OCP：通过接口扩展替代修改原实现；装饰/代理优先
+  - LSP/ISP/DIP：面向接口编程，小接口拆分，依赖抽象
+- DRY：公用逻辑下沉至专用组件/工具；删除重复代码
+- KISS：优先简单方案；方法短小（建议 <80 行），浅层嵌套（≤3 层）
+
+## 架构与分层
+- 控制器 Controller：仅组装/路由/输入输出，禁止业务逻辑；仅使用 @GetMapping/@PostMapping
+- 服务 Service：聚合业务流程，事务边界在 Service 层
+- 数据访问 DAO/Mapper：仅数据持久化与查询，返回实体或轻量对象
+- VO/DTO：输入请求 VO、输出响应 VO，禁止实体直出直入
+
+## 对象转换
+- 转换器模式：`Converter`/`Assembler` 承担 Entity↔VO/DTO 的双向转换
+- 禁止在 Controller/DAO 中散落重复转换逻辑
+
+## 参数校验
+- Bean Validation：在 Controller 的 @RequestBody/@RequestParam 使用 @Valid + 分组
+- 复杂业务校验封装到 `Validator` 组件，避免污染 Service 主流程
+- 复杂查询：使用 POST + `Search{Domain}Request`（请求体提交查询条件）；简单查询使用 GET
+
+## 事务模式
+- 显式声明 @Transactional 在 Service；读取操作 readOnly=true
+- 避免同类内自调用导致事务失效；必要时抽取到独立 Bean
+
+## 缓存模式
+- 读多写少热点：使用 @Cacheable/@CacheEvict，key 设计稳定且唯一
+- 缓存粒度以聚合根或查询维度为单位；设置过期与一致性策略
+
+## 异步与任务
+- 异步模式：@Async 仅承载非关键路径操作；返回 Future/CompletableFuture
+- 定时任务：职责单一，幂等可重试，失败告警
+
+## 错误处理与响应
+- 全局异常：使用全局异常处理器统一映射为 CommonResponse
+- 响应模型：`CommonResponse<T>` 字段固定为 `code:String(13)`、`msg:String`、`data:T`
+- 分页模型：`CommonPageResponse<T>` 字段固定为 `total`、`pageNumber`、`pageSize`、`list`
+- 错误码：使用 13 位字符串错误码；禁止将实现细节暴露到 msg
+- 日志：在入口/核心步骤/异常处记录必要上下文；避免敏感信息
+
+## 查询与分页
+- 简单查询使用 GET；复杂条件查询使用 POST + `Search{Domain}Request`
+- 分页返回统一 `CommonPageResponse<T>`：`total`、`pageNumber`、`pageSize`、`list`
+
+## 性能与安全
+- 数据库：避免 N+1，优先批量/分页；必要时读写分离
+- 安全：输入验证、预编译 SQL、防 XSS 与信息脱敏
+
+## 依赖注入（对齐编码规范）
+- 按 `02-coding-standards/coding-standards.mdc`：统一使用 `@Autowired` 字段注入；除非明确说明，不使用构造器注入
+
+## 组合模式与扩展点（建议）
+- 策略模式：可配置的业务分支（如计费、路由、折扣）
+- 责任链模式：可插拔的处理流水线（审单、风控、审批）
+- 装饰器模式：横切增强（审计、缓存、限流）无侵入扩展
+
+## 进一步阅读
+- 质量与最佳实践：`common/04-code-quality-standards.mdc`（已整合到当前文件）
+- API 设计与响应：`01-design-standards/api-design-standards.mdc`
+- 错误码规范：`01-design-standards/error-code-standards.mdc`
+- 控制器与异常规则：`03-code-file-convertions/controller-class-conventions.mdc`、`03-code-file-convertions/global-exception-handler-conventions.mdc`
+- 统一响应模型：`03-code-file-convertions/common-response-class-conventions.mdc`

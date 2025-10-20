@@ -4,8 +4,6 @@ globs:
 alwaysApply: true
 ---
 
-# 代码结构规范
-
 ## 目录结构
 ```
 src/
@@ -56,20 +54,20 @@ src/
 com.{company}.{project}.{layer}
 
 // 示例（基于目录结构）
-com.example.app.Application                   # 主入口类
-com.example.app.config.DatabaseConfig         # 配置类
-com.example.app.controller.UserController     # 控制器
-com.example.app.service.UserService           # 服务接口
-com.example.app.service.impl.UserServiceImpl  # 服务实现
-com.example.app.dao.entity.UserEntity         # MyBatis实体
-com.example.app.dao.mapper.UserMapper         # MyBatis Mapper
-com.example.app.dto.UserDto                   # 数据传输对象
-com.example.app.vo.request.CreateUserRequest  # 请求对象
-com.example.app.vo.response.UserResponse     # 响应对象
+com.example.app.Application                         # 主入口类
+com.example.app.config.DatabaseConfig               # 配置类
+com.example.app.controller.UserController           # 控制器
+com.example.app.service.UserService                 # 服务接口
+com.example.app.service.impl.UserServiceImpl        # 服务实现
+com.example.app.dao.entity.UserEntity               # MyBatis实体
+com.example.app.dao.mapper.UserMapper               # MyBatis Mapper
+com.example.app.dto.UserDto                         # 数据传输对象
+com.example.app.vo.request.CreateUserRequest        # 请求对象
+com.example.app.vo.response.UserResponse            # 响应对象
 com.example.app.exception.UserNotFoundException     # 自定义异常
-com.example.app.task.ScheduledTask            # 定时任务
-com.example.app.util.DateUtils                # 工具类
-com.example.app.security.JwtUtil              # 安全工具类
+com.example.app.task.ScheduledTask                  # 定时任务
+com.example.app.util.DateUtils                      # 工具类
+com.example.app.security.JwtUtil                    # 安全工具类
 
 // 示例（当request和response对象比较多时，可以用Domain拆分一层）
 com.example.app.vo.request.user.CreateUserRequest
@@ -80,4 +78,21 @@ com.example.app.controller.UserControllerTest  # 控制器测试
 com.example.app.service.UserServiceTest        # 服务测试
 com.example.app.dao.mapper.UserMapperTest      # Mapper测试
 ```
+
+## 进一步阅读
+- 分层规范：
+  - `03-code-file-convertions/controller-class-conventions.mdc`
+  - `03-code-file-convertions/service-interface-conventions.mdc`、`03-code-file-convertions/service-impl-conventions.mdc`
+  - `03-code-file-convertions/mapper-interface-conventions.mdc`
+  - `03-code-file-convertions/entity-class-conventions.mdc`
+  - `03-code-file-convertions/dto-class-conventions.mdc`
+  - `03-code-file-convertions/request-class-conventions.mdc`、`03-code-file-convertions/response-class-conventions.mdc`
+  - `03-code-file-convertions/exception-class-conventions.mdc`、`03-code-file-convertions/global-exception-handler-conventions.mdc`
+  - `03-code-file-convertions/task-class-conventions.mdc`
+  - `03-code-file-convertions/utility-class-conventions.mdc`
+  - `03-code-file-convertions/spring-boot-configuration.mdc`
+- 基础规则：
+  - 命名规范：`02-coding-standards/naming-standards.mdc`
+  - 代码风格：`02-coding-standards/code-style-standards.mdc`
+  - 编码实践：`02-coding-standards/coding-standards.mdc`
 

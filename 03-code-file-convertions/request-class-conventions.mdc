@@ -16,3 +16,4 @@ globs: **/src/main/java/**/vo/request/**/**Request.java
 - 必须使用 @Email、@Pattern 等格式验证。
 - 必须保持请求类的简洁性，只包含必要的字段。
 - 必须在请求类中避免业务逻辑。
+- 复杂查询建议：当查询条件较多或结构化（范围、排序、过滤集合等），应设计 `Search{Domain}Request` 并通过 POST 的 @RequestBody 提交；简单查询使用 GET 的 @RequestParam/@PathVariable。

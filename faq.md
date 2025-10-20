@@ -1,19 +1,22 @@
 # 常见问题解答 (FAQ)
 
-> **文件说明**：本文档收集了在使用 Cursor Rules 规范体系过程中遇到的常见问题和解决方案，包括以下内容：
-> - 基础问题（什么是 Cursor Rules、如何开始使用、规范体系结构）
-> - 规范使用问题（如何选择合适的规范、规范冲突处理、规范更新）
-> - AI 编程问题（AI 生成代码质量、提示词优化、AI 理解规范）
-> - 代码生成问题（代码模板使用、代码审查、代码质量保证）
-> - 团队协作问题（规范推广、团队培训、规范维护）
-> - 技术问题（Spring Boot 相关、数据库设计、API 设计）
-> - 最佳实践（开发流程、代码审查、持续改进）
+> **文件说明**：本文档收集了在使用 Cursor Rules 规范体系过程中遇到的常见问题和解决方案，按以下分类组织：
+> 
+> ** 基础入门**：了解 Cursor Rules 的基本概念、适用场景和价值
+> ** 配置与使用**：规则文件的加载、自定义和快速定位方法
+> ** AI 编程协作**：与 AI 协作的最佳实践、代码生成和调试技巧
+> ** 代码质量与安全**：代码质量提升、安全防护和可维护性实践
+> ** Spring Boot 技术**：Spring Boot 相关的技术问题和解决方案
+> ** API 设计与错误处理**：API 设计规范、错误码设计和异常处理
+> ** 数据持久化**：MyBatis 注解模式、依赖注入等数据层问题
+> ** 团队协作**：规范推广、冲突处理和持续维护
+> ** 其他问题**：技术栈适用性、项目贡献和获取帮助
 > 
 > 建议在遇到问题时先查阅此文档，如果问题未涵盖，可以向团队反馈。
 
 # 常见问题解答 (FAQ)
 
-## 基础问题
+## 1. 基础入门
 
 ### Q1: 什么是 Cursor Rules？
 A: Cursor Rules 是一套为 AI 辅助编程设计的开发规范体系，旨在确保 AI 生成的代码符合项目标准，提高开发效率和代码质量。
@@ -32,13 +35,13 @@ A: 主要适用于：
 - 微服务架构项目
 - 需要 AI 辅助开发的项目
 
-## 使用问题
+## 2. 配置与使用
 
 ### Q4: 如何在 Cursor 中加载这些规则？
 A: 有几种方式：
-1. **全局规则**：将 `cursor-rules/` 目录复制到用户主目录下的 `.cursor/` 文件夹
-2. **项目规则**：在项目根目录创建 `.cursorrules` 文件，引用相关规则
-3. **团队规则**：在团队共享的代码仓库中维护规则文件
+1. **项目规则**：在项目根目录创建 `.cursor/rules` 目录，将所有 `.mdc` 文件复制到该目录
+2. **开启 Auto Attached**：在 Cursor 设置中开启 "Auto Attached" 选项，Cursor 会自动读取 `.cursor/rules` 目录下的规则文件
+3. **团队规则**：在团队共享的代码仓库中维护规则文件，统一复制到各项目的 `.cursor/rules` 目录
 
 ### Q5: 如何自定义规则？
 A: 可以：
@@ -49,18 +52,21 @@ A: 可以：
 
 ### Q6: 规则文件太多，如何快速找到需要的？
 A: 建议：
-1. 先阅读 `00-introduction.md` 了解整体结构
-2. 根据开发阶段选择相关章节
+1. 先阅读 `00-project-structure/project-structure.mdc` 了解整体结构
+2. 根据开发阶段选择相关章节：
+   - 编码实践 → `02-coding-standards/coding-standards.mdc`
+   - API 设计 → `01-design-standards/api-design-standards.mdc`
+   - 具体文件 → `03-code-file-convertions/` 目录
 3. 使用 IDE 的搜索功能快速定位
 4. 参考目录结构快速导航
 
-## 开发问题
+## 3. AI 编程协作
 
 ### Q7: AI 生成的代码不符合规范怎么办？
 A: 可以：
-1. 使用 `07-ai-coding-guidelines/` 中的提示词模板
-2. 参考 `anti-patterns-to-avoid.md` 中的错误模式
-3. 使用 `review-checklist.md` 进行检查
+1. 使用 `02-coding-standards/coding-standards.mdc` 中的编码实践规范
+2. 参考 `01-design-standards/design-pattern-standards.mdc` 中的设计原则
+3. 使用 `03-code-file-convertions/` 中的具体文件约定进行检查
 4. 提供正确的示例给 AI
 
 ### Q8: 如何确保 AI 生成完整的代码？
@@ -71,105 +77,13 @@ A: 在提示词中明确要求：
 4. 添加必要的日志记录
 5. 使用统一的响应格式
 
-### Q9: 如何处理 AI 生成的代码中的安全问题？
-A: 参考 `06-code-quality/security-basics.md`：
-1. 验证所有外部输入
-2. 使用参数化查询防止 SQL 注入
-3. 对输出进行转义防止 XSS
-4. 验证用户权限
-5. 保护敏感信息
-
-### Q10: AI 生成的代码性能不好怎么办？
-A: 参考 `06-code-quality/performance-tips.md`：
-1. 避免 N+1 查询问题
-2. 使用批量操作
-3. 合理使用缓存
-4. 优化 SQL 查询
-5. 使用异步处理
-
-## 技术问题
-
-### Q11: 如何处理循环依赖问题？
-A: 参考 `02-spring-boot-guidelines/bean-management.md`：
-1. 重构设计，提取公共服务
-2. 使用 `@Lazy` 注解
-3. 使用 `ApplicationContext` 获取 Bean
-4. 重新设计类之间的依赖关系
-
-### Q12: 事务不生效怎么办？
-A: 检查以下问题：
-1. 是否使用了 `@Transactional` 注解
-2. 是否在同一个类中自调用
-3. 是否捕获了异常导致回滚失效
-4. 是否正确配置了事务管理器
-
-### Q13: 如何优化数据库查询性能？
-A: 参考相关规范：
-1. 添加适当的索引
-2. 使用批量查询避免 N+1 问题
-3. 优化 SQL 语句
-4. 使用连接池
-5. 考虑读写分离
-
-### Q14: 如何处理异常？
-A: 参考 `05-service-layer/exception-handling.md`：
-1. 使用全局异常处理器
-2. 区分业务异常和系统异常
-3. 返回用户友好的错误信息
-4. 记录详细的错误日志
-5. 使用统一的错误码体系
-
-## 最佳实践问题
-
-### Q15: 如何设计好的 API？
-A: 参考 `03-api-design/` 章节：
-1. 遵循 RESTful 规范
-2. 使用统一的响应格式
-3. 添加完整的 API 文档
-4. 进行参数验证
-5. 考虑版本控制
-
-### Q16: 如何编写可维护的代码？
-A: 遵循以下原则：
-1. 单一职责原则
-2. 开闭原则
-3. 依赖倒置原则
-4. 接口隔离原则
-5. 里氏替换原则
-
-### Q17: 如何提高代码质量？
-A: 参考 `06-code-quality/` 章节：
-1. 编写完整的单元测试
-2. 使用静态分析工具
-3. 进行代码审查
-4. 遵循编码规范
-5. 持续重构
-
 ### Q18: 如何与 AI 更好地协作？
-A: 参考 `07-ai-coding-guidelines/` 章节：
+A: 参考项目规范：
 1. 使用结构化的提示词
 2. 提供足够的上下文信息
 3. 明确输出格式要求
-4. 使用代码模板
+4. 使用 `.cursor/rules` 目录下的规则文件
 5. 进行代码审查
-
-## 故障排查
-
-### Q19: 应用启动失败怎么办？
-A: 检查以下问题：
-1. 配置文件是否正确
-2. 数据库连接是否正常
-3. 依赖注入是否有问题
-4. 端口是否被占用
-5. 日志中的错误信息
-
-### Q20: 性能问题如何排查？
-A: 使用以下方法：
-1. 查看应用日志
-2. 使用性能分析工具
-3. 检查数据库查询
-4. 分析内存使用情况
-5. 监控系统资源
 
 ### Q21: 如何调试 AI 生成的代码？
 A: 建议：
@@ -177,9 +91,148 @@ A: 建议：
 2. 添加调试日志
 3. 使用断点调试
 4. 检查异常堆栈
-5. 参考错误模式文档
+5. 参考 `03-code-file-convertions/` 中的具体文件约定
+6. 使用 `02-coding-standards/coding-standards.mdc` 中的编码实践规范
 
-## 团队协作问题
+## 4. 代码质量与安全
+
+### Q9: 如何处理 AI 生成的代码中的安全问题？
+A: 参考 `01-design-standards/design-pattern-standards.mdc`：
+1. 验证所有外部输入
+2. 使用参数化查询防止 SQL 注入
+3. 对输出进行转义防止 XSS
+4. 验证用户权限
+5. 保护敏感信息
+
+### Q10: AI 生成的代码性能不好怎么办？
+A: 参考 `01-design-standards/design-pattern-standards.mdc`：
+1. 避免 N+1 查询问题
+2. 使用批量操作
+3. 合理使用缓存
+4. 优化 SQL 查询
+5. 使用异步处理
+
+### Q16: 如何编写可维护的代码？
+A: 参考 `01-design-standards/design-pattern-standards.mdc`：
+1. 遵循 SOLID 原则（单一职责、开闭、依赖倒置、接口隔离、里氏替换）
+2. 应用 DRY 原则（不要重复自己）
+3. 遵循 KISS 原则（保持简单）
+4. 合理分层架构
+5. 使用设计模式
+
+### Q17: 如何提高代码质量？
+A: 参考 `01-design-standards/design-pattern-standards.mdc`：
+1. 编写完整的单元测试
+2. 使用静态分析工具
+3. 进行代码审查
+4. 遵循编码规范
+5. 持续重构
+
+## 5. Spring Boot 技术问题
+
+### Q11: 如何处理循环依赖问题？
+A: 参考 `02-coding-standards/coding-standards.mdc`：
+1. 重构设计，提取公共服务
+2. 使用 `@Lazy` 注解
+3. 使用 `ApplicationContext` 获取 Bean
+4. 重新设计类之间的依赖关系
+5. 统一使用 `@Autowired` 字段注入，避免构造器注入
+
+### Q12: 事务不生效怎么办？
+A: 参考 `02-coding-standards/coding-standards.mdc`：
+1. 是否使用了 `@Transactional` 注解
+2. 是否在同一个类中自调用
+3. 是否捕获了异常导致回滚失效
+4. 是否正确配置了事务管理器
+5. 检查事务传播行为设置
+
+### Q13: 如何优化数据库查询性能？
+A: 参考 `01-design-standards/design-pattern-standards.mdc`：
+1. 添加适当的索引
+2. 使用批量查询避免 N+1 问题
+3. 优化 SQL 语句
+4. 使用连接池
+5. 考虑读写分离
+
+### Q19: 应用启动失败怎么办？
+A: 参考 `00-project-structure/project-structure.mdc` 和 `02-coding-standards/coding-standards.mdc`：
+1. 检查配置文件是否正确
+2. 数据库连接是否正常
+3. 依赖注入是否有问题（检查 `@Autowired` 字段注入）
+4. 端口是否被占用
+5. 查看日志中的错误信息
+6. 检查 MyBatis 注解配置
+
+### Q20: 性能问题如何排查？
+A: 参考 `01-design-standards/design-pattern-standards.mdc`：
+1. 查看应用日志
+2. 使用性能分析工具
+3. 检查数据库查询（避免 N+1 问题）
+4. 分析内存使用情况
+5. 监控系统资源
+6. 检查缓存使用情况
+
+## 6. API 设计与错误处理
+
+### Q14: 如何处理异常？
+A: 参考 `02-coding-standards/coding-standards.mdc` 和 `01-design-standards/error-code-standards.mdc`：
+1. 使用全局异常处理器
+2. 区分业务异常和系统异常
+3. 返回用户友好的错误信息
+4. 记录详细的错误日志
+5. 使用统一的 13 位错误码体系
+
+### Q15: 如何设计好的 API？
+A: 参考 `01-design-standards/api-design-standards.mdc`：
+1. 仅使用 GET 和 POST 方法
+2. 使用统一的响应格式 `CommonResponse`
+3. 添加完整的 API 文档
+4. 进行参数验证
+5. 使用 13 位错误码
+
+### Q29: 如何设计 13 位错误码？
+A: 参考 `01-design-standards/error-code-standards.mdc`：
+1. 前 4 位：子系统编号
+2. 第 5 位：错误类型（B-业务、T-技术、C-客户端、U-未知、S-成功）
+3. 第 6-7 位：预留编码（推荐填 0）
+4. 第 8-13 位：子系统内编码（6 位数字）
+5. 示例：`1001B00000001`（用户模块业务错误 000001）
+
+### Q30: 为什么只使用 GET 和 POST 方法？
+A: 参考 `01-design-standards/api-design-standards.mdc`：
+1. GET：用于简单查询，参数少且幂等
+2. POST：用于所有修改操作（增删改）和复杂查询
+3. 简化前端调用，减少 HTTP 方法选择困扰
+4. 符合 RESTful 设计原则
+5. 便于 API 网关统一处理
+
+### Q32: 如何处理分页查询？
+A: 参考 `03-code-file-convertions/common-page-request-class-conventions.mdc` 和 `03-code-file-convertions/common-page-response-class-conventions.mdc`：
+1. 使用 `CommonPageRequest` 作为分页请求参数
+2. 使用 `CommonPageResponse` 作为分页响应
+3. 包含 `total`、`pageNumber`、`pageSize`、`list` 字段
+4. 复杂分页查询使用 POST 方法
+5. 简单分页查询可以使用 GET 方法
+
+## 7. 数据持久化
+
+### Q28: 如何使用 MyBatis 注解模式？
+A: 参考 `03-code-file-convertions/mapper-interface-conventions.mdc`：
+1. 使用 `@Mapper` 注解标记接口
+2. 使用 `@Insert`、`@Update`、`@Delete`、`@Select` 注解定义 SQL
+3. 避免使用 XML 配置文件
+4. 不使用 MyBatis Plus 的 `BaseMapper`
+5. 复杂查询可以使用 `@Select` 注解
+
+### Q31: 如何正确使用 @Autowired 字段注入？
+A: 参考 `02-coding-standards/coding-standards.mdc`：
+1. 统一使用 `@Autowired` 字段注入
+2. 禁止使用构造器注入（除非明确说明）
+3. 避免循环依赖问题
+4. 保持代码简洁性
+5. 符合项目统一规范
+
+## 8. 团队协作
 
 ### Q22: 如何让团队统一使用这些规范？
 A: 建议：
@@ -205,7 +258,7 @@ A: 建议：
 4. 参考开源项目实践
 5. 持续改进
 
-## 其他问题
+## 9. 其他问题
 
 ### Q25: 这些规范适用于其他技术栈吗？
 A: 部分适用：
@@ -214,7 +267,7 @@ A: 部分适用：
 - 建议根据实际技术栈定制
 
 ### Q26: 如何贡献到项目中？
-A: 参考 `changelog.md` 中的贡献指南：
+A: 参考项目贡献指南：
 1. Fork 项目仓库
 2. 创建功能分支
 3. 提交变更

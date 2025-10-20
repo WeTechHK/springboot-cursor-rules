@@ -6,7 +6,10 @@ globs: **/src/main/java/**/controller/**Controller.java
 - 类名必须以 Controller 结尾。
 - 必须使用 @RequestMapping 指定类级别的 API 路由，符合 Google OpenAPI 规范，例如 ("/api/v1/users")。
 - 类方法中的所有依赖项都必须通过 @Autowired 注入，且不使用构造函数，除非另有说明。
-- 类方法必须使用最佳实践的 HTTP 方法注解，例如创建 = @PostMapping("/create")，查询 = @GetMapping("/{id}")。
+- 仅使用 @GetMapping 与 @PostMapping：
+  - 简单查询使用 @GetMapping，参数通过 @RequestParam/@PathVariable
+  - 复杂查询使用 @PostMapping，查询条件放入 @RequestBody
+  - 所有修改（创建、更新、部分更新、删除）统一使用 @PostMapping
 - 所有方法返回对象必须是统一响应包装类型，如 CommonResponse<T> 或 PageCommonResponse<T>。
 - 必须使用 @Operation 注解进行 API 文档说明，包含摘要和描述。
 - POST 请求参数必须使用 @RequestBody @Valid，路径参数使用 @PathVariable。

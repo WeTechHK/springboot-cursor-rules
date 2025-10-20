@@ -1,0 +1,58 @@
+---
+description: 编码实践规范（依赖注入、异常、日志、事务、性能、安全、API返回、组织、测试），适用于所有 Spring Boot 项目。
+globs:
+alwaysApply: true
+---
+
+## 依赖注入（DI）
+- 必须使用 `@Autowired` 字段注入（统一风格，便于快速接入与维护）
+- 不使用构造器注入，除非规范或场景另有明确说明（例如特殊生命周期或必须依赖校验）
+- 可选依赖请通过 `@Autowired(required = false)`、`@Nullable` 或 `ObjectProvider<T>` 处理，避免 NPE
+- 避免循环依赖；如出现请重构依赖关系或通过事件/接口解耦
+
+## 异常处理
+- 使用具体异常类型；业务异常统一封装（如 `BusinessException`）
+- 异常信息明确、可定位；禁止空 `catch`
+- 数据访问异常转换为领域异常，并记录上下文
+
+## 日志记录
+- 在关键入口、核心步骤、异常处记录日志
+- 包含必要上下文信息（主体、动作、主键、结果、耗时）；禁止输出敏感信息
+
+## 事务与数据库
+- 合理使用 `@Transactional`；注意同类内部自调用导致事务失效
+- 避免 N+1 查询；优先批量操作与分页
+- 限制单次返回规模；I/O 设置超时与重试策略
+
+## 性能优化
+- 避免无谓对象创建与反射；热点路径加缓存（如 `@Cacheable`）
+- 合理的数据结构与算法；压测评估瓶颈并针对性优化
+
+## 安全编码
+- 所有输入校验（`@Valid` + 分组校验）；参数对象尽量不可变
+- 预编译 SQL/占位符防注入；输出做 XSS 处理
+- 敏感字段脱敏；密钥安全存储（KMS、Vault 等）
+
+## API 与返回值
+- Controller 统一返回结构（例如 `CommonResponse<T>`）与错误码体系
+- 明确幂等性与防重策略（如 `traceId`和`requestId`）；必要时限流/降级
+
+## 代码组织
+- 单一职责；方法短小（建议 <80 行），复杂逻辑拆分
+- 使用卫语句减少嵌套；消除魔法数字/字符串（提取为常量或枚举）
+
+## 测试
+- 单元测试覆盖核心与边界；Mock 外部依赖
+- 集成测试验证端到端流程；缺陷引入回归用例
+
+## 进一步阅读
+- 事务、日志、异常、切面：`03-code-file-convertions/logging-aspect-conventions.mdc`、`03-code-file-convertions/global-exception-handler-conventions.mdc`
+- Controller 返回与校验：`03-code-file-convertions/controller-class-conventions.mdc`、`03-code-file-convertions/validation-class-conventions.mdc`
+- Service/DAO 实践：`03-code-file-convertions/service-interface-conventions.mdc`、`03-code-file-convertions/service-impl-conventions.mdc`、`03-code-file-convertions/mapper-interface-conventions.mdc`
+- DTO/VO 设计：`03-code-file-convertions/dto-class-conventions.mdc`、`03-code-file-convertions/request-class-conventions.mdc`、`03-code-file-convertions/response-class-conventions.mdc`
+- 实体与常量/枚举：`03-code-file-convertions/entity-class-conventions.mdc`、`03-code-file-convertions/constants-class-conventions.mdc`、`03-code-file-convertions/enum-class-conventions.mdc`
+- 应用配置与主类：`03-code-file-convertions/spring-boot-configuration.mdc`、`03-code-file-convertions/application-main-class-conventions.mdc`
+
+---
+- 命名相关规则见：`02-coding-standards/naming-standards.mdc`
+- 代码风格（格式化、导入、注释、布局）见：`02-coding-standards/code-style-standards.mdc`
