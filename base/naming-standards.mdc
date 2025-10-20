@@ -1,0 +1,42 @@
+---
+description: 命名规范（包、类、方法、变量、常量），适用于所有 Spring Boot 项目。
+globs: 
+alwaysApply: true
+---
+
+# 命名规范
+
+## 包命名
+- 格式：全小写字母，使用点分隔符
+- 规则：`com.{company}.{project}.{layer}`
+- 示例：`com.example.app.controller`、`com.example.app.service.impl`、`com.example.app.dao.mapper`
+
+## 类命名
+- 实体类（MyBatis/持久化对象）：`{Domain}Entity`（如：`UserEntity`）
+- Mapper 接口：`{Domain}Mapper`（如：`UserMapper`）
+- 服务接口/实现：`{Domain}Service`、`{Domain}ServiceImpl`
+- 控制器：`{Domain}Controller`
+- DTO：`{Domain}Dto`（如：`UserDto`）
+- VO 请求/响应：`{Action}{Domain}Request`、`{Domain}Response`（如：`CreateUserRequest`、`UserResponse`）
+- 配置类：`{Domain}Config`（如：`DatabaseConfig`）
+- 自定义异常：`{Domain}Exception`（如：`UserNotFoundException`）
+- 定时任务：`{Domain}Task`/`{Action}{Domain}Task`（如：`ScheduledTask`、`SyncUserTask`）
+
+## 方法命名
+- 查询：`get{Domain}ById`、`list{Domain}s`、`find{Domain}s`
+- 变更：`create{Domain}`、`update{Domain}`、`delete{Domain}ById`
+- 业务：`process{Domain}`、`validate{Domain}`、`convert{Domain}`
+
+## 变量命名
+- 字段：驼峰命名（如：`userName`、`createTime`）
+- 局部变量：驼峰命名（如：`userList`、`isValid`）
+- 方法参数：驼峰命名（如：`userId`、`request`）
+- 常量：全大写，下划线分隔（如：`MAX_RETRY_COUNT`）
+
+## VO 包命名补充
+- 基本规则：`com.{company}.{project}.vo.request`、`com.{company}.{project}.vo.response`
+- 当对象较多时，可按Domain再分一层：
+  - 请求：`com.{company}.{project}.vo.request.{Domain}.{Action}{Domain}Request`
+  - 响应：`com.{company}.{project}.vo.response.{Domain}.{Domain}Response`
+  - 示例：`com.example.app.vo.request.user.CreateUserRequest`、`com.example.app.vo.response.user.UserResponse`
+
