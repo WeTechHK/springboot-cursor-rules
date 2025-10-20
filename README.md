@@ -1,8 +1,8 @@
 # Spring Boot Cursor Rules
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![GitHub stars](https://img.shields.io/github/stars/WeTechHK/srpingboot-cursor-rules.svg)](https://github.com/WeTechHK/srpingboot-cursor-rules/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/WeTechHK/srpingboot-cursor-rules.svg)](https://github.com/WeTechHK/srpingboot-cursor-rules/network)
+[![GitHub stars](https://img.shields.io/github/stars/WeTechHK/springboot-cursor-rules.svg)](https://github.com/WeTechHK/springboot-cursor-rules/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/WeTechHK/springboot-cursor-rules.svg)](https://github.com/WeTechHK/springboot-cursor-rules/network)
 
 > **项目说明**：这是一个通用、实用的 Spring Boot 开发规范体系，专为 Cursor AI 和团队开发设计。遵循 80/20 原则，只保留最核心、最常用、最标准的开发规范。
 
@@ -31,7 +31,7 @@ git clone git@github.com:WeTechHK/springboot-cursor-rules.git
 
 进入项目目录
 ```bash
-cd srpingboot-cursor-rules
+cd springboot-cursor-rules
 ```
 
 在你的 Spring Boot 项目中创建规则目录
@@ -83,8 +83,8 @@ AI：好的，我会参考编码实践规范来生成代码...
 
 ## 相关链接
 
-- **GitHub 仓库**：[WeTechHK/srpingboot-cursor-rules](https://github.com/WeTechHK/srpingboot-cursor-rules)
-- **问题反馈**：[Issues](https://github.com/WeTechHK/srpingboot-cursor-rules/issues)
-- **功能请求**：[Feature Requests](https://github.com/WeTechHK/srpingboot-cursor-rules/issues/new?template=feature_request.md)
+- **GitHub 仓库**：[WeTechHK/springboot-cursor-rules](https://github.com/WeTechHK/springboot-cursor-rules)
+- **问题反馈**：[Issues](https://github.com/WeTechHK/springboot-cursor-rules/issues)
+- **功能请求**：[Feature Requests](https://github.com/WeTechHK/springboot-cursor-rules/issues/new?template=feature_request.md)
 
 

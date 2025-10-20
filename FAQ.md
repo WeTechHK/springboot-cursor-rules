@@ -335,6 +335,6 @@ A: 可以通过以下方式：
 
 ## 🔗 相关链接
 
-- **项目仓库**：[WeTechHK/srpingboot-cursor-rules](https://github.com/WeTechHK/srpingboot-cursor-rules)
-- **问题反馈**：[Issues](https://github.com/WeTechHK/srpingboot-cursor-rules/issues)
-- **功能请求**：[Feature Requests](https://github.com/WeTechHK/srpingboot-cursor-rules/issues/new?template=feature_request.md)
+- **项目仓库**：[WeTechHK/springboot-cursor-rules](https://github.com/WeTechHK/springboot-cursor-rules)
+- **问题反馈**：[Issues](https://github.com/WeTechHK/springboot-cursor-rules/issues)
+- **功能请求**：[Feature Requests](https://github.com/WeTechHK/springboot-cursor-rules/issues/new?template=feature_request.md)
