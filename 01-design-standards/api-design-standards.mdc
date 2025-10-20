@@ -4,6 +4,8 @@ globs:
 alwaysApply: true
 ---
 
+# API 设计规范
+
 ## RESTful 原则
 - 资源导向：面向资源建模，避免动词化路径（如 `/api/v1/users` 而非 `/getUsers`）
 - 统一接口：仅使用 GET 和 POST 两种 HTTP 方法（团队规范）

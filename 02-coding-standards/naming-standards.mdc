@@ -4,6 +4,8 @@ globs:
 alwaysApply: true
 ---
 
+# 命名规范
+
 ## 包命名
 - 格式：全小写字母，使用点分隔符
 - 规则：`com.{company}.{project}.{layer}`

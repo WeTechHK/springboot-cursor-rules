@@ -4,6 +4,8 @@ globs:
 alwaysApply: true
 ---
 
+# 设计模式规范
+
 ## 设计原则（必须遵循）
 - SOLID：
   - SRP：类与方法职责单一，按职能拆分校验/处理/转换

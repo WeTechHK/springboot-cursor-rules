@@ -4,6 +4,7 @@ globs:
 alwaysApply: true
 ---
 
+# 技术栈
 
 ## 核心框架
 
@@ -39,11 +40,15 @@ alwaysApply: true
   - 文档：`https://docs.spring.io/spring-data/jpa/docs/current/reference/html/`
   - Hibernate 文档：`https://docs.jboss.org/hibernate/orm/current/userguide/html_single/`
 - MyBatis / MyBatis-Spring
-  - 用途：半自动化 SQL 映射、细粒度 SQL 控制
+  - 用途：半自动化 SQL 映射、细粒度 SQL 控制（注解模式）
   - 文档：`https://mybatis.org/mybatis-3/` | `https://mybatis.org/spring/`
+  - 使用规范：参考 `03-code-file-convertions/mapper-interface-conventions.mdc`
 - 数据库驱动
   - MySQL：`https://dev.mysql.com/doc/` | 驱动 `mysql-connector-j`
   - PostgreSQL：`https://www.postgresql.org/docs/` | 驱动 `postgresql`
+- 数据库设计规范
+  - 表结构设计：参考 `01-design-standards/table-design-standards.mdc`
+  - 实体类映射：参考 `03-code-file-convertions/entity-class-conventions.mdc`
 
 ## 校验与序列化
 

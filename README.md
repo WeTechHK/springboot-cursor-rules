@@ -4,7 +4,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/WeTechHK/srpingboot-cursor-rules.svg)](https://github.com/WeTechHK/srpingboot-cursor-rules/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/WeTechHK/srpingboot-cursor-rules.svg)](https://github.com/WeTechHK/srpingboot-cursor-rules/network)
 
-> **项目说明**：这是一个通用、实用的 Spring Boot 开发规范体系，专为 Cursor AI 和团队开发设计。遵循 80/20 原则，只保留最核心、最常用的开发规范。
+> **项目说明**：这是一个通用、实用的 Spring Boot 开发规范体系，专为 Cursor AI 和团队开发设计。遵循 80/20 原则，只保留最核心、最常用、最标准的开发规范。
 
 ## 核心特性
 
@@ -15,7 +15,7 @@
 
 ###  分层组织
 - **00-project-structure**：项目结构和技术栈
-- **01-design-standards**：API 设计、错误码、设计模式
+- **01-design-standards**：API 设计、错误码、设计模式、表结构设计
 - **02-coding-standards**：编码实践、代码风格、命名规范
 - **03-code-file-convertions**：具体代码文件约定
 
@@ -66,7 +66,7 @@ AI：好的，我会参考编码实践规范来生成代码...
 -  代码质量与安全问题
 -  Spring Boot 技术问题
 -  API 设计与错误处理
--  数据持久化问题
+-  数据持久化与表结构设计
 -  团队协作问题
 
 ## 许可证

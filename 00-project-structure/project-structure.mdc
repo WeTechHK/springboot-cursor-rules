@@ -4,6 +4,8 @@ globs:
 alwaysApply: true
 ---
 
+# 项目结构和包结构规范
+
 ## 目录结构
 ```
 src/

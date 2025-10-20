@@ -13,3 +13,10 @@ globs: **/src/main/java/**/dao/entity/*.java
 - 必须为所有字段提供完整的 JavaDoc 注释。
 - 必须保持实体类简洁，只包含数据字段。
 - 必须在实体类中避免业务逻辑。
+- 必须包含 createTime 和 updateTime 审计字段。
+- 布尔字段使用 is 前缀命名。
+- 字段命名使用驼峰命名法，与数据库表字段对应。
+
+## 进一步阅读
+- 数据库表设计规范：`01-design-standards/table-design-standards.mdc`
+- 命名规范：`02-coding-standards/naming-standards.mdc`
