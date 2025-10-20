@@ -1,0 +1,23 @@
+---
+description: 定义Spring Boot应用启动类的编码标准，包括注解配置、组件扫描、功能启用和启动方法规范。
+globs: **/src/main/java/**/**Application.java
+---
+- 启动类必须使用 @SpringBootApplication 注解标记。
+- 启动类必须使用 public static void main(String[] args) 方法作为程序入口。
+- 启动类必须调用 SpringApplication.run() 方法启动应用。
+- 必须使用 @MapperScan 注解扫描数据访问层接口。
+- 必须使用 @EnableTransactionManagement 启用事务管理。
+- 必须使用 @EnableAspectJAutoProxy 启用AOP切面功能。
+- 必须使用 @EnableScheduling 启用定时任务功能。
+- 必须使用 @ComponentScan 指定组件扫描包路径。
+- 必须使用 @EnableConfigurationProperties 启用配置属性绑定。
+- 必须排除不需要的自动配置类。
+- 启动类命名必须以 Application 结尾。
+- 启动类必须放在根包或子包中。
+- 必须配置正确的包扫描路径。
+- 必须配置正确的Mapper扫描路径。
+- 必须提供完整的 JavaDoc 注释。
+- 必须导入必要的Spring Boot相关类。
+- 必须配置应用的基本信息。
+- 必须确保启动类位于正确的包结构中。
+- 必须避免在启动类中包含业务逻辑。

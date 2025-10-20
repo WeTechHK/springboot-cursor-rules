@@ -1,0 +1,46 @@
+---
+description: 定义 Gradle 构建文件的编码标准，包括插件配置、依赖管理、任务定义和构建优化规范。
+globs: **/build.gradle
+---
+- 构建文件必须使用 Gradle 8.14 或更高版本。
+- 必须使用 Spring Boot Gradle 插件进行项目构建。
+- 必须配置 Java 21 作为编译和运行版本。
+- 必须使用 Maven Central 仓库作为主要依赖源。
+- 必须配置阿里云镜像仓库提高依赖下载速度。
+- 必须使用 implementation 配置核心依赖。
+- 必须使用 testImplementation 配置测试依赖。
+- 必须使用 developmentOnly 配置开发环境依赖。
+- 必须使用 annotationProcessor 配置注解处理器。
+- 必须使用 compileOnly 配置仅编译时依赖。
+- 必须使用 providedRuntime 配置运行时依赖。
+- 必须配置 MyBatis 相关依赖。
+- 必须配置 MySQL 数据库驱动依赖。
+- 必须配置 Lombok 依赖和注解处理器。
+- 必须配置 Hutool 工具库依赖。
+- 必须配置 Spring Boot Actuator 监控依赖。
+- 必须配置 Spring Boot Test 测试依赖。
+- 必须配置 JUnit 5 测试框架依赖。
+- 必须配置 Mockito 测试框架依赖。
+- 必须配置 Springdoc OpenAPI 文档依赖。
+- 必须配置 Jackson 序列化依赖。
+- 必须配置 Validation 验证依赖。
+- 必须配置 Spring Security 安全依赖。
+- 必须配置 Gradle Wrapper 版本管理。
+- 必须配置多环境构建 Profile。
+- 必须配置代码质量检查插件。
+- 必须配置测试覆盖率报告插件。
+- 必须配置 Docker 容器化构建插件。
+- 必须配置应用打包和部署任务。
+- 必须配置依赖版本管理。
+- 必须配置插件版本管理。
+- 必须配置构建优化和缓存策略。
+- 必须配置多模块项目构建。
+- 必须配置代码生成和编译任务。
+- 必须配置资源文件处理。
+- 必须配置 JAR 包构建和发布。
+- 必须配置 Docker 镜像构建和推送。
+- 必须配置环境变量和配置管理。
+- 必须配置构建脚本的文档注释。
+- 必须避免硬编码版本号和配置。
+- 必须使用变量管理可配置参数。
+- 必须保持构建脚本的简洁性和可读性。

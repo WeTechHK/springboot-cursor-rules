@@ -1,0 +1,13 @@
+---
+description: 定义响应类的编码标准，包括响应对象、分页响应和数据封装。
+globs: **/src/main/java/**/vo/response/**/**Response.java
+---
+- 响应类必须作为基类CommonResponse或PageCommonResponse的 data 字段。
+- 必须使用 @Data 注解自动生成 getter/setter 方法。
+- 必须使用 @NoArgsConstructor 生成无参构造器。
+- 必须使用 @Accessors(chain = true) 支持链式调用。
+- 响应类命名必须以 Response 结尾。
+- 必须使用 @Schema 注解提供 API 文档描述。
+- 必须为每个字段提供清晰的说明和示例。
+- 必须保持响应类的简洁性，只包含必要的字段。
+- 必须在响应类中避免业务逻辑。

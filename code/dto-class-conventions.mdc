@@ -1,0 +1,18 @@
+---
+description: 定义 DTO 类的编码标准，包括数据传输对象、数据转换和对象映射规范。
+globs: **/src/main/java/**/dto/**DTO.java
+---
+- DTO 类必须使用 @Data 注解自动生成 getter/setter 方法。
+- 必须使用 @NoArgsConstructor 生成无参构造器。
+- 必须使用 @AllArgsConstructor 生成全参构造器。
+- 必须使用 @Accessors(chain = true) 支持链式调用。
+- DTO 类命名必须以 DTO 结尾。
+- 字段名必须使用驼峰命名法。
+- 必须使用 @Schema 注解提供 API 文档描述。
+- 必须为每个字段提供清晰的说明和示例。
+- 必须标注必填字段和可选字段。
+- 必须保持 DTO 类的简洁性，只包含必要的字段。
+- 必须在 DTO 中避免业务逻辑。
+- 必须考虑 DTO 的序列化和反序列化性能。
+- 必须使用 @JsonFormat 控制日期时间格式。
+- 必须使用 @JsonIgnore 忽略敏感字段。

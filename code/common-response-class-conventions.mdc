@@ -1,0 +1,18 @@
+---
+description: 定义通用响应基类的编码标准，包括响应状态、数据封装和错误处理规范。
+globs: **/src/main/java/**/vo/response/CommonResponse.java
+---
+- 通用响应类必须使用 @Data 注解自动生成 getter/setter 方法。
+- 必须使用 @NoArgsConstructor 生成无参构造器。
+- 必须使用 @Accessors(chain = true) 支持链式调用。
+- 通用响应类命名必须是 CommonResponse 。
+- 通用响应类仅包含以下字段：状态码字段 code、消息字段 msg 和数据字段 data 。
+- 状态码字段 code，使用 int 类型。
+- 消息字段 msg，使用 String 类型。
+- 数据字段 data，使用泛型 T 类型。
+- 必须使用 @Schema 注解提供 API 文档描述。
+- 必须为每个字段提供清晰的说明和示例。
+- 必须提供成功响应的静态方法 success(T data)和success()。
+- 必须提供错误响应的静态方法 error(int code, String msg)和error(CodeEnum codeEnum)。
+- 必须支持响应数据的序列化和反序列化。
+- 必须在通用响应类中避免业务逻辑。

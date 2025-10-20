@@ -1,0 +1,18 @@
+---
+description: 定义 MyBatis Mapper 接口的编码标准，包括 SQL 注解、参数映射、结果映射和数据库操作。
+globs: **/src/main/java/**/dao/mapper/**Mapper.java
+---
+- 必须使用 @Mapper 注解标记 Mapper 接口。
+- 接口名称必须以 Mapper 结尾。
+- 必须使用基于注解的 SQL，而不是 XML 文件。
+- 必须使用 @Select、@Insert、@Update、@Delete 注解进行数据库操作。
+- 必须使用 @Param 注解进行参数映射。
+- 复杂查询必须使用 <script> 标签进行动态 SQL。
+- 必须使用 @Results 和 @Result 注解进行结果映射。
+- 插入操作必须使用 @Options(useGeneratedKeys = true, keyProperty = "id") 获取自增主键。
+- 分页查询必须使用 LIMIT 和 OFFSET，并提供独立的 count 方法。
+- 动态 SQL 必须使用 <where> 和 <if> 标签进行条件查询。
+- 必须使用参数化查询防止 SQL 注入。
+- SQL 语句必须简洁高效。
+- 必须为所有方法提供完整的 JavaDoc 注释。
+- 必须支持多条件动态查询，并考虑适当的索引。
