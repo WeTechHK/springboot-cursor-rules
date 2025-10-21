@@ -46,6 +46,8 @@ alwaysApply: true
 ## 测试
 - 单元测试覆盖核心与边界；Mock 外部依赖
 - 集成测试验证端到端流程；缺陷引入回归用例
+- 使用 AssertJ 进行流畅断言；使用 `@MockBean` 或 `@Mock` 模拟依赖
+- 测试覆盖率目标：核心业务逻辑 ≥ 80%，工具类 ≥ 90%
 
 ## 进一步阅读
 - 事务、日志、异常、切面：`03-code-file-convertions/logging-aspect-conventions.mdc`、`03-code-file-convertions/global-exception-handler-conventions.mdc`
@@ -58,3 +60,7 @@ alwaysApply: true
 ---
 - 命名相关规则见：`02-coding-standards/naming-standards.mdc`
 - 代码风格（格式化、导入、注释、布局）见：`02-coding-standards/code-style-standards.mdc`
+- 单元测试规范见：`02-coding-standards/unit-testing-standards.mdc`
+- 构建部署规范见：`02-coding-standards/build-and-deployment-standards.mdc`
+- AOP切面和定时任务见：`02-coding-standards/aspect-and-task-standards.mdc`
+- 异常处理规范见：`02-coding-standards/exception-handling-standards.mdc`

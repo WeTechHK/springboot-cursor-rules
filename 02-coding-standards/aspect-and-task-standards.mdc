@@ -1,0 +1,69 @@
+---
+description: AOP切面和定时任务编码标准，适用于所有 Spring Boot 项目。
+globs:
+alwaysApply: true
+---
+
+# AOP切面和定时任务编码规范
+
+## AOP切面规范
+- 切面类名必须以 `Aspect` 结尾
+- 必须使用 `@Aspect` 注解标记切面类
+- 必须使用 `@Component` 注解标记为Spring组件
+- 必须使用 `@Slf4j` 注解进行日志记录
+
+## 切点表达式规范
+- 必须使用 `@Pointcut` 注解定义切点
+- 切点表达式必须精确匹配目标方法
+- 必须使用 `@Before`、`@Around`、`@After`、`@AfterReturning`、`@AfterThrowing` 等注解
+- 切点表达式必须具有可读性和维护性
+
+## 日志切面规范
+- 必须记录请求和响应信息
+- 必须记录方法执行时间
+- 必须记录异常信息
+- 必须使用结构化日志格式
+- 必须避免记录敏感信息
+
+## 定时任务规范
+- 任务类名必须以 `Task` 结尾
+- 必须使用 `@Component` 注解标记
+- 必须使用 `@Slf4j` 注解进行日志记录
+- 必须使用 `@Scheduled` 注解配置调度
+
+## 定时任务配置规范
+- 使用 `fixedDelayString` 配置固定延迟
+- 使用 `initialDelayString` 配置初始延迟
+- 使用SpEL表达式配置动态时间
+- 定时任务必须具有幂等性
+- 必须配置合理的执行频率
+
+## 异常处理规范
+- 切面方法必须处理异常情况
+- 定时任务必须处理异常情况
+- 异常必须记录详细的日志信息
+- 异常处理必须保证系统稳定性
+- 必须避免异常影响主业务流程
+
+## 性能考虑规范
+- 切面方法必须保持高性能
+- 定时任务必须避免长时间阻塞
+- 推荐使用异步处理提高性能
+- 必须进行性能监控和优化
+- 避免在切面中进行耗时操作
+
+## 代码质量要求
+- 切面代码必须保持简洁
+- 定时任务代码必须具有可读性
+- 必须提供完整的JavaDoc注释
+- 必须进行单元测试和集成测试
+- 必须遵循单一职责原则
+
+## 进一步阅读
+- 具体切面实现：`03-code-file-convertions/logging-aspect-conventions.mdc`
+- 定时任务实现：`03-code-file-convertions/task-class-conventions.mdc`
+- 相关基础规则：
+  - 命名规范：`02-coding-standards/naming-standards.mdc`
+  - 代码风格：`02-coding-standards/code-style-standards.mdc`
+  - 编码实践：`02-coding-standards/coding-standards.mdc`
+  - 单元测试：`02-coding-standards/unit-testing-standards.mdc`
