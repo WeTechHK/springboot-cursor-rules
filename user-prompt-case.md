@@ -1,6 +1,6 @@
-# Spring Boot Cursor Rules 典型对话场景
+# Spring Boot Cursor Rules 典型场景
 
-基于当前规则体系，以下是11个典型对话场景，按开发阶段和内容类型进行分类：
+基于当前规则体系，以下是11个典型场景，按开发阶段和内容类型进行分类：
 
 ## 一、新内容开发场景
 
@@ -8,7 +8,17 @@
 
 **开发者**："创建一个学生管理系统的 Spring Boot 项目，包含用户管理、课程管理、成绩管理等模块"
 
-**AI**：我会根据 `.cursor/rules/00-project-structure/project-structure.mdc` 和 `tech-stack.mdc` 中的项目结构规范，为您创建完整的 Spring Boot 项目结构，包括主启动类、配置类、Controller层、Service层、Mapper层、实体类等，并配置必要的依赖和功能模块。
+**AI**：已完成需求分析，根据00-project-structure/project-structure.mdc和tech-stack.mdc创建完整的Spring Boot项目结构
+
+**计划：**
+- 开发主启动类
+- 开发配置类
+- 开发Controller层
+- 开发Service层
+- 开发Mapper层
+- 开发实体类
+
+**请确认：** 是否需要集成Spring Security和Redis缓存？
 
 ---
 
@@ -16,7 +26,16 @@
 
 **开发者**："在现有项目中新增课程管理模块，包含课程信息管理、课程安排、选课等功能"
 
-**AI**：我会根据 `.cursor/rules/03-code-file-convertions/` 中的各类规范，为您生成完整的课程管理模块，包括 CourseController、CourseService、CourseMapper、CourseEntity、相关的 Request/Response 对象，确保遵循现有的项目架构和编码规范。
+**AI**：已完成模块分析，根据03-code-file-convertions/中的各类规范生成完整的课程管理模块
+
+**计划：**
+- 开发CourseController
+- 开发CourseService接口和实现
+- 开发CourseMapper
+- 开发CourseEntity
+- 开发Request/Response对象
+
+我将开始开发课程管理模块。
 
 ---
 
@@ -24,7 +43,16 @@
 
 **开发者**："创建课程服务层，包含课程的增删改查、课程状态管理、课程统计等功能"
 
-**AI**：我会根据 `.cursor/rules/03-code-file-convertions/service-interface-conventions.mdc` 和 `service-impl-conventions.mdc` 中的服务层规范，为您生成 CourseService 接口及 CourseServiceImpl 实现类，确保使用 @Service 注解、@Autowired 依赖注入、@Transactional 事务管理，并通过 DTO 进行数据传递。
+**AI**：已完成服务层设计，根据03-code-file-convertions/service-interface-conventions.mdc和service-impl-conventions.mdc生成CourseService
+
+**计划：**
+- 开发CourseService接口
+- 开发CourseServiceImpl实现类
+- 配置事务管理
+- 配置异常处理
+- 配置日志记录
+
+我将开始开发课程服务层。
 
 ---
 
@@ -32,7 +60,15 @@
 
 **开发者**："为课程管理模块编写完整的单元测试，包含正常流程和异常情况的测试用例"
 
-**AI**：我会根据 `.cursor/rules/02-coding-standards/unit-testing-standards.mdc` 中的测试规范，为您生成 CourseServiceTest、CourseControllerTest、CourseMapperTest 等测试类，确保使用 AAA 模式、@MockBean 模拟依赖、AssertJ 进行流畅断言，并达到核心业务逻辑 ≥ 80% 的覆盖率目标。
+**AI**：已完成测试方案设计，根据02-coding-standards/unit-testing-standards.mdc生成完整的测试用例
+
+**计划：**
+- 开发CourseServiceTest
+- 开发CourseControllerTest
+- 开发CourseMapperTest
+- 开发异常场景测试
+
+我将开始开发单元测试用例。
 
 ---
 
@@ -40,7 +76,15 @@
 
 **开发者**："创建课程实体的 MyBatis Mapper 接口，包含基本的 CRUD 操作和复杂查询"
 
-**AI**：我会根据 `.cursor/rules/03-code-file-convertions/mapper-interface-conventions.mdc` 中的 Mapper 规范，为您生成 CourseMapper 接口，确保使用 @Mapper 注解、基于注解的 SQL 配置（@Select、@Insert、@Update、@Delete）、@Param 参数映射，并遵循表名 t_ 前缀规范。
+**AI**：已完成数据访问层设计，根据03-code-file-convertions/mapper-interface-conventions.mdc生成CourseMapper接口
+
+**计划：**
+- 开发基础CRUD操作
+- 开发复杂查询方法
+- 开发分页查询
+- 开发批量操作
+
+我将开始开发CourseMapper接口。
 
 ---
 
@@ -48,7 +92,15 @@
 
 **开发者**："创建课程相关的业务异常类，并配置全局异常处理器"
 
-**AI**：我会根据 `.cursor/rules/03-code-file-convertions/exception-class-conventions.mdc` 和 `global-exception-handler-conventions.mdc` 中的异常处理规范，为您生成 CourseNotFoundException、CourseStatusException 等业务异常类，确保包含13位错误码字段，并更新 GlobalExceptionHandler 统一处理异常，遵循 `01-design-standards/error-code-standards.mdc` 中的错误码设计规范。
+**AI**：已完成异常处理设计，根据03-code-file-convertions/exception-class-conventions.mdc和global-exception-handler-conventions.mdc生成异常处理体系
+
+**计划：**
+- 开发业务异常类
+- 开发全局异常处理器
+- 定义错误码
+- 配置异常日志记录
+
+我将开始开发异常处理体系。
 
 ---
 
@@ -58,7 +110,16 @@
 
 **开发者**："重构整个学生管理系统，统一代码风格，优化架构设计，提升代码质量"
 
-**AI**：我会根据 `.cursor/rules/02-coding-standards/code-style-standards.mdc`、`coding-standards.mdc` 和 `naming-standards.mdc` 中的编码规范，系统性地重构项目代码，包括统一命名规范、优化代码结构、改进异常处理、完善日志记录，确保整个项目符合最新的编码标准。
+**AI**：已完成项目分析，根据02-coding-standards/中的编码规范制定系统性重构方案
+
+**计划：**
+- 重构命名规范
+- 重构代码结构
+- 重构异常处理
+- 重构日志记录
+- 重构代码质量
+
+**请确认：** 重构范围是否包含数据库表结构优化？
 
 ---
 
@@ -66,7 +127,16 @@
 
 **开发者**："在现有学生管理系统中新增成绩管理模块，与现有的用户管理和课程管理模块集成"
 
-**AI**：我会根据现有的项目架构和 `.cursor/rules/03-code-file-convertions/` 中的规范，为您生成成绩管理模块的完整代码，确保与现有模块的接口和数据模型保持一致，遵循项目的统一架构模式。
+**AI**：已完成模块集成分析，根据现有项目架构和03-code-file-convertions/规范生成成绩管理模块
+
+**计划：**
+- 开发GradeController
+- 开发GradeService
+- 开发GradeMapper
+- 集成现有模块
+- 统一数据模型
+
+我将开始开发成绩管理模块。
 
 ---
 
@@ -74,7 +144,16 @@
 
 **开发者**："重构课程管理模块，优化性能，改进代码结构，增加新的业务功能"
 
-**AI**：我会根据 `.cursor/rules/02-coding-standards/coding-standards.mdc` 中的编码实践规范，重构课程管理模块的现有代码，包括优化数据库查询、改进事务管理、增强异常处理、完善日志记录，并确保新功能与现有功能的无缝集成。
+**AI**：已完成模块分析，根据02-coding-standards/coding-standards.mdc制定课程管理模块重构方案
+
+**计划：**
+- 优化数据库查询
+- 重构事务管理
+- 重构异常处理
+- 重构日志记录
+- 集成新功能
+
+我将开始重构课程管理模块。
 
 ---
 
@@ -82,7 +161,16 @@
 
 **开发者**："修改课程服务层的查询方法，增加新的查询条件和排序功能"
 
-**AI**：我会根据 `.cursor/rules/03-code-file-convertions/service-impl-conventions.mdc` 中的服务实现规范，修改现有的 CourseServiceImpl 类，确保新增功能符合现有的编码规范，包括参数校验、异常处理、日志记录和事务管理，并保持代码的向后兼容性。
+**AI**：已完成代码分析，根据03-code-file-convertions/service-impl-conventions.mdc修改CourseServiceImpl类
+
+**计划：**
+- 修改查询条件
+- 修改排序功能
+- 修改参数校验
+- 修改异常处理
+- 修改日志记录
+
+我将开始修改CourseServiceImpl类。
 
 ---
 
@@ -90,13 +178,21 @@
 
 **开发者**："修复课程管理模块中的并发选课问题，确保数据一致性"
 
-**AI**：我会根据 `.cursor/rules/02-coding-standards/coding-standards.mdc` 中的事务和数据库规范，分析现有的课程管理代码，识别并发问题，提供基于 @Transactional 和数据库锁机制的解决方案，确保修复后的代码符合项目的编码标准和性能要求。
+**AI**：已完成问题分析，根据02-coding-standards/coding-standards.mdc制定并发问题修复方案
+
+**计划：**
+- 修复数据库锁机制
+- 修复事务范围
+- 修复重试机制
+- 修复性能测试验证
+
+我将开始修复并发问题。
 
 ---
 
 ## 使用说明
 
-这些对话场景按开发阶段和内容类型进行了系统分类，展示了AI如何根据项目规则自动生成符合标准的代码：
+这些场景按开发阶段和内容类型进行了系统分类，展示了AI如何根据项目规则自动生成符合标准的代码：
 
 ### 新内容开发场景（场景1-6）
 - **新项目开发**：从零开始创建完整的Spring Boot项目
@@ -112,6 +208,16 @@
 - **重构某个模块**：优化特定模块的代码结构和性能
 - **修改某个代码文件**：在现有文件中添加或修改功能
 - **Bug修复**：修复现有功能中的问题
+
+### 交互特点
+- **进度透明**：明确标识当前进度状态（已完成/进行中/待确认/待完成）
+- **精炼高效**：避免冗余信息，突出重点，节省token和交互轮次
+- **智能确认**：仅在关键决策点寻求用户确认，其他情况直接执行
+- **逻辑清晰**：明确说明已完成什么、正在做什么、接下来要做什么
+
+### 确认机制
+- **需要确认**：当涉及业务决策、技术选型、范围变更等关键决策点时使用"请确认：xxx"
+- **无需确认**：当任务明确、技术方案确定、可直接执行时使用"我将开始xxx"
 
 ### 规则映射
 每个场景都明确对应特定的规则文件，确保生成的代码遵循项目的编码规范、设计模式和最佳实践。开发者可以直接使用这些场景作为与AI对话的模板，AI会自动应用相应的规则文件来生成高质量的代码。
