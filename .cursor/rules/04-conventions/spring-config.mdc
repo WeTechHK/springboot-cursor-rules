@@ -1,0 +1,182 @@
+---
+description: 定义Spring Boot配置文件的编码标准，包括application.yml、环境配置、数据库配置和日志配置
+globs: **/src/main/resources/**/**.yml
+layer: L4
+allowedReferences: [L4]
+---
+
+# Spring Boot Configuration 编码约定
+
+## 适用范围
+定义Spring Boot配置文件（YAML格式）的实现规范，管理应用配置。
+
+## 核心规则
+
+### 文件结构
+- 主配置：`application.yml`
+- 开发环境：`application-dev.yml`
+- 生产环境：`application-prod.yml`
+- **可选**：测试环境：`application-test.yml`（可选）
+
+### 配置组织
+- 使用层次结构（YAML缩进）
+- 按功能模块分组
+- 提供合理默认值
+- 敏感信息使用环境变量
+
+## 主配置示例（application.yml）
+```yaml
+spring:
+  application:
+    name: student-management-system
+  
+  profiles:
+    active: dev  # 激活的环境
+  
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/smt?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:password}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+
+server:
+  port: 8080
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    root: INFO
+    com.edu.smt: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+```
+
+## 开发环境配置（application-dev.yml）
+```yaml
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/smt_dev
+    username: root
+    password: dev_password
+
+logging:
+  level:
+    com.edu.smt: DEBUG
+    org.springframework.web: DEBUG
+```
+
+## 生产环境配置（application-prod.yml）
+```yaml
+server:
+  port: 80
+
+spring:
+  datasource:
+    url: jdbc:mysql://prod-db:3306/smt_prod
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 50
+
+logging:
+  level:
+    root: WARN
+    com.edu.smt: INFO
+  file:
+    name: /var/log/smt/application.log
+```
+
+## 配置模块
+
+### 数据源配置
+```yaml
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://host:port/database
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 600000
+      max-lifetime: 1800000
+```
+
+### MyBatis配置
+```yaml
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-statement-timeout: 30
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+```
+
+### 日志配置
+```yaml
+logging:
+  level:
+    root: INFO
+    com.edu.smt: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
+    max-size: 10MB
+    max-history: 30
+```
+
+### 安全配置（JWT）
+```yaml
+jwt:
+  secret: ${JWT_SECRET:your-secret-key}
+  expiration: 604800000  # 7天（毫秒）
+```
+
+## 环境变量覆盖
+```yaml
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:mysql://localhost:3306/smt}
+    username: ${DATABASE_USER:root}
+    password: ${DATABASE_PASSWORD:password}
+
+jwt:
+  secret: ${JWT_SECRET:default-secret}
+```
+
+## 最佳实践
+- 敏感信息使用环境变量
+- 提供默认值（使用`:`语法）
+- 按功能分组配置
+- 不同环境使用不同配置文件
+- **禁止**：将密码硬编码在配置文件中
+
+## 激活环境
+```bash
+# 开发环境
+java -jar app.jar --spring.profiles.active=dev
+
+# 生产环境
+java -jar app.jar --spring.profiles.active=prod
+
+# 环境变量方式
+export SPRING_PROFILES_ACTIVE=prod
+java -jar app.jar
+```
+
+## 相关规则
+- 启动类: `04-conventions/application.mdc`

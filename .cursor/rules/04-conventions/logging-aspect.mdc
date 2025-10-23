@@ -1,0 +1,143 @@
+---
+description: 定义日志切面类的编码标准，包括AOP切面设计、日志记录、性能监控和异常处理规范
+globs: **/src/main/java/**/aspect/WebLogAspect.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# LoggingAspect 编码约定
+
+## 适用范围
+定义AOP日志切面的实现规范，用于统一记录Controller层的请求、响应和异常信息。
+
+## 核心规则
+
+### 类定义
+- `@Aspect` 标记切面
+- `@Component` 注册为Spring组件
+- `@Slf4j` 日志记录
+- 类名：`WebLogAspect` 或 `LoggingAspect`
+
+### 切点定义
+- `@Pointcut` 定义切点表达式
+- 拦截Controller层所有公共方法
+- 示例：`execution(public * com.*.*.controller..*.*(..))`
+
+### 通知类型
+- `@Before` 记录请求信息
+- `@Around` 记录响应和执行时间
+- `@AfterThrowing` 记录异常
+
+### 记录内容
+- 请求：URL, HTTP方法, IP, 类方法, 参数
+- 响应：返回值, 执行时间
+- 异常：异常类型, 异常消息
+- **禁止**：记录敏感信息（密码、token）
+
+## 最小示例
+```java
+@Aspect
+@Component
+@Slf4j
+public class WebLogAspect {
+    
+    @Pointcut("execution(public * com.*.*.controller..*.*(..))")
+    public void webLog() {}
+    
+    @Before("webLog()")
+    public void doBefore(JoinPoint joinPoint) {
+        // 获取请求信息
+        ServletRequestAttributes attributes = 
+            (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        
+        log.info("========== 请求开始 ==========");
+        log.info("URL            : {}", request.getRequestURL().toString());
+        log.info("HTTP Method    : {}", request.getMethod());
+        log.info("IP             : {}", request.getRemoteAddr());
+        log.info("Class Method   : {}.{}", 
+            joinPoint.getSignature().getDeclaringTypeName(),
+            joinPoint.getSignature().getName());
+        log.info("Args           : {}", Arrays.toString(joinPoint.getArgs()));
+    }
+    
+    @Around("webLog()")
+    public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
+        
+        // 执行方法
+        Object result = joinPoint.proceed();
+        
+        // 记录执行时间
+        long timeCost = System.currentTimeMillis() - startTime;
+        log.info("Response       : {}", result);
+        log.info("Time Cost      : {} ms", timeCost);
+        log.info("========== 请求结束 ==========");
+        
+        return result;
+    }
+    
+    @AfterThrowing(pointcut = "webLog()", throwing = "ex")
+    public void doAfterThrowing(JoinPoint joinPoint, Throwable ex) {
+        log.error("========== 异常 ==========");
+        log.error("Exception Class: {}", ex.getClass().getName());
+        log.error("Exception Msg  : {}", ex.getMessage());
+    }
+}
+```
+
+## 进阶示例（带ThreadLocal）
+```java
+@Aspect
+@Component
+@Slf4j
+public class WebLogAspect {
+    
+    private static final ThreadLocal<Long> TIME_THREADLOCAL = new ThreadLocal<>();
+    
+    @Pointcut("execution(public * com.*.*.controller..*.*(..))")
+    public void webLog() {}
+    
+    @Before("webLog()")
+    public void doBefore(JoinPoint joinPoint) {
+        TIME_THREADLOCAL.set(System.currentTimeMillis());
+        
+        ServletRequestAttributes attributes = 
+            (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        
+        log.info("Request: {} {} from {}", 
+            request.getMethod(), 
+            request.getRequestURI(), 
+            request.getRemoteAddr());
+    }
+    
+    @AfterReturning(pointcut = "webLog()", returning = "result")
+    public void doAfterReturning(Object result) {
+        Long startTime = TIME_THREADLOCAL.get();
+        long timeCost = System.currentTimeMillis() - startTime;
+        
+        log.info("Response: {} ({}ms)", result, timeCost);
+        
+        // 清理ThreadLocal避免内存泄漏
+        TIME_THREADLOCAL.remove();
+    }
+    
+    @AfterThrowing(pointcut = "webLog()", throwing = "ex")
+    public void doAfterThrowing(Throwable ex) {
+        log.error("Exception: {}", ex.getMessage(), ex);
+        TIME_THREADLOCAL.remove();  // 清理
+    }
+}
+```
+
+## 最佳实践
+- 使用INFO级别记录正常请求
+- 使用ERROR级别记录异常
+- 合理控制日志内容长度
+- 清理ThreadLocal避免内存泄漏
+- **禁止**：避免序列化循环引用对象
+- **禁止**：避免记录大文件内容
+
+## 相关规则
+- 控制器: `04-conventions/controller.mdc`

@@ -1,0 +1,178 @@
+---
+description: 定义工具类的编码标准，包括类结构设计、方法实现和代码质量规范
+globs: **/src/main/java/**/utils/**Util.java, **/src/main/java/**/util/**Util.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# Utility 编码约定
+
+## 适用范围
+定义工具类的实现规范，提供通用的静态工具方法。
+
+## 核心规则
+
+### 类定义
+- `final class` 防止继承
+- `private` 构造器防止实例化
+- 类名以 `Util` 或 `Utils` 结尾
+- 所有方法 `public static`
+
+### 方法设计
+- 方法名清晰表达功能
+- 参数验证（开始处）
+- 返回类型明确（避免Object）
+- 考虑线程安全
+- 提供重载方法
+
+### 异常处理
+- 无效参数抛出 `IllegalArgumentException`
+- 提供清晰的错误消息
+- **可选**：必要时记录日志
+
+### JavaDoc要求
+- 类级别：说明工具类用途
+- 方法级别：参数、返回值、异常、示例
+
+## 最小示例
+
+### JwtUtil（JWT工具类）
+```java
+/**
+ * JWT工具类
+ * 提供JWT token的生成和验证功能
+ */
+@Slf4j
+public final class JwtUtil {
+    
+    private static final String SECRET = "your-secret-key";
+    private static final long EXPIRATION = 7 * 24 * 60 * 60 * 1000L;
+    
+    private JwtUtil() {
+        // 防止实例化
+    }
+    
+    /**
+     * 生成JWT token
+     *
+     * @param username 用户名
+     * @return JWT token
+     * @throws IllegalArgumentException 如果username为空
+     */
+    public static String generateToken(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("username不能为空");
+        }
+        
+        return Jwts.builder()
+            .setSubject(username)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+            .signWith(SignatureAlgorithm.HS512, SECRET)
+            .compact();
+    }
+    
+    /**
+     * 从token中提取用户名
+     *
+     * @param token JWT token
+     * @return 用户名
+     */
+    public static String getUsernameFromToken(String token) {
+        Claims claims = parseToken(token);
+        return claims.getSubject();
+    }
+    
+    /**
+     * 验证token是否有效
+     *
+     * @param token JWT token
+     * @return true如果有效，false如果无效或过期
+     */
+    public static boolean validateToken(String token) {
+        try {
+            parseToken(token);
+            return true;
+        } catch (Exception e) {
+            log.warn("Token验证失败: {}", e.getMessage());
+            return false;
+        }
+    }
+    
+    private static Claims parseToken(String token) {
+        return Jwts.parser()
+            .setSigningKey(SECRET)
+            .parseClaimsJws(token)
+            .getBody();
+    }
+}
+```
+
+### PasswordUtil（密码工具类）
+```java
+/**
+ * 密码工具类
+ * 提供密码哈希和验证功能
+ */
+public final class PasswordUtil {
+    
+    private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
+    
+    private PasswordUtil() {}
+    
+    /**
+     * 哈希密码
+     *
+     * @param rawPassword 原始密码
+     * @return 哈希后的密码
+     */
+    public static String hash(String rawPassword) {
+        if (rawPassword == null) {
+            throw new IllegalArgumentException("密码不能为空");
+        }
+        return ENCODER.encode(rawPassword);
+    }
+    
+    /**
+     * 验证密码
+     *
+     * @param rawPassword 原始密码
+     * @param hashedPassword 哈希密码
+     * @return true如果匹配
+     */
+    public static boolean matches(String rawPassword, String hashedPassword) {
+        return ENCODER.matches(rawPassword, hashedPassword);
+    }
+}
+```
+
+## 最佳实践
+
+### 单一职责
+- 一个工具类只处理一类问题
+- 示例：JwtUtil只处理JWT，PasswordUtil只处理密码
+
+### 避免过度设计
+- 优先使用成熟库（Hutool, Apache Commons）
+- **禁止**：避免重复造轮子
+
+### 性能考虑
+- 避免重复创建对象（使用静态实例）
+- 考虑缓存计算结果
+- 注意线程安全（避免共享可变状态）
+
+### 测试
+- 工具类必须有完整的单元测试
+- 目标覆盖率 ≥ 90%
+
+## 常见工具类
+- `JwtUtil` - JWT处理
+- `PasswordUtil` - 密码哈希
+- `DateUtil` - 日期处理
+- `JsonUtil` - JSON序列化
+- `StringUtil` - 字符串处理
+- `FileUtil` - 文件操作
+- `HttpUtil` - HTTP请求
+
+## 相关规则
+- 常量类: `04-conventions/constants.mdc`

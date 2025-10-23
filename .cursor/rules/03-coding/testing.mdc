@@ -1,0 +1,80 @@
+---
+description: 单元测试规范（测试结构、Mock使用、断言、覆盖率、命名、组织），适用于所有 Spring Boot 项目。
+globs:
+alwaysApply: true
+layer: L3
+allowedReferences: [L3, L4]
+---
+
+# 单元测试规范
+
+## 测试结构（AAA模式）
+- **Arrange（准备）**：设置测试数据和Mock对象
+- **Act（执行）**：调用被测试方法
+- **Assert（断言）**：验证结果和行为
+- 每个测试方法只测试一个场景，方法名明确表达测试意图
+
+## Mock 使用规范
+- 使用 `@MockBean` 或 `@Mock` 模拟外部依赖（数据库、外部服务、第三方库）
+- 优先使用 `@MockBean`（Spring Boot 集成）而非 `@Mock`（纯Mockito）
+- Mock 对象行为设置：使用 `when().thenReturn()` 或 `doReturn().when()`
+- 验证Mock交互：使用 `verify()` 验证方法调用次数和参数
+- 避免过度Mock：只Mock必要的依赖，保持测试简洁
+
+## 断言规范
+- 使用 AssertJ 进行流畅断言：`assertThat().isEqualTo()`
+- 断言内容：返回值、异常、状态变化、副作用
+- 异常测试：使用 `assertThatThrownBy()` 或 `@Test(expected = Exception.class)`
+- 集合断言：使用 `assertThat(list).hasSize().contains().doesNotContain()`
+- 避免使用过时断言方法（如 `assertEquals`、`assertTrue`）
+
+## 测试覆盖率
+- 核心业务逻辑：目标覆盖率 ≥ 80%
+- 边界条件和异常路径：必须覆盖
+- 工具类：目标覆盖率 ≥ 90%
+- 使用 JaCoCo 生成覆盖率报告
+- 关注分支覆盖率，而不仅仅是行覆盖率
+
+## 测试命名规范
+- 测试类：`{被测试类名}Test`
+- 测试方法：`should_{期望行为}_when_{测试条件}`
+- 示例：`should_return_user_when_valid_id_provided`
+- 中文项目可使用：`应该_返回用户_当_提供有效ID时`
+
+## 测试数据准备
+- 使用 `@TestConfiguration` 或 `@TestPropertySource` 配置测试环境
+- 测试数据：使用 Builder 模式或工厂方法创建
+- 避免硬编码测试数据：提取为常量或测试工具类
+- 使用 `@DirtiesContext` 清理测试间状态污染
+
+## 测试组织与结构
+- 测试包结构：`src/test/java` 与 `src/main/java` 对应
+- 测试资源：`src/test/resources` 存放测试配置文件
+- 集成测试：使用 `@SpringBootTest` 进行端到端测试
+- 单元测试：使用 `@ExtendWith(MockitoExtension.class)` 进行纯单元测试
+
+## 性能与并发测试
+- 性能测试：使用 `@Timeout` 注解限制测试执行时间
+- 并发测试：使用 `CountDownLatch` 或 `CompletableFuture` 测试多线程场景
+- 异步测试：使用 `@Async` 和 `awaitility` 库验证异步操作
+
+## 测试最佳实践
+- 测试独立性：每个测试方法独立运行，不依赖其他测试
+- 测试确定性：相同输入产生相同输出，避免随机性和时间依赖
+- 快速反馈：单元测试执行时间 < 100ms，集成测试 < 1s
+- 测试维护：及时更新测试用例，删除过时测试
+
+## 进一步阅读
+- 具体测试类型的实现：
+  - `04-conventions/controller.mdc`
+  - `04-conventions/service.mdc`
+  - `04-conventions/service-impl.mdc`
+  - `04-conventions/mapper.mdc`
+  - `04-conventions/entity.mdc`
+  - `04-conventions/utility.mdc`
+  - `04-conventions/validation.mdc`
+
+- 相关基础规则索引：
+  - 命名规则：`03-coding/naming.mdc`
+  - 代码风格：`03-coding/code-style.mdc`
+  - 编码实践：`03-coding/coding.mdc`

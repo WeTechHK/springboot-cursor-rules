@@ -1,0 +1,109 @@
+---
+description: Spring Boot应用启动类编码规范，包括注解配置、组件扫描、功能启用
+globs: **/src/main/java/**/**Application.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# Application 编码约定
+
+## 适用范围
+定义Spring Boot应用启动类的实现规范，负责应用启动和功能配置。
+
+## 核心规则
+
+### 类定义
+- `@SpringBootApplication` 标记启动类
+- 类名以 `Application` 结尾
+- 位置：根包或主包下
+- 提供 `main` 方法
+
+### 必须启用的功能
+- `@MapperScan` 扫描Mapper接口
+- `@EnableTransactionManagement` 启用事务
+- `@EnableAspectJAutoProxy` 启用AOP
+
+### 可选启用的功能
+- **可选**：`@EnableScheduling` 启用定时任务
+- **可选**：`@EnableAsync` 启用异步
+- **可选**：`@EnableCaching` 启用缓存
+- **可选**：`@EnableConfigurationProperties` 绑定配置类
+
+## 最小示例
+```java
+/**
+ * Spring Boot 应用启动类
+ */
+@SpringBootApplication
+@MapperScan("com.edu.smt.mapper")
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
+public class Application {
+    
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+## 带定时任务示例
+```java
+@SpringBootApplication
+@MapperScan("com.edu.smt.mapper")
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
+@EnableScheduling  // 启用定时任务
+public class Application {
+    
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+## 带配置属性示例
+```java
+@SpringBootApplication
+@MapperScan("com.edu.smt.mapper")
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
+@EnableConfigurationProperties({
+    JwtProperties.class,
+    AppProperties.class
+})
+public class Application {
+    
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+## 注解说明
+
+### @SpringBootApplication
+- 包含 `@Configuration`, `@EnableAutoConfiguration`, `@ComponentScan`
+- 自动扫描当前包及子包
+
+### @MapperScan
+- 扫描MyBatis Mapper接口
+- 参数：`"com.{company}.{project}.mapper"`
+- 必须与mapper包路径一致
+
+### @EnableTransactionManagement
+- 启用声明式事务
+- 支持 `@Transactional` 注解
+
+### @EnableAspectJAutoProxy
+- 启用AOP代理
+- 支持 `@Aspect` 切面
+
+## 最佳实践
+- 保持启动类简洁，不包含业务逻辑
+- 按需启用功能，避免不必要的注解
+- MapperScan路径必须正确
+- **禁止**：在启动类中定义@Bean
+
+## 相关规则
+- Mapper接口: `04-conventions/mapper.mdc`
+- 定时任务: `04-conventions/task.mdc`

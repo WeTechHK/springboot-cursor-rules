@@ -1,0 +1,81 @@
+---
+description: 定义通用分页请求基类的编码标准，包括分页参数、排序参数和查询条件规范
+globs: **/src/main/java/**/vo/request/CommonPageRequest.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# CommonPageRequest 编码约定
+
+## 适用范围
+定义统一分页请求基类 `CommonPageRequest`，继承自 `CommonRequest`，用于所有分页查询场景。
+
+## 核心规则
+
+### 继承关系
+- 必须继承 `CommonRequest`
+- **禁止**：创建不继承CommonRequest的分页基类
+
+### 字段定义
+- `pageNumber` (Integer, 必填): 页码，最小值1
+- `pageSize` (Integer, 必填): 每页数量，最小值1
+- `sortBy` (String, 可选): 排序字段，支持多字段（逗号分隔）
+- `sortDirection` (String, 可选): 排序方向，ASC/DESC
+- **禁止**：在基类中添加业务查询字段
+
+### 注解要求
+- `@Data` 生成getter/setter
+- `@NoArgsConstructor` 无参构造器
+- `@Accessors(chain = true)` 链式调用
+- `@NotNull` 验证pageNumber和pageSize
+- `@Min(1)` 限制最小值
+
+### 默认值建议
+- **可选**：pageNumber默认值: 1
+- **可选**：pageSize默认值: 10
+- **可选**：sortDirection默认值: ASC
+
+## 使用示例
+
+### 定义具体分页请求
+```java
+public class SearchUserRequest extends CommonPageRequest {
+    private String keyword;
+    private String role;
+}
+```
+
+### Controller接收参数
+```java
+@PostMapping("/search")
+public CommonResponse<PageData<UserResponse>> searchUsers(
+    @Valid @RequestBody SearchUserRequest request
+) {
+    // request自动包含: traceId, pageNumber, pageSize, sortBy, sortDirection
+    return userService.searchUsers(request);
+}
+```
+
+## 最小示例
+```java
+@Data
+@NoArgsConstructor
+@Accessors(chain = true)
+public class CommonPageRequest extends CommonRequest {
+    
+    @NotNull(message = "页码不能为空")
+    @Min(value = 1, message = "页码最小为1")
+    private Integer pageNumber;
+    
+    @NotNull(message = "每页数量不能为空")
+    @Min(value = 1, message = "每页数量最小为1")
+    private Integer pageSize;
+    
+    private String sortBy;
+    private String sortDirection;
+}
+```
+
+## 相关规则
+- 父类: `04-conventions/common-request.mdc`
+- 分页响应: `04-conventions/page-data.mdc`

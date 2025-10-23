@@ -1,0 +1,128 @@
+---
+description: 定义全局异常处理器的编码标准，包括异常映射、错误码输出和日志规范
+globs: **/src/main/java/**/exception/GlobalExceptionHandler.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# GlobalExceptionHandler 编码约定
+
+## 适用范围
+定义全局异常处理器的实现规范，统一处理所有未捕获异常并返回标准响应。
+
+## 核心规则
+
+### 类定义
+- `@RestControllerAdvice` 全局异常处理
+- `@Slf4j` 日志记录
+- 类名：`GlobalExceptionHandler`
+
+### 异常处理方法
+- `@ExceptionHandler(XxxException.class)` 处理特定异常
+- 返回 `CommonResponse<Void>`
+- 记录错误日志（ERROR级别）
+
+### HTTP状态码映射
+| 异常类型 | HTTP状态码 | 错误码类型 |
+|---------|-----------|-----------|
+| 业务异常 | 400 | B类 |
+| 参数校验失败 | 400 | C类 |
+| 未认证 | 401 | C类 |
+| 权限不足 | 403 | C类 |
+| 资源不存在 | 404 | B类 |
+| 系统异常 | 500 | T类 |
+
+### 日志记录
+- 记录错误码、错误消息
+- 记录traceId（如有）
+- 记录请求关键信息
+- **禁止**：记录敏感信息
+
+## 最小示例
+```java
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+    
+    /**
+     * 业务异常处理
+     */
+    @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResponse<Void> handleBusinessException(BusinessException e) {
+        log.error("业务异常: code={}, msg={}", e.getCode(), e.getMsg());
+        return CommonResponse.error(e.getCode(), e.getMsg());
+    }
+    
+    /**
+     * 参数校验异常
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResponse<Void> handleValidationException(MethodArgumentNotValidException e) {
+        String errorMsg = e.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .map(FieldError::getDefaultMessage)
+            .collect(Collectors.joining("; "));
+        
+        log.error("参数校验失败: {}", errorMsg);
+        return CommonResponse.error(
+            ErrorCodeEnum.VALIDATION_ERROR.getCode(),
+            errorMsg
+        );
+    }
+    
+    /**
+     * 未认证异常
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public CommonResponse<Void> handleAuthenticationException(AuthenticationException e) {
+        log.error("认证失败: {}", e.getMessage());
+        return CommonResponse.error(ErrorCodeEnum.UNAUTHORIZED);
+    }
+    
+    /**
+     * 权限不足异常
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public CommonResponse<Void> handleAccessDeniedException(AccessDeniedException e) {
+        log.error("权限不足: {}", e.getMessage());
+        return CommonResponse.error(ErrorCodeEnum.FORBIDDEN);
+    }
+    
+    /**
+     * 系统异常（兜底）
+     */
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonResponse<Void> handleException(Exception e) {
+        log.error("系统异常", e);  // 记录完整堆栈
+        return CommonResponse.error(
+            ErrorCodeEnum.INTERNAL_ERROR.getCode(),
+            "系统内部错误"  // 不暴露具体异常信息
+        );
+    }
+}
+```
+
+## 异常处理顺序
+1. 具体业务异常（BusinessException）
+2. 参数校验异常（MethodArgumentNotValidException）
+3. 认证授权异常（AuthenticationException, AccessDeniedException）
+4. 数据访问异常（DataAccessException）
+5. 通用异常（Exception） - 兜底
+
+## 最佳实践
+- 异常处理器中不包含业务逻辑
+- 统一返回CommonResponse格式
+- 根据异常类型返回合适的HTTP状态码
+- 生产环境不暴露堆栈信息
+- 记录足够的上下文用于排查问题
+
+## 相关规则
+- 异常类: `04-conventions/exception.mdc`
+- 错误码: `04-conventions/error-code-enum.mdc`
+- 响应格式: `04-conventions/common-response.mdc`

@@ -1,0 +1,111 @@
+---
+description: 定义业务异常与系统异常类的编码标准，包括错误码、消息与枚举映射
+globs: **/src/main/java/**/exception/**Exception.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# Exception 编码约定
+
+## 适用范围
+定义自定义异常类的实现规范，用于业务异常和系统异常的统一处理。
+
+## 核心规则
+
+### 异常类定义
+- 继承 `RuntimeException`
+- 类名以 `Exception` 结尾
+- 位置：`exception` 包下
+
+### 字段要求
+- `code` (String): 13位错误码
+- `msg` (String): 错误消息
+- **可选**：`cause` (Throwable): 原始异常（可选）
+
+### 构造器
+- 提供基于 `ErrorCodeEnum` 的构造器
+- 提供 code + msg 的构造器
+- **可选**：提供带 cause 的构造器
+
+### 消息原则
+- 用户友好的错误描述
+- **禁止**：包含敏感信息（密码、token）
+- **禁止**：暴露实现细节（SQL、堆栈）
+
+## 最小示例
+
+### BusinessException（业务异常）
+```java
+/**
+ * 业务异常
+ * 用于业务规则验证失败的场景
+ */
+@Getter
+public class BusinessException extends RuntimeException {
+    
+    private final String code;
+    private final String msg;
+    
+    /**
+     * 基于错误码枚举构造
+     */
+    public BusinessException(ErrorCodeEnum errorCode) {
+        super(errorCode.getMsg());
+        this.code = errorCode.getCode();
+        this.msg = errorCode.getMsg();
+    }
+    
+    /**
+     * 自定义错误码和消息
+     */
+    public BusinessException(String code, String msg) {
+        super(msg);
+        this.code = code;
+        this.msg = msg;
+    }
+    
+    /**
+     * 带原始异常
+     */
+    public BusinessException(ErrorCodeEnum errorCode, Throwable cause) {
+        super(errorCode.getMsg(), cause);
+        this.code = errorCode.getCode();
+        this.msg = errorCode.getMsg();
+    }
+}
+```
+
+## 使用示例
+
+### 在Service中抛出
+```java
+// 方式1：使用枚举（推荐）
+if (existingUser != null) {
+    throw new BusinessException(ErrorCodeEnum.USERNAME_EXISTS);
+}
+
+// 方式2：自定义消息
+if (user == null) {
+    throw new BusinessException(
+        ErrorCodeEnum.USER_NOT_FOUND.getCode(),
+        "用户ID " + userId + " 不存在"
+    );
+}
+
+// 方式3：包装原始异常
+try {
+    // 外部调用
+} catch (IOException e) {
+    throw new BusinessException(ErrorCodeEnum.INTERNAL_ERROR, e);
+}
+```
+
+### 异常分类建议
+- **BusinessException**: 业务规则验证失败（用户名重复、余额不足）
+- **SystemException**: 系统级错误（配置缺失、依赖不可用）
+- **AuthenticationException**: 认证失败
+- **AuthorizationException**: 权限不足
+
+## 相关规则
+- 错误码枚举: `04-conventions/error-code-enum.mdc`
+- 全局处理: `04-conventions/exception-handler.mdc`

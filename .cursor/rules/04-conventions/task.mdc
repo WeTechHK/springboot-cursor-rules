@@ -1,0 +1,166 @@
+---
+description: 定义定时任务类的编码标准，包括任务调度、配置管理、异常处理和性能监控规范
+globs: **/src/main/java/**/task/*Task.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# Task 编码约定
+
+## 适用范围
+定义定时任务类的实现规范，使用Spring的`@Scheduled`注解实现任务调度。
+
+## 核心规则
+
+### 类定义
+- `@Component` 注册为Spring组件
+- `@Slf4j` 日志记录
+- 类名以 `Task` 结尾
+
+### 调度配置
+- `@Scheduled` 定义调度策略
+- 使用 `fixedDelay` 或 `fixedRate`（单位：毫秒）
+- 使用 `initialDelay` 设置初始延迟
+- **可选**：使用SpEL表达式读取配置：`${task.interval}`
+
+### 任务要求
+- 任务必须幂等（可重复执行）
+- 异常处理（避免任务中断）
+- 记录开始、结束、耗时
+- **禁止**：避免长时间阻塞操作
+
+## 最小示例
+```java
+/**
+ * 数据同步定时任务
+ */
+@Component
+@Slf4j
+public class DataSyncTask {
+    
+    @Autowired
+    private UserService userService;
+    
+    /**
+     * 每5分钟执行一次用户数据同步
+     */
+    @Scheduled(
+        fixedDelay = 5 * 60 * 1000,  // 5分钟
+        initialDelay = 60 * 1000      // 启动后1分钟开始
+    )
+    public void syncUserData() {
+        long startTime = System.currentTimeMillis();
+        
+        try {
+            log.info("========== 用户数据同步开始 ==========");
+            
+            // 执行同步逻辑
+            int syncCount = userService.syncUsersFromExternalSystem();
+            
+            long timeCost = System.currentTimeMillis() - startTime;
+            log.info("用户数据同步完成: 同步{}条, 耗时{}ms", syncCount, timeCost);
+            
+        } catch (Exception e) {
+            log.error("用户数据同步失败", e);
+            // 不抛出异常，避免任务中断
+        }
+    }
+}
+```
+
+## 使用配置文件
+```java
+@Component
+@Slf4j
+public class CleanupTask {
+    
+    /**
+     * 清理过期数据
+     * 执行间隔通过配置文件控制
+     */
+    @Scheduled(fixedDelayString = "${task.cleanup.interval:3600000}")
+    public void cleanupExpiredData() {
+        log.info("开始清理过期数据");
+        
+        try {
+            // 清理逻辑
+            int deletedCount = deleteExpiredRecords();
+            log.info("清理完成: 删除{}条记录", deletedCount);
+        } catch (Exception e) {
+            log.error("清理失败", e);
+        }
+    }
+}
+```
+
+## Cron表达式示例
+```java
+/**
+ * 每天凌晨2点执行报表生成
+ */
+@Scheduled(cron = "0 0 2 * * ?")
+public void generateDailyReport() {
+    log.info("开始生成日报");
+    // ...
+}
+
+/**
+ * 每周一早上8点执行
+ */
+@Scheduled(cron = "0 0 8 ? * MON")
+public void generateWeeklyReport() {
+    log.info("开始生成周报");
+    // ...
+}
+```
+
+## 最佳实践
+
+### 幂等性设计
+```java
+@Scheduled(fixedDelay = 60000)
+public void processOrders() {
+    // 使用分布式锁或数据库状态标记确保幂等
+    List<Order> pendingOrders = orderMapper.findPendingOrders();
+    
+    for (Order order : pendingOrders) {
+        if (tryLock(order.getId())) {
+            try {
+                processOrder(order);
+            } finally {
+                releaseLock(order.getId());
+            }
+        }
+    }
+}
+```
+
+### 异步执行（可选）
+```java
+@Component
+@Slf4j
+@EnableAsync
+public class AsyncTask {
+    
+    @Scheduled(fixedDelay = 300000)
+    @Async  // 异步执行，不阻塞调度线程
+    public void heavyTask() {
+        // 执行耗时任务
+    }
+}
+```
+
+## 启用定时任务
+在Application启动类添加：
+```java
+@SpringBootApplication
+@EnableScheduling  // 启用定时任务
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+## 相关规则
+- 启动类: `04-conventions/application.mdc`

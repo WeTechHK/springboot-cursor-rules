@@ -1,0 +1,130 @@
+---
+description: 定义服务实现类的编码标准，包括依赖注入、事务管理、日志记录和业务逻辑实现
+globs: **/src/main/java/**/service/impl/**ServiceImpl.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# ServiceImpl 编码约定
+
+## 适用范围
+定义业务逻辑服务实现类的规范，实现Service接口中定义的业务操作。
+
+## 核心规则
+
+### 类定义
+- `@Service` 标记为Spring组件
+- 类名以 `ServiceImpl` 结尾
+- 位置：`service.impl` 包下
+- 实现对应的Service接口
+
+### 依赖注入
+- `@Autowired` 字段注入
+- 注入Mapper、其他Service、工具类
+- **禁止**：使用构造器注入（除非明确说明）
+
+### 事务管理
+- `@Transactional` 标记涉及多个数据库操作的方法
+- 只读操作：`@Transactional(readOnly = true)`
+- 事务边界在Service层
+- **禁止**：避免同类内部自调用导致事务失效
+
+### 日志记录
+- `@Slf4j` 启用日志
+- 记录关键业务操作（开始、成功、失败）
+- 记录必要的上下文信息（ID、用户、参数）
+- **禁止**：记录敏感信息（密码、token）
+
+### 异常处理
+- 业务异常：抛出 `BusinessException`（带错误码）
+- 参数校验：方法开始处验证
+- 异常传播：不捕获业务异常，交给GlobalExceptionHandler
+- **禁止**：空catch块
+
+## 最小示例
+```java
+@Service
+@Slf4j
+public class UserServiceImpl implements UserService {
+    
+    @Autowired
+    private UserMapper userMapper;
+    
+    @Autowired
+    private PasswordUtil passwordUtil;
+    
+    @Override
+    @Transactional
+    public CommonResponse<UserResponse> createUser(CreateUserRequest request) {
+        log.info("创建用户开始, username={}", request.getUsername());
+        
+        // 1. 参数验证
+        UserEntity existing = userMapper.findByUsername(request.getUsername());
+        if (existing != null) {
+            throw new BusinessException(
+                ErrorCodeEnum.USERNAME_EXISTS.getCode(),
+                ErrorCodeEnum.USERNAME_EXISTS.getMsg()
+            );
+        }
+        
+        // 2. 业务处理
+        UserEntity entity = new UserEntity();
+        entity.setUsername(request.getUsername());
+        entity.setPasswordHash(passwordUtil.hash(request.getPassword()));
+        entity.setEmail(request.getEmail());
+        
+        // 3. 数据持久化
+        userMapper.insert(entity);
+        
+        // 4. 组装响应
+        UserResponse response = convertToResponse(entity);
+        
+        log.info("创建用户成功, userId={}", entity.getId());
+        return CommonResponse.success(response);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public CommonResponse<UserResponse> getUserById(Long id) {
+        UserEntity entity = userMapper.findById(id);
+        if (entity == null) {
+            throw new BusinessException(
+                ErrorCodeEnum.USER_NOT_FOUND.getCode(),
+                ErrorCodeEnum.USER_NOT_FOUND.getMsg()
+            );
+        }
+        return CommonResponse.success(convertToResponse(entity));
+    }
+    
+    private UserResponse convertToResponse(UserEntity entity) {
+        // Entity → Response 转换逻辑
+        return UserResponse.builder()
+            .id(entity.getId())
+            .username(entity.getUsername())
+            .email(entity.getEmail())
+            .build();
+    }
+}
+```
+
+## 最佳实践
+
+### 方法结构
+1. 参数验证
+2. 业务规则检查
+3. 数据处理与持久化
+4. 组装响应
+
+### 性能考虑
+- 避免N+1查询，使用批量操作
+- 合理使用事务粒度
+- 只读操作标记readOnly=true
+
+### 异步处理
+- **可选**：非关键路径：使用 `@Async`
+- **可选**：返回Future/CompletableFuture
+
+## 相关规则
+- 接口定义: `04-conventions/service.mdc`
+- 数据访问: `04-conventions/mapper.mdc`
+- 异常处理: `04-conventions/exception.mdc`

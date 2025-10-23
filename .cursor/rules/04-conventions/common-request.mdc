@@ -1,0 +1,77 @@
+---
+description: 定义通用请求基类的编码标准，包括请求头、公共参数和基础验证规范
+globs: **/src/main/java/**/vo/request/CommonRequest.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# CommonRequest 编码约定
+
+## 适用范围
+定义统一请求基类 `CommonRequest`，所有具体请求类应继承此类以获得通用请求参数。
+
+## 核心规则
+
+### 字段定义
+- `traceId` (String, 可选): 请求追踪ID
+- 格式：`{operationType}_{YYYYMMddHHmmss}_{6位随机数}`
+- **禁止**：在基类中添加业务字段
+
+### 注解要求
+- `@Data` 生成getter/setter
+- `@NoArgsConstructor` 无参构造器
+- `@AllArgsConstructor` 全参构造器
+- `@Accessors(chain = true)` 链式调用
+- **可选**：`@Schema` 提供API文档
+- **可选**：`@JsonInclude(NON_NULL)` JSON序列化
+
+### traceId 字段规范
+- 类型：String
+- 可选字段（不使用@NotBlank）
+- Schema标注为可选
+- **可选**：建议业务接口填写，用于问题追踪
+
+## 使用场景
+
+### 公开接口（如登录）
+```java
+public class LoginRequest extends CommonRequest {
+    @NotBlank private String username;
+    @NotBlank private String password;
+    // traceId 可选
+}
+```
+
+### 业务接口
+```java
+public class CreateUserRequest extends CommonRequest {
+    @NotBlank private String username;
+    @NotBlank private String email;
+    // traceId 建议填写
+}
+```
+
+### 分页查询
+```java
+public class SearchUserRequest extends CommonPageRequest {
+    private String keyword;
+    // 自动继承 traceId 和分页参数
+}
+```
+
+## 最小示例
+```java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class CommonRequest {
+    @Schema(description = "请求追踪ID（可选）", 
+            example = "createUser_20250127150000_123456")
+    private String traceId;
+}
+```
+
+## 相关规则
+- 分页请求: `04-conventions/common-page-request.mdc`

@@ -1,0 +1,122 @@
+---
+description: 定义Gradle构建文件的编码标准，包括插件配置、依赖管理、任务定义和构建优化规范
+globs: **/build.gradle
+layer: L4
+allowedReferences: [L4]
+---
+
+# Gradle 编码约定
+
+## 适用范围
+定义Gradle构建文件的规范，管理项目依赖、插件和构建任务。
+
+## 核心规则
+
+### 版本要求
+- Gradle ≥ 8.14
+- Java 17/21 (推荐LTS)
+- Spring Boot 3.x
+
+### 项目配置
+- `group`: `com.{company}` (仅公司域名)
+- `version`: `0.0.1-SNAPSHOT`
+- 禁止将项目名混在group中
+
+### 必须配置的插件
+- `org.springframework.boot`
+- `io.spring.dependency-management`
+- `java`
+
+## build.gradle 示例
+
+```gradle
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.edu'
+version = '0.0.1-SNAPSHOT'
+archivesBaseName = 'sms'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    maven {
+        url 'https://maven.aliyun.com/repository/public/'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Starter
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    
+    // 数据访问
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    
+    // 工具类
+    implementation 'cn.hutool:hutool-all:5.8.24'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // API文档
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    
+    // 测试
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+```
+
+## settings.gradle 规范
+
+```gradle
+rootProject.name = 'your-project-name'
+```
+
+**说明**：
+- `rootProject.name`：设置项目名称（不含group部分）
+- 示例：如果包路径是`com.edu.sms`，则`rootProject.name = 'sms'`
+- 禁止将group名混入rootProject.name（如'com-edu-soop'）
+- settings.gradle必须第一个生成，build.gradle第二个生成
+
+## Gradle项目必需文件
+
+```
+project/
+├── build.gradle          # 构建脚本（必需）
+├── settings.gradle       # 项目设置（必需）
+├── gradle.properties     # Gradle属性（可选）
+└── gradle/               # Gradle Wrapper（可选）
+    └── wrapper/
+        ├── gradle-wrapper.jar
+        └── gradle-wrapper.properties
+```
+
+## 禁止行为
+
+1. 禁止同时生成`pom.xml`和`build.gradle`
+2. 禁止只生成`build.gradle`而不生成`settings.gradle`
+3. 禁止在group中包含项目名（如`group = 'com.edu.soop'`应为`group = 'com.edu'`）
+
+## 相关规则
+- 技术栈定义：`01-structure/tech-stack.mdc`
+- 代码生成框架：`00-interaction/generation-framework.mdc`

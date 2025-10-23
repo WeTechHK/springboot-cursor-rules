@@ -1,0 +1,73 @@
+---
+description: 异常处理和自定义异常编码标准，适用于所有 Spring Boot 项目。
+globs:
+alwaysApply: true
+layer: L3
+allowedReferences: [L3, L4]
+---
+
+# 异常处理编码规范
+
+## 全局异常处理规范
+- 异常处理类名必须为 `GlobalExceptionHandler`
+- 必须使用 `@RestControllerAdvice` 注解标记
+- 必须使用 `@Slf4j` 注解进行日志记录
+- 必须使用 `@ExceptionHandler` 注解处理特定异常
+
+## 异常处理方法规范
+- 每个异常处理方法必须使用 `@ExceptionHandler` 注解
+- 方法参数必须包含对应的异常类型
+- 返回值必须使用 `CommonResponse` 包装
+- 必须记录详细的异常日志信息
+- 必须返回用户友好的错误信息
+
+## 自定义异常规范
+- 异常类名必须以 `Exception` 结尾
+- 必须继承 `RuntimeException` 或具体异常类
+- 必须提供完整的构造函数
+- 必须包含有意义的异常消息
+- 必须包含错误码信息
+
+## 异常分类处理
+- 业务异常：使用 `BusinessException` 处理
+- 参数校验异常：使用 `MethodArgumentNotValidException` 处理
+- 数据访问异常：使用 `DataAccessException` 处理
+- 系统异常：使用通用异常处理
+- 认证授权异常：使用 `AuthenticationException` 处理
+
+## 异常信息规范
+- 异常消息必须清晰明确
+- 必须包含关键业务参数信息
+- 生产环境不暴露敏感信息
+- 异常码必须统一管理
+- 异常信息必须国际化支持
+
+## 日志记录规范
+- 异常必须记录ERROR级别日志
+- 日志信息必须包含异常堆栈
+- 关键业务异常必须记录业务上下文
+- 使用结构化日志格式
+- 必须包含请求追踪信息
+
+## 异常处理策略
+- 业务异常返回友好的错误提示
+- 系统异常返回通用的错误信息
+- 参数校验异常返回具体的校验错误
+- 异常处理必须保证系统稳定性
+- 必须支持异常重试机制
+
+## 代码质量要求
+- 异常处理代码必须简洁清晰
+- 避免在异常处理中包含业务逻辑
+- 异常处理必须具有一致性
+- 必须进行异常处理的单元测试
+- 必须遵循异常处理最佳实践
+
+## 进一步阅读
+- 具体异常处理实现：`04-conventions/exception-handler.mdc`
+- 自定义异常实现：`04-conventions/exception.mdc`
+- 相关基础规则：
+  - 命名规范：`03-coding/naming.mdc`
+  - 代码风格：`03-coding/code-style.mdc`
+  - 编码实践：`03-coding/coding.mdc`
+  - 单元测试：`03-coding/testing.mdc`

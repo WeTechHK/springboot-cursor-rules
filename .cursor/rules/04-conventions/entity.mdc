@@ -1,0 +1,114 @@
+---
+description: 定义实体类的编码标准，包括数据映射、字段验证、序列化和数据库表映射
+globs: **/src/main/java/**/entity/*.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# Entity 编码约定
+
+## 适用范围
+定义数据库实体类的实现规范，映射数据库表结构。
+
+## 核心规则
+
+### 类定义
+- 类名以 `Entity` 结尾
+- 位置：`entity` 包下
+- 包名：`com.{company}.{project}.entity`
+
+### 注解要求
+- `@Data` 生成getter/setter
+- `@NoArgsConstructor` 无参构造器
+- `@AllArgsConstructor` 全参构造器
+- `@Builder` 建造者模式
+- **可选**：`@Accessors(chain = true)` 链式调用（可选）
+
+### 字段类型规范
+- 主键：`Long id`（自增）
+- 时间：`LocalDateTime createTime/updateTime`
+- 金额：`BigDecimal`
+- 状态：`String` 或枚举类型
+- 布尔：`Boolean isDeleted/isEnabled`
+
+### 审计字段（强制）
+- `createTime` (LocalDateTime) - 创建时间
+- `updateTime` (LocalDateTime) - 更新时间
+
+### 命名规范
+- 字段名：驼峰命名，对应数据库下划线字段
+- 布尔字段：使用 `is` 前缀
+- 示例：`userName` ↔ `user_name`, `isEnabled` ↔ `is_enabled`
+
+## 最小示例
+```java
+/**
+ * 用户实体类
+ * 对应数据库表 t_users
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class UserEntity {
+    
+    /**
+     * 主键ID
+     */
+    private Long id;
+    
+    /**
+     * 用户名
+     */
+    private String username;
+    
+    /**
+     * 密码哈希
+     */
+    private String passwordHash;
+    
+    /**
+     * 邮箱
+     */
+    private String email;
+    
+    /**
+     * 角色
+     */
+    private String role;
+    
+    /**
+     * 是否启用
+     */
+    private Boolean isEnabled;
+    
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
+    
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updateTime;
+}
+```
+
+## 字段映射关系
+| Java字段 | 数据库字段 | Java类型 | MySQL类型 |
+|---------|-----------|---------|-----------|
+| id | id | Long | BIGINT |
+| username | username | String | VARCHAR |
+| isEnabled | is_enabled | Boolean | TINYINT |
+| createTime | create_time | LocalDateTime | DATETIME |
+| totalAmount | total_amount | BigDecimal | DECIMAL |
+
+## 设计原则
+- 只包含数据字段，不包含业务逻辑
+- 字段对应数据库表列
+- 所有字段提供JavaDoc注释
+- **禁止**：在Entity中包含计算逻辑
+- **禁止**：在Entity中调用Service/Mapper
+
+## 相关规则
+- Mapper接口: `04-conventions/mapper.mdc`

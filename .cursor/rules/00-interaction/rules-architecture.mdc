@@ -1,0 +1,401 @@
+---
+description: 规则文件分层架构说明，定义规则间的依赖关系和引用规范
+layer: L0
+allowedReferences: [L0, L1, L2, L3, L4]
+alwaysApply: true
+---
+
+# 规则分层架构
+
+## 概述
+
+本项目规则文件采用严格的五层架构，确保清晰的依赖关系、良好的可维护性和AI的准确理解。
+
+## 分层原则
+
+规则文件按职责划分为五层，采用**单向依赖**原则：
+
+```
+L0: 00-interaction/     AI指导层（框架与角色定义）
+      ↓ 可引用
+L1: 01-structure/       项目结构层（目录与技术栈）
+      ↓ 可引用
+L2: 02-design/          设计标准层（API、数据库、模式）
+      ↓ 可引用
+L3: 03-coding/          编码规范层（命名、风格、测试）
+      ↓ 可引用
+L4: 04-conventions/     具体约定层（各类文件实现规范）
+```
+
+**核心原则**：只能向下引用，禁止反向引用。
+
+## 各层详细说明
+
+### L0: AI指导层 (00-interaction/)
+
+**职责**：定义AI的角色、行为和代码生成框架
+
+**文件清单**：
+- `generation-framework.mdc` - 代码生成综合框架
+- `role-definition.mdc` - AI角色定义
+- `rules-architecture.mdc` - 本文件
+
+**引用权限**：可引用所有层级 [L0, L1, L2, L3, L4]
+
+**典型用途**：
+- AI了解自己的职责和工作方式
+- 理解代码生成的整体流程
+- 掌握规则体系的组织结构
+
+---
+
+### L1: 项目结构层 (01-structure/)
+
+**职责**：定义项目的目录结构、包组织和技术栈
+
+**文件清单**：
+- `project.mdc` - 项目目录结构和包结构规范
+- `tech-stack.mdc` - 技术栈定义和官方文档链接
+
+**引用权限**：可引用 [L1, L2, L3, L4]
+
+**典型用途**：
+- 了解项目的整体结构
+- 确定文件应该放在哪个目录
+- 查询技术栈和依赖版本
+
+---
+
+### L2: 设计标准层 (02-design/)
+
+**职责**：定义架构设计、API、数据库等设计标准
+
+**文件清单**：
+- `api.mdc` - RESTful API设计规范
+- `database.mdc` - MySQL表结构设计规范
+- `error-codes.mdc` - 错误码设计规范（13位编码）
+- `patterns.mdc` - 设计模式和架构模式规范
+
+**引用权限**：可引用 [L2, L3, L4]
+
+**典型用途**：
+- 设计API接口时遵循的标准
+- 设计数据库表结构的规范
+- 错误码的编码规则
+- 常用设计模式的应用
+
+---
+
+### L3: 编码规范层 (03-coding/)
+
+**职责**：定义跨文件类型的通用编码标准
+
+**文件清单**：
+- `naming.mdc` - 命名规范（包、类、方法、变量）
+- `code-style.mdc` - 代码格式规范（缩进、注释、导入）
+- `coding.mdc` - 编码实践（DI、异常、日志、事务）
+- `testing.mdc` - 单元测试规范（AAA模式、Mock、断言）
+- `exceptions.mdc` - 异常处理编码规范
+
+**引用权限**：可引用 [L3, L4]
+
+**典型用途**：
+- 确定类名、方法名的命名规则
+- 了解代码格式化标准
+- 掌握异常处理和日志记录规范
+- 编写单元测试的标准
+
+---
+
+### L4: 具体约定层 (04-conventions/)
+
+**职责**：定义每种文件类型的具体实现约定
+
+**文件清单**（23个）：
+
+**基础类**：
+- `common-request.mdc` - 通用请求基类
+- `common-response.mdc` - 通用响应基类
+- `common-page-request.mdc` - 分页请求基类
+- `page-data.mdc` - 分页数据封装类
+- `error-code-enum.mdc` - 错误码枚举规范
+
+**分层类**：
+- `controller.mdc` - REST控制器规范
+- `service.mdc` - 服务接口规范
+- `service-impl.mdc` - 服务实现类规范
+- `mapper.mdc` - MyBatis Mapper接口规范
+- `entity.mdc` - 实体类规范
+- `request.mdc` - 请求DTO规范
+- `response.mdc` - 响应DTO规范
+
+**工具类**：
+- `exception.mdc` - 自定义异常规范
+- `exception-handler.mdc` - 全局异常处理器规范
+- `validation.mdc` - 校验器规范
+- `logging-aspect.mdc` - 日志切面规范
+- `constants.mdc` - 常量类规范
+- `enum.mdc` - 枚举类规范
+- `utility.mdc` - 工具类规范
+- `task.mdc` - 定时任务规范
+
+**配置类**：
+- `application.mdc` - 应用启动类规范
+- `spring-config.mdc` - Spring配置文件规范
+- `gradle.mdc` - Gradle构建文件规范
+
+**引用权限**：**仅可引用 [L4]**（只能内部相互引用）
+
+**典型用途**：
+- 编写Controller时遵循的具体约定
+- 实现Service时的注解和结构要求
+- 定义Entity的字段和注解规范
+
+## 依赖规则详解
+
+### 允许的引用方向
+
+| 当前层级 | 可引用层级 | 说明 |
+|---|---|---|
+| **L0** | L0, L1, L2, L3, L4 | 指导层，可引用所有规则 |
+| **L1** | L1, L2, L3, L4 | 结构层，可引用设计和规范 |
+| **L2** | L2, L3, L4 | 设计层，可引用编码规范和具体约定 |
+| **L3** | L3, L4 | 编码层，可引用具体约定 |
+| **L4** | **仅 L4** | 具体约定层，只能内部相互引用 |
+
+### 禁止的引用方向
+
+| 禁止引用 | 原因 |
+|---|---|
+| **L4 → L0/L1/L2/L3** | 具体约定不应依赖上层设计和规范（已内化） |
+| **L3 → L0/L1/L2** | 编码规范独立于项目结构和设计 |
+| **L2 → L0/L1** | 设计标准独立于项目结构 |
+| **L1 → L0** | 项目结构独立于AI指导 |
+
+### L4层内部引用说明
+
+L4层文件可以相互引用，常见的引用关系：
+
+| 引用对 | 关系说明 |
+|---|---|
+| `controller` ↔ `request`/`response` | 控制器使用DTO对象 |
+| `entity` ↔ `mapper` | Mapper操作实体类 |
+| `service` ↔ `service-impl` | 接口与实现关系 |
+| `common-response` ↔ `error-code-enum` | 响应使用错误码 |
+| `common-request` ↔ `common-page-request` | 继承关系 |
+| `exception` ↔ `exception-handler` | 异常与处理器关系 |
+
+这些循环引用是合理的，因为它们描述的是同一层级内紧密关联的概念。
+
+## 元数据字段说明
+
+每个规则文件的 frontmatter 包含以下层级相关字段：
+
+```yaml
+---
+description: 文件描述
+layer: L0/L1/L2/L3/L4          # 所属层级
+allowedReferences: [L3, L4]    # 允许引用的层级
+alwaysApply: true              # 是否总是应用（可选）
+globs: pattern                 # 适用文件模式（可选）
+---
+```
+
+### 字段定义
+
+| 字段 | 类型 | 必填 | 说明 | 示例 |
+|---|---|---|---|---|
+| `layer` | String | 是 | 所属层级 | `L0`, `L1`, `L2`, `L3`, `L4` |
+| `allowedReferences` | Array | 是 | 允许引用的层级列表 | `[L3, L4]` |
+| `description` | String | 是 | 文件功能描述 | "REST控制器编码规范" |
+| `alwaysApply` | Boolean | 否 | 是否总是应用此规则 | `true`, `false` |
+| `globs` | String/Array | 否 | 适用的文件匹配模式 | `**/controller/**` |
+
+## AI使用指南
+
+### 生成代码时的使用流程
+
+1. **理解总体框架** (L0)
+   - 阅读 `generation-framework.mdc` 了解代码生成流程
+   - 阅读 `role-definition.mdc` 了解自己的角色
+
+2. **了解项目结构** (L1)
+   - 查看 `project.mdc` 确定目录结构
+   - 查看 `tech-stack.mdc` 了解技术栈
+
+3. **遵循设计标准** (L2)
+   - API设计时参考 `api.mdc`
+   - 数据库设计时参考 `database.mdc`
+   - 错误码设计时参考 `error-codes.mdc`
+
+4. **应用编码规范** (L3)
+   - 命名时参考 `naming.mdc`
+   - 代码格式参考 `code-style.mdc`
+   - 编码实践参考 `coding.mdc`
+
+5. **实现具体文件** (L4)
+   - 创建Controller时参考 `controller.mdc`
+   - 创建Entity时参考 `entity.mdc`
+   - 创建Service时参考 `service.mdc` 和 `service-impl.mdc`
+
+### 引用规则时的注意事项
+
+**正确做法**：
+- L4文件引用L4文件："参见 `04-conventions/controller.mdc`"
+- L3文件引用L4文件："详见 `04-conventions/entity.mdc`"
+- L0文件引用任何层级
+
+**错误做法**：
+- L4文件引用L3文件："参见 `03-coding/naming.mdc`"
+- L4文件引用L2文件："参见 `02-design/api.mdc`"
+- L3文件引用L1文件："参见 `01-structure/project.mdc`"
+
+**原则**：
+- 需要上层规则时，直接应用其原则（不在文件中写引用）
+- L4层规则应该已经内化了L0-L3的要求
+
+### 编写新规则时的检查清单
+
+- [ ] 确定规则属于哪一层（L0/L1/L2/L3/L4）
+- [ ] 在 frontmatter 中正确设置 `layer` 字段
+- [ ] 在 frontmatter 中正确设置 `allowedReferences` 字段
+- [ ] 确保所有引用都在 `allowedReferences` 范围内
+- [ ] 使用验证脚本检查是否有违规引用
+- [ ] 如果是L4层规则，避免引用L0-L3层规则
+
+## 验证机制
+
+### 自动验证脚本
+
+提供验证脚本检查规则文件引用是否符合分层原则：
+
+```bash
+# 验证所有规则文件
+.cursor/rules/validate-refs.sh
+
+# 验证特定文件
+.cursor/rules/validate-refs.sh 04-conventions/controller.mdc
+```
+
+### 验证内容
+
+验证脚本会检查：
+1. 所有规则文件是否包含 `layer` 和 `allowedReferences` 字段
+2. 文件中的实际引用是否在 `allowedReferences` 范围内
+3. 输出所有违规引用的详细清单
+
+### 预期输出
+
+```
+[通过] 04-conventions/controller.mdc
+[通过] 04-conventions/entity.mdc
+[违规] 04-conventions/mapper.mdc
+   → 引用了 03-coding/naming.mdc (不在允许范围内)
+   → 允许引用: [L4]
+   → 实际引用: [L3, L4]
+
+总计: 38个文件，36个通过，2个违规
+```
+
+## 维护建议
+
+### 添加新规则文件时
+
+1. 确定新规则属于哪一层
+2. 复制同层级文件的 frontmatter 模板
+3. 正确设置 `layer` 和 `allowedReferences`
+4. 编写规则内容时注意引用方向
+5. 运行验证脚本确认
+
+### 修改现有规则时
+
+1. 检查 frontmatter 中的层级信息
+2. 添加引用前确认是否在 `allowedReferences` 范围内
+3. 修改后运行验证脚本
+4. 如需跨层引用，考虑是否需要调整分层
+
+### 重构规则体系时
+
+1. 先修改 frontmatter 中的层级定义
+2. 调整文件间的引用关系
+3. 运行验证脚本查看影响范围
+4. 逐个修复违规引用
+5. 更新本文档的说明
+
+## 常见问题
+
+### Q: L4层规则需要说明命名规范怎么办？
+**A**: L4层规则应该直接描述具体的命名要求，而不是引用L3层的 `naming.mdc`。L4层规则是具体的实现约定，应该包含足够的细节。
+
+### Q: 发现合理的跨层引用需求怎么办？
+**A**: 首先评估是否真的需要跨层引用，大多数情况下可以通过以下方式解决：
+- 在当前层级直接描述相关要求
+- 将通用内容上移到更高层级
+- 重新评估规则的分层是否合理
+
+### Q: L4层的循环引用是否需要解决？
+**A**: 不需要。L4层内部的循环引用是合理的，因为这些文件描述的是同一抽象层级的紧密关联概念。只需要避免跨层的循环引用。
+
+### Q: 验证脚本报错怎么办？
+**A**: 
+1. 检查 frontmatter 格式是否正确
+2. 确认 `layer` 和 `allowedReferences` 字段是否存在
+3. 检查引用路径是否正确
+4. 根据错误提示修复违规引用
+
+## 相关规则
+
+- 代码生成框架: `00-interaction/generation-framework.mdc`
+- AI角色定义: `00-interaction/role-definition.mdc`
+- 项目结构: `01-structure/project.mdc`
+
+## 附录：完整文件清单
+
+### L0 层（3个文件）
+- `00-interaction/generation-framework.mdc`
+- `00-interaction/role-definition.mdc`
+- `00-interaction/rules-architecture.mdc`
+
+### L1 层（2个文件）
+- `01-structure/project.mdc`
+- `01-structure/tech-stack.mdc`
+
+### L2 层（4个文件）
+- `02-design/api.mdc`
+- `02-design/database.mdc`
+- `02-design/error-codes.mdc`
+- `02-design/patterns.mdc`
+
+### L3 层（5个文件）
+- `03-coding/code-style.mdc`
+- `03-coding/coding.mdc`
+- `03-coding/exceptions.mdc`
+- `03-coding/naming.mdc`
+- `03-coding/testing.mdc`
+
+### L4 层（23个文件）
+- `04-conventions/application.mdc`
+- `04-conventions/common-page-request.mdc`
+- `04-conventions/common-request.mdc`
+- `04-conventions/common-response.mdc`
+- `04-conventions/constants.mdc`
+- `04-conventions/controller.mdc`
+- `04-conventions/entity.mdc`
+- `04-conventions/enum.mdc`
+- `04-conventions/error-code-enum.mdc`
+- `04-conventions/exception-handler.mdc`
+- `04-conventions/exception.mdc`
+- `04-conventions/gradle.mdc`
+- `04-conventions/logging-aspect.mdc`
+- `04-conventions/mapper.mdc`
+- `04-conventions/page-data.mdc`
+- `04-conventions/request.mdc`
+- `04-conventions/response.mdc`
+- `04-conventions/service-impl.mdc`
+- `04-conventions/service.mdc`
+- `04-conventions/spring-config.mdc`
+- `04-conventions/task.mdc`
+- `04-conventions/utility.mdc`
+- `04-conventions/validation.mdc`
+
+**总计：37个规则文件**

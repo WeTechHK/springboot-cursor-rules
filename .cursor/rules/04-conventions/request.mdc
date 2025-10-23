@@ -1,0 +1,88 @@
+---
+description: 定义请求类的编码标准，包括请求对象、参数验证和数据校验
+globs: **/src/main/java/**/vo/request/**/**Request.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# Request 编码约定
+
+## 适用范围
+定义具体请求类的实现规范，所有请求类必须继承 `CommonRequest` 或 `CommonPageRequest`。
+
+## 核心规则
+
+### 继承关系
+- 普通请求：继承 `CommonRequest`
+- 分页查询：继承 `CommonPageRequest`
+- **禁止**：不继承基类的请求类
+
+### 注解要求
+- `@Data` 生成getter/setter
+- `@NoArgsConstructor` 无参构造器
+- `@Accessors(chain = true)` 链式调用
+- `@EqualsAndHashCode(callSuper = true)` 包含父类字段
+- `@Schema` 提供API文档
+
+### 命名规范
+- 类名以 `Request` 结尾
+- 示例：`CreateUserRequest`, `SearchUserRequest`, `LoginRequest`
+
+### 参数校验
+- `@NotNull`, `@NotBlank`, `@Size` 基础验证
+- `@Email`, `@Pattern` 格式验证
+- 提供清晰的验证消息
+
+## 使用场景
+
+### 登录请求（公开接口）
+```java
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class LoginRequest extends CommonRequest {
+    @NotBlank(message = "用户名不能为空")
+    private String username;
+    
+    @NotBlank(message = "密码不能为空")
+    private String password;
+    // traceId继承自CommonRequest（可选）
+}
+```
+
+### 创建请求（业务接口）
+```java
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class CreateUserRequest extends CommonRequest {
+    @NotBlank(message = "用户名不能为空")
+    @Size(min = 3, max = 20, message = "用户名长度3-20")
+    private String username;
+    
+    @NotBlank(message = "邮箱不能为空")
+    @Email(message = "邮箱格式不正确")
+    private String email;
+}
+```
+
+### 分页查询请求
+```java
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class SearchUserRequest extends CommonPageRequest {
+    private String role;       // 可选字段
+    private String keyword;    // 可选字段
+    // 自动继承: traceId, pageNumber, pageSize, sortBy, sortDirection
+}
+```
+
+## 查询方式选择
+- **可选**：简单查询（1-3个参数）：使用GET + `@RequestParam`
+- **可选**：复杂查询（多参数/范围/过滤）：使用POST + `Search*Request`
+
+## 相关规则
+- 基类: `04-conventions/common-request.mdc`
+- 分页基类: `04-conventions/common-page-request.mdc`
+- 控制器: `04-conventions/controller.mdc`

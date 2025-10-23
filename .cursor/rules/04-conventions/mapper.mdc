@@ -1,0 +1,122 @@
+---
+description: 定义MyBatis Mapper接口的编码标准，包括SQL注解、参数映射、结果映射和数据库操作
+globs: **/src/main/java/**/mapper/**Mapper.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# Mapper Interface 编码约定
+
+## 适用范围
+定义MyBatis Mapper接口的实现规范，使用注解模式进行数据库操作（不使用XML）。
+
+## 核心规则
+
+### 接口定义
+- `@Mapper` 标记接口
+- 接口名以 `Mapper` 结尾
+- 位置：`mapper` 包下
+- 包名：`com.{company}.{project}.mapper`
+
+### SQL注解
+- `@Select` 查询操作
+- `@Insert` 插入操作
+- `@Update` 更新操作
+- `@Delete` 删除操作
+- **禁止**：使用XML映射文件
+
+### 参数映射
+- 使用 `@Param` 标注参数
+- 单参数也建议使用 `@Param`
+- 复杂查询使用 `<script>` 动态SQL
+
+### 结果映射
+- 简单映射：字段名一致时自动映射
+- 复杂映射：使用 `@Results` + `@Result`
+- 驼峰转换：自动支持 user_name → userName
+
+### 主键生成
+- 插入时获取自增ID：`@Options(useGeneratedKeys = true, keyProperty = "id")`
+
+### 分页查询
+- 提供分页方法：使用 `LIMIT` 和 `OFFSET`
+- 提供计数方法：独立的 `count` 方法
+
+## 最小示例
+```java
+@Mapper
+public interface UserMapper {
+    
+    /**
+     * 插入用户
+     */
+    @Insert("INSERT INTO t_users (username, password_hash, email, role, enabled, create_time, update_time) " +
+            "VALUES (#{username}, #{passwordHash}, #{email}, #{role}, #{enabled}, NOW(), NOW())")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int insert(UserEntity user);
+    
+    /**
+     * 根据ID查询
+     */
+    @Select("SELECT * FROM t_users WHERE id = #{id}")
+    UserEntity findById(@Param("id") Long id);
+    
+    /**
+     * 根据用户名查询
+     */
+    @Select("SELECT * FROM t_users WHERE username = #{username}")
+    UserEntity findByUsername(@Param("username") String username);
+    
+    /**
+     * 更新用户状态
+     */
+    @Update("UPDATE t_users SET enabled = #{enabled}, update_time = NOW() WHERE id = #{id}")
+    int updateEnabled(@Param("id") Long id, @Param("enabled") Boolean enabled);
+    
+    /**
+     * 分页查询
+     */
+    @Select("SELECT * FROM t_users WHERE role = #{role} ORDER BY id DESC LIMIT #{pageSize} OFFSET #{offset}")
+    List<UserEntity> listByRole(@Param("role") String role, 
+                                @Param("pageSize") int pageSize, 
+                                @Param("offset") int offset);
+    
+    /**
+     * 计数查询
+     */
+    @Select("SELECT COUNT(*) FROM t_users WHERE role = #{role}")
+    long countByRole(@Param("role") String role);
+}
+```
+
+## 动态SQL示例
+```java
+/**
+ * 动态条件查询
+ */
+@Select("<script>" +
+        "SELECT * FROM t_users " +
+        "<where>" +
+        "  <if test='role != null'>AND role = #{role}</if>" +
+        "  <if test='keyword != null'>AND username LIKE CONCAT('%', #{keyword}, '%')</if>" +
+        "  <if test='enabled != null'>AND enabled = #{enabled}</if>" +
+        "</where>" +
+        "ORDER BY id DESC " +
+        "LIMIT #{pageSize} OFFSET #{offset}" +
+        "</script>")
+List<UserEntity> search(@Param("role") String role,
+                       @Param("keyword") String keyword,
+                       @Param("enabled") Boolean enabled,
+                       @Param("pageSize") int pageSize,
+                       @Param("offset") int offset);
+```
+
+## 最佳实践
+- 表名使用 `t_` 前缀（如 `t_users`）
+- 使用参数化查询防止SQL注入
+- 分页查询offset计算：`(pageNumber - 1) * pageSize`
+- 更新时自动更新 `update_time = NOW()`
+- **可选**：考虑为查询字段添加索引
+
+## 相关规则
+- 实体类: `04-conventions/entity.mdc`

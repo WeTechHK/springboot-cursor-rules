@@ -1,0 +1,85 @@
+---
+description: 定义服务接口的编码标准，包括接口设计、方法定义和业务逻辑规范
+globs: **/src/main/java/**/service/**Service.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# Service Interface 编码约定
+
+## 适用范围
+定义业务逻辑服务接口的实现规范，定义业务操作的契约。
+
+## 核心规则
+
+### 命名规范
+- 接口名以 `Service` 结尾
+- 示例：`UserService`, `CourseService`, `GradeService`
+
+### 方法定义
+- 方法名清晰表达业务意图
+- 使用动词开头：`create`, `update`, `delete`, `get`, `list`, `search`
+- 返回统一包装类型：`CommonResponse<T>`
+- 参数使用Request对象或基本类型
+
+### 职责原则
+- 单一职责：一个Service管理一个业务领域
+- 清晰边界：方法职责明确，避免过于宽泛
+- **禁止**：直接操作数据库（交给Mapper）
+- **禁止**：处理HTTP请求（交给Controller）
+
+### JavaDoc要求
+- 接口级别：说明Service职责
+- 方法级别：描述业务操作、参数、返回值、异常
+
+## 最小示例
+```java
+/**
+ * 用户服务接口
+ * 负责用户管理相关的业务逻辑
+ */
+public interface UserService {
+    
+    /**
+     * 创建用户
+     *
+     * @param request 创建用户请求
+     * @return 创建成功的用户信息
+     */
+    CommonResponse<UserResponse> createUser(CreateUserRequest request);
+    
+    /**
+     * 根据ID获取用户
+     *
+     * @param id 用户ID
+     * @return 用户信息
+     */
+    CommonResponse<UserResponse> getUserById(Long id);
+    
+    /**
+     * 分页搜索用户
+     *
+     * @param request 搜索条件
+     * @return 分页用户列表
+     */
+    CommonResponse<PageData<UserResponse>> searchUsers(SearchUserRequest request);
+}
+```
+
+## 方法命名模式
+
+### 查询类
+- `get{Domain}ById(Long id)` - 单条查询
+- `list{Domain}s()` - 列表查询
+- `search{Domain}s(SearchRequest)` - 复杂查询/分页
+
+### 修改类
+- `create{Domain}(CreateRequest)` - 创建
+- `update{Domain}(UpdateRequest)` - 更新
+- `delete{Domain}ById(Long id)` - 删除
+- `disable{Domain}(Long id)` - 禁用
+
+## 相关规则
+- 实现类: `04-conventions/service-impl.mdc`
+- 请求对象: `04-conventions/request.mdc`
+- 响应对象: `04-conventions/response.mdc`

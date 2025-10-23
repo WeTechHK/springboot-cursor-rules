@@ -1,0 +1,95 @@
+---
+description: 定义响应类的编码标准，包括响应对象、分页响应和数据封装
+globs: **/src/main/java/**/vo/response/**/**Response.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# Response 编码约定
+
+## 适用范围
+定义具体响应类的实现规范，作为 `CommonResponse<T>` 的data字段类型。
+
+## 核心规则
+
+### 类型定位
+- 响应类是数据封装类，不是完整响应
+- 作为 `CommonResponse<T>` 的泛型T
+- **禁止**：包含code和msg字段（这些属于CommonResponse）
+- **禁止**：继承CommonResponse
+
+### 注解要求
+- `@Data` 生成getter/setter
+- `@NoArgsConstructor` 无参构造器
+- `@Accessors(chain = true)` 链式调用
+- **可选**：`@Builder` 建造者模式（可选）
+- **可选**：`@Schema` 提供API文档
+
+### 命名规范
+- 类名以 `Response` 结尾
+- 示例：`UserResponse`, `CourseResponse`, `LoginResponse`
+
+## 响应结构说明
+```json
+{
+  "code": "0",           // ← CommonResponse字段
+  "msg": "success",      // ← CommonResponse字段
+  "data": {              // ← data字段的值是Response对象
+    "id": 1,             // ↓ UserResponse字段
+    "username": "admin", // ↓
+    "email": "..."       // ↓
+  }
+}
+```
+
+## 使用示例
+
+### 单条数据响应
+```java
+@Data
+@NoArgsConstructor
+@Builder
+@Accessors(chain = true)
+public class UserResponse {
+    private Long id;
+    private String username;
+    private String email;
+    private String role;
+    private LocalDateTime createTime;
+}
+
+// Controller使用
+return CommonResponse.success(userResponse);
+```
+
+### 分页数据响应
+```java
+// Controller使用
+return CommonResponse.successPage(total, pageNum, pageSize, userList);
+
+// 响应JSON
+{
+  "code": "0",
+  "msg": "success",
+  "data": {
+    "total": 100,
+    "pageNumber": 1,
+    "pageSize": 10,
+    "list": [  // List<UserResponse>
+      { "id": 1, "username": "..." },
+      { "id": 2, "username": "..." }
+    ]
+  }
+}
+```
+
+## 字段设计原则
+- 只包含前端需要的字段
+- 避免暴露敏感信息（密码、内部ID）
+- 使用合适的数据类型（LocalDateTime而非String）
+- **可选**：复杂对象可嵌套其他Response
+
+## 相关规则
+- 响应封装: `04-conventions/common-response.mdc`
+- 分页数据: `04-conventions/page-data.mdc`
+- 控制器: `04-conventions/controller.mdc`

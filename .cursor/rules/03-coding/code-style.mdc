@@ -1,0 +1,59 @@
+---
+description: 代码风格规范（格式化、导入顺序、注释、布局），适用于所有 Spring Boot 项目。
+globs:
+alwaysApply: true
+layer: L3
+allowedReferences: [L3, L4]
+---
+
+# 代码格式规范
+
+## 代码格式化
+- 缩进：4 个空格（禁止 Tab）
+- 行宽：建议不超过 120 字符
+- 大括号：K&R 风格（左大括号与声明同一行）
+- 空行：语义分组之间使用 1 行空行；避免多余空行
+- 空格：关键字后跟空格（如 `if (`），二元运算符两侧保留空格
+- 换行：链式调用与长参数列表按语义换行，参数分组对齐
+- 注解与声明：注解紧贴被修饰元素上一行；多个注解按标准顺序排列（例如：约束注解 -> Spring 注解 -> Swagger 注解）
+
+## 导入（import）顺序
+- 顺序：JDK 标准库 -> 第三方库 -> 项目内部包
+- 分组：各组之间空一行，组内按字母序排列
+- 清理：移除未使用的 import，禁止通配符 `*` 导入
+
+## 注释规范
+- JavaDoc 用于：公共类、公共/受保护方法、对外 API；内容简洁、包含参数/返回/异常
+- 行内注释仅在必要处补充背景或非显而易见意图，避免陈述代码本身
+- 统一语言风格（中/英在项目层面约定一致），避免混用
+
+## 代码布局与可读性
+- 方法保持短小，相关语句按语义分组并以空行分隔
+- 避免深层嵌套（>3 层）；使用卫语句提前返回提升可读性
+- 消除魔法数字/字符串：抽取为常量或枚举（此条为布局与可读性要求，不涉命名细节）
+- 工具类：`final` 类 + 私有构造器避免被实例化
+
+## 进一步阅读
+- 具体代码类型的风格与布局：
+  - `04-conventions/controller.mdc`
+  - `04-conventions/service.mdc`
+  - `04-conventions/service-impl.mdc`
+  - `04-conventions/mapper.mdc`
+  - `04-conventions/entity.mdc`
+  - `04-conventions/request.mdc`
+  - `04-conventions/response.mdc`
+  - `04-conventions/exception.mdc`
+  - `04-conventions/exception-handler.mdc`
+  - `04-conventions/utility.mdc`
+  - `04-conventions/validation.mdc`
+  - `04-conventions/logging-aspect.mdc`
+  - `04-conventions/application.mdc`
+  - `04-conventions/spring-config.mdc`
+  - `04-conventions/task.mdc`
+  - `04-conventions/constants.mdc`
+  - `04-conventions/enum.mdc`
+  - `04-conventions/gradle.mdc`
+
+- 相关基础规则索引：
+  - 命名规则：`03-coding/naming.mdc`
+  - 编码实践：`03-coding/coding.mdc`
