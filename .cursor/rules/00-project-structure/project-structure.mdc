@@ -48,7 +48,13 @@ src/
 
 ## 包结构约定
 
-根包名：选择一个有意义的根包名称（例如，com.yourcompany.appname）。
+根包名：选择一个有意义的根包名称，必须按照 `com.yourcompany.appname` 格式命名。
+
+**根包名规范：**
+- 格式：`com.{company}.{projectname}`
+- 示例：`com.example.studentmanagement`、`com.techcorp.ecommerce`
+- 要求：使用小写字母，避免使用下划线和连字符
+- 建议：使用有意义的公司名和项目名，便于识别和维护
 
 ```java
 
