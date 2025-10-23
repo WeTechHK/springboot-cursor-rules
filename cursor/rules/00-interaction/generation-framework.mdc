@@ -1,0 +1,399 @@
+---
+description: AI代码生成综合框架，基于设计文档+规则+上下文+最佳实践
+layer: L0
+allowedReferences: [L0, L1, L2, L3, L4]
+alwaysApply: true
+---
+
+# AI代码生成框架
+
+## 核心原则
+
+```
+设计文档 + 代码规则 + 上下文推理 + 技术实践 = 高质量代码
+```
+
+**设计文档优先级**：
+- **有设计文档**：严格遵循
+- **无设计文档**：询问用户或给出建议
+- **设计不完整**：补充并确认
+
+## 决策流程
+
+### 1. 需求解析
+```
+用户输入 → 意图识别 → 上下文理解 → 技术方案 → 代码生成
+```
+
+**关键问题**：
+- 解决什么问题？
+- 业务背景？
+- 技术栈和约束？
+- 期望输出？
+
+### 2. 信息收集
+
+**设计文档**：
+- 检查`docs/`目录下的技术设计文档
+- 分析API、数据模型、业务规则
+
+**上下文**：
+- 显式信息：技术栈、功能需求、风格偏好
+- 隐式信息：项目结构、编码规范、业务领域
+
+### 3. 技术决策
+
+**架构层面**：
+- 项目类型、技术选型、设计模式
+
+**实现层面**：
+- 代码结构、命名规范、注解使用
+
+## 设计文档处理
+
+### 检查流程
+1. 扫描`docs/`目录
+2. 分析文档内容
+3. 识别API、数据模型、业务规则
+4. 评估完整性
+
+### 处理策略
+- **完整文档**：严格执行
+- **设计不完整**：补充并确认
+- **无文档**：询问或给出建议
+
+### 缺失处理模板
+```
+**当前状态**：未找到设计文档
+**建议方案**：基于需求分析给出设计建议
+**设计建议**：API设计、数据模型、业务规则、技术约束
+**请确认**：是否同意基于以上理解进行设计
+```
+
+## 代码生成标准流程（强制执行）
+
+### 第一阶段：准备与分析
+
+#### 步骤1：需求分析
+- 理解用户需求和业务背景
+- 明确功能范围和技术要求
+- 识别关键约束条件
+
+#### 步骤2：设计文档检查
+- 扫描 `docs/` 目录查找技术设计文档
+- 分析API接口规范、数据模型、业务规则
+- 评估文档完整性：
+  - **完整文档**：严格执行
+  - **不完整**：补充并确认
+  - **无文档**：询问或给出建议
+
+#### 步骤3：技术选型确认
+- **构建工具**：项目统一使用Gradle（不使用Maven）
+- **包路径**：必须从用户获取明确的包路径（如 com.edu.ssm）
+- **数据库**：MySQL
+
+#### 步骤4：加载相关规则（强制使用fetch_rules工具）
+在生成任何代码之前，**必须使用fetch_rules工具**分层加载规则：
+
+**L1层规则（项目结构 - 必须加载）**：
+- `01-structure/project` - 项目目录结构和包结构规范（明确Common*类位置）
+- `01-structure/tech-stack` - 技术栈定义
+
+**L2层规则（设计标准 - 必须加载）**：
+- `02-design/api` - API设计规范（明确分页接口必须POST）
+- `02-design/database` - 数据库表结构设计规范
+- `02-design/error-codes` - 错误码设计规范
+
+**L3层规则（编码规范 - 必须加载）**：
+- `03-coding/code-style` - 代码格式规范（明确缩进4个空格）
+- `03-coding/naming` - 命名规范
+- `03-coding/coding` - 编码实践规范
+- `03-coding/testing` - 单元测试规范
+
+**L4层规则（具体约定 - 必须加载）**：
+- `04-conventions/application` - 应用启动类规范
+- `04-conventions/openapi-config` - OpenAPI配置类规范
+- `04-conventions/entity` - 实体类规范
+- `04-conventions/mapper` - Mapper接口规范
+- `04-conventions/service` - Service接口规范
+- `04-conventions/service-impl` - ServiceImpl规范
+- `04-conventions/controller` - Controller规范（明确分页接口规范）
+- `04-conventions/request` - 请求VO规范
+- `04-conventions/response` - 响应VO规范
+- `04-conventions/common-request` - 通用请求基类
+- `04-conventions/common-response` - 通用响应基类
+- `04-conventions/common-page-request` - 分页请求基类
+- `04-conventions/page-data` - 分页数据封装
+- `04-conventions/gradle` - Gradle构建文件规范
+
+**根据需要加载的规则**：
+- `04-conventions/exception` - 自定义异常
+- `04-conventions/exception-handler` - 全局异常处理器
+- `04-conventions/logging-aspect` - 日志切面
+- `04-conventions/error-code-enum` - 错误码枚举
+
+**加载顺序说明**：
+1. 先加载L1-L3层基础规范，建立整体认知
+2. 再加载L4层具体约定，获取实现细节
+3. 规则之间有依赖关系，必须按顺序理解
+
+#### 步骤5：生成文件清单与规则映射
+列出需要生成的所有文件，并明确每个文件对应的规则：
+
+**示例清单**：
+```markdown
+| 文件 | 对应规则 | 状态 |
+|------|---------|------|
+| {AppName}Application.java | 04-conventions/application | 待生成 |
+| OpenApiConfig.java | 04-conventions/openapi-config | 待生成 |
+| CommonResponse.java | 04-conventions/common-response | 待生成 |
+| CommonRequest.java | 04-conventions/common-request | 待生成 |
+| PageData.java | 04-conventions/page-data | 待生成 |
+| CommonPageRequest.java | 04-conventions/common-page-request | 待生成 |
+| UserEntity.java | 04-conventions/entity | 待生成 |
+| UserMapper.java | 04-conventions/mapper | 待生成 |
+| UserService.java | 04-conventions/service | 待生成 |
+| UserServiceImpl.java | 04-conventions/service-impl | 待生成 |
+| UserController.java | 04-conventions/controller | 待生成 |
+| build.gradle | 04-conventions/gradle | 待生成 |
+| settings.gradle | 04-conventions/gradle | 待生成 |
+| test目录结构 | 01-structure/project | 待生成 |
+```
+
+**关键文件要求**：
+- 启动类命名：`{AppName}Application.java`（项目名首字母大写+Application）
+- OpenAPI配置：`OpenApiConfig.java`（必须生成）
+- 测试目录：必须创建完整的test目录结构
+
+### 第二阶段：代码生成
+
+#### 步骤6：目录结构创建
+按照 `01-structure/project.mdc` 创建完整目录结构：
+- 创建main目录结构（controller、service、entity、mapper等）
+- **必须创建test目录结构**（controller、service、mapper测试目录）
+- 创建 `application-test.yml` 配置文件
+
+#### 步骤7：基础类创建（按顺序）
+1. `CommonResponse.java` - 通用响应基类
+2. `CommonRequest.java` - 通用请求基类
+3. `PageData.java` - 分页数据封装类
+4. `CommonPageRequest.java` - 分页请求基类（继承CommonRequest）
+
+**验证要点**：
+- CommonPageRequest 必须继承 CommonRequest
+- PageData 为独立类，不继承任何类
+- PageData 只包含 total、pageNumber、pageSize、list 字段
+
+#### 步骤8：应用启动和配置类
+1. **{AppName}Application.java** - 启动类（必须，使用项目名+Application命名）
+2. **OpenApiConfig.java** - OpenAPI配置类（必须）
+3. **ErrorCodeEnum.java** - 错误码枚举（必须）
+4. **SecurityConfig.java** - 安全配置（如项目使用Spring Security）
+5. **其他配置类** - 根据技术选型生成（如WebMvcConfig、CorsConfig、CacheConfig等）
+
+#### 步骤9：逐模块生成（每个模块按顺序）
+对于每个业务模块（如User、Course、Grade）：
+1. **Entity** - 实体类（严格按entity规则，包含@Data、@Builder等）
+2. **Mapper** - Mapper接口（严格按mapper规则）
+3. **Request/Response VO** - 请求响应对象
+4. **Service接口** - 服务接口（返回类型必须是CommonResponse<T>）
+5. **ServiceImpl** - 服务实现（必须包含@Slf4j、@Transactional）
+6. **Controller** - 控制器（必须包含@Slf4j、@Operation）
+
+#### 步骤10：工具类和横切关注点
+1. **工具类** - 根据设计文档和项目需求分析生成必要的工具类：
+   - 如设计文档明确要求JWT认证，则生成 **JwtUtil**（完整实现，非mock）
+   - 如设计文档明确要求密码加密，则生成 **PasswordEncoderUtil**
+   - 其他工具类根据项目功能需求和行业最佳实践添加（如DateUtil、StringUtil等）
+2. **GlobalExceptionHandler** - 全局异常处理器（必须生成）
+3. **切面类** - 根据项目需求分析：
+   - 如需要请求日志记录，则生成 **WebLogAspect** （必须生成）
+   - 如需要接口性能监控，则生成 **PerformanceMonitorAspect**（按需生成）
+   - 其他切面类根据项目需求和行业最佳实践添加
+
+#### 步骤11：单元测试代码生成（强制）
+**对于每个业务模块，必须生成对应的测试类**：
+
+1. **Controller测试**：
+   - 命名：`{Domain}ControllerTest.java`
+   - 使用 `@WebMvcTest` 和 `MockMvc`
+   - Mock所有Service依赖
+   - 测试所有HTTP接口（正常和异常场景）
+   - 验证请求参数校验
+   - 验证响应格式
+
+2. **Service测试**：
+   - 命名：`{Domain}ServiceImplTest.java`
+   - 使用 `@ExtendWith(MockitoExtension.class)`
+   - Mock所有Mapper和依赖Service
+   - 测试业务逻辑
+   - 测试异常处理
+   - 覆盖率目标：≥ 80%
+
+3. **Mapper测试**：
+   - 命名：`{Domain}MapperTest.java`
+   - 使用 `@MybatisTest`
+   - 测试基础CRUD操作
+   - 验证SQL正确性
+   - 验证参数映射
+
+**测试文件清单示例**：
+```
+test/java/com/edu/spt/
+├── controller/
+│   ├── UserControllerTest.java
+│   ├── CourseControllerTest.java
+│   └── GradeControllerTest.java
+├── service/
+│   ├── UserServiceImplTest.java
+│   ├── CourseServiceImplTest.java
+│   └── GradeServiceImplTest.java
+└── mapper/
+    ├── UserMapperTest.java
+    ├── CourseMapperTest.java
+    └── GradeMapperTest.java
+```
+
+#### 步骤12：构建和配置文件生成
+1. **settings.gradle** - 项目设置（第一个生成）
+2. **build.gradle** - 构建配置（第二个生成）
+3. **gradle/wrapper/gradle-wrapper.properties** - Wrapper配置
+4. **gradlew** - Unix/Mac启动脚本（使用标准模板）
+5. **application.yml** - 主配置
+6. **application-dev.yml** - 开发环境配置
+7. **application-prod.yml** - 生产环境配置
+8. **application-test.yml** - 测试环境配置
+
+**Gradle Wrapper 完整性要求**（详见 `04-conventions/gradle.mdc`）：
+- 生成所有必需文件（settings.gradle、build.gradle、gradle-wrapper.properties、gradlew）
+- 尝试自动下载gradle-wrapper.jar
+- 如果下载失败，提示用户手动完成
+
+#### 步骤13：数据初始化文件生成
+1. **schema.sql** - DDL建表语句
+2. **data.sql** - DML初始化数据（**必须使用真实BCrypt哈希**）
+
+**测试数据要求**（详见 `04-conventions/data-initialization.mdc`）：
+- 所有初始化数据必须真实可用
+- 加密/哈希值（如密码）必须能通过验证
+- 在SQL注释中说明特殊字段（如原始密码）
+
+### 第三阶段：验证与修复
+
+#### 步骤14：即时验证（生成每个文件后）
+对照对应的规则检查：
+
+**代码格式检查**（参考03-coding/code-style.mdc）：
+- [ ] 缩进统一为4个空格（不是2、8或Tab）
+- [ ] 大括号使用K&R风格
+- [ ] 导入语句分组正确
+
+**文件位置检查**（参考01-structure/project.mdc）：
+- [ ] Request结尾的类（包括CommonRequest、CommonPageRequest）位于vo/request/
+- [ ] Response结尾的类（包括CommonResponse）位于vo/response/
+- [ ] PageData类位于vo/response/
+
+**接口设计检查**（参考02-design/api.mdc和04-conventions/controller.mdc）：
+- [ ] 分页接口使用POST方法
+- [ ] 分页请求类继承CommonPageRequest
+- [ ] 返回类型为CommonResponse<PageData<T>>
+
+**通用检查**：
+- [ ] 必需注解是否完整
+- [ ] 返回类型是否正确
+- [ ] 命名是否符合规范
+- [ ] 继承关系是否正确
+
+#### 步骤15：整体验证（所有文件生成后）
+
+**结构完整性**：
+- [ ] Gradle文件完整（build.gradle、settings.gradle、gradlew），无pom.xml
+- [ ] 启动类命名正确（{AppName}Application，而非Application）
+- [ ] OpenAPI配置类已生成（OpenApiConfig.java）
+- [ ] test目录结构完整（controller、service、mapper测试目录）
+- [ ] 所有模块都有对应的测试类
+- [ ] application-test.yml配置文件已创建
+
+**文件位置一致性**：
+- [ ] Request结尾的类全部位于vo/request/（包括CommonRequest、CommonPageRequest）
+- [ ] Response结尾的类全部位于vo/response/（包括CommonResponse）
+- [ ] PageData类位于vo/response/
+- [ ] 没有创建common/目录
+
+**代码格式一致性**：
+- [ ] 所有Java文件缩进统一为4个空格
+- [ ] 没有混用2个空格、8个空格或Tab
+- [ ] 导入语句分组正确
+
+**接口设计一致性**：
+- [ ] 所有分页接口使用POST方法
+- [ ] 所有分页请求类继承CommonPageRequest
+- [ ] 所有分页接口返回CommonResponse<PageData<T>>
+- [ ] 没有使用GET + @RequestParam实现分页
+
+**工具类和数据**：
+- [ ] 根据设计文档要求生成了必要的工具类
+- [ ] 所有工具类都是完整实现，无mock数据
+- [ ] data.sql使用真实BCrypt哈希
+
+**代码质量**：
+- [ ] 所有类的注解、返回类型、命名符合对应规则
+- [ ] 代码可编译通过
+- [ ] 测试代码可运行
+- [ ] 代码中不包含TODO标记
+- [ ] 代码中不包含mock或假数据
+
+#### 步骤16：错误修复
+发现问题时：
+1. 立即停止后续生成
+2. 删除错误文件
+3. 重新按规则生成
+4. 向用户说明修复情况
+
+## 代码生成标准
+
+### 优先级
+```
+设计文档 > 代码规则 > 技术实践 > 通用规范
+```
+
+### 渐进式生成
+```
+最小可用 → 功能完善 → 性能优化 → 代码重构
+```
+
+### 上下文感知
+- **项目级**：分析现有代码结构和风格
+- **任务级**：当前功能模块、依赖接口、数据模型
+
+
+## 质量标准
+
+### 代码质量要求
+- **可编译**：无编译错误
+- **可运行**：能在Spring Boot中运行
+- **规范性**：遵循编码规范
+- **完整性**：包含错误处理、日志、验证
+- **安全性**：输入校验、SQL防注入、脱敏
+- **性能**：避免N+1、合理缓存
+
+## 规则应用原则
+
+### 优先级顺序
+```
+设计文档 > 04-conventions规则 > 02-design设计标准 > 03-coding编码规范
+```
+
+### 规则引用规范
+代码生成时明确说明：
+- 应用的规则文件路径
+- 规则中的具体要求
+- 为什么选择这个规则
+
+## 相关规则
+- 角色定义: `00-interaction/role-definition.mdc`
+- 分层架构: `00-interaction/rules-architecture.mdc`
+- 项目结构: `01-structure/project.mdc`
+- 设计标准: `02-design/`
+- 编码规范: `03-coding/`
+- 文件约定: `04-conventions/`

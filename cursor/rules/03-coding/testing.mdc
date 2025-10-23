@@ -8,6 +8,29 @@ allowedReferences: [L3, L4]
 
 # 单元测试规范
 
+## 核心要求（强制）
+
+**测试代码生成强制规则**：
+- ✅ **必须生成**：每个Controller、Service、Mapper都必须有对应的测试类
+- ✅ **必须测试**：所有公共方法都必须有测试用例
+- ✅ **必须覆盖**：核心业务逻辑覆盖率 ≥ 80%
+- ❌ **禁止跳过**：不允许只创建测试目录而不生成测试代码
+- ❌ **禁止TODO**：测试类中不允许包含未实现的TODO标记
+
+**测试文件组织**：
+```
+src/test/java/{package}/
+├── controller/
+│   ├── {Domain}ControllerTest.java  # 必须生成
+│   └── ...
+├── service/
+│   ├── {Domain}ServiceImplTest.java # 必须生成
+│   └── ...
+└── mapper/
+    ├── {Domain}MapperTest.java      # 必须生成
+    └── ...
+```
+
 ## 测试结构（AAA模式）
 - **Arrange（准备）**：设置测试数据和Mock对象
 - **Act（执行）**：调用被测试方法

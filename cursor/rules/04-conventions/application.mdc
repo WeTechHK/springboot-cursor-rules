@@ -14,9 +14,11 @@ allowedReferences: [L4]
 
 ### 类定义
 - `@SpringBootApplication` 标记启动类
-- 类名以 `Application` 结尾
-- 位置：根包或主包下
+- 类名格式：`{AppName}Application`，其中 AppName 为项目名首字母大写的驼峰形式
+- 示例：项目名 `ssm` → 类名 `SsmApplication`；项目名 `user-service` → 类名 `UserServiceApplication`
+- 位置：根包或主包下（`com.{company}.{project}` 包下）
 - 提供 `main` 方法
+- **禁止**：使用通用名称 `Application`（必须包含项目名）
 
 ### 必须启用的功能
 - `@MapperScan` 扫描Mapper接口
@@ -31,17 +33,23 @@ allowedReferences: [L4]
 
 ## 最小示例
 ```java
+package com.edu.ssm;
+
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 /**
- * Spring Boot 应用启动类
+ * 学生管理系统启动类
  */
 @SpringBootApplication
-@MapperScan("com.edu.smt.mapper")
+@MapperScan("com.edu.ssm.mapper")
 @EnableTransactionManagement
-@EnableAspectJAutoProxy
-public class Application {
+public class SsmApplication {
     
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(SsmApplication.class, args);
     }
 }
 ```
@@ -49,14 +57,13 @@ public class Application {
 ## 带定时任务示例
 ```java
 @SpringBootApplication
-@MapperScan("com.edu.smt.mapper")
+@MapperScan("com.edu.ssm.mapper")
 @EnableTransactionManagement
-@EnableAspectJAutoProxy
 @EnableScheduling  // 启用定时任务
-public class Application {
+public class SsmApplication {
     
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(SsmApplication.class, args);
     }
 }
 ```
@@ -64,17 +71,16 @@ public class Application {
 ## 带配置属性示例
 ```java
 @SpringBootApplication
-@MapperScan("com.edu.smt.mapper")
+@MapperScan("com.edu.ssm.mapper")
 @EnableTransactionManagement
-@EnableAspectJAutoProxy
 @EnableConfigurationProperties({
     JwtProperties.class,
     AppProperties.class
 })
-public class Application {
+public class SsmApplication {
     
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(SsmApplication.class, args);
     }
 }
 ```
@@ -98,10 +104,26 @@ public class Application {
 - 启用AOP代理
 - 支持 `@Aspect` 切面
 
+## 命名规范详解
+
+### 项目名到类名转换规则
+1. 单词项目名（如 `ssm`）：首字母大写 → `SsmApplication`
+2. 多词连字符（如 `user-service`）：驼峰化首字母大写 → `UserServiceApplication`
+3. 多词下划线（如 `student_management`）：驼峰化首字母大写 → `StudentManagementApplication`
+
+### 转换示例
+| 项目名 | 类名 |
+|--------|------|
+| ssm | SsmApplication |
+| sms | SmsApplication |
+| user-service | UserServiceApplication |
+| order_system | OrderSystemApplication |
+
 ## 最佳实践
 - 保持启动类简洁，不包含业务逻辑
 - 按需启用功能，避免不必要的注解
 - MapperScan路径必须正确
+- 类名必须体现项目特征，禁止使用通用名 `Application`
 - **禁止**：在启动类中定义@Bean
 
 ## 相关规则

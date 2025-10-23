@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     
     @Autowired
-    private PasswordUtil passwordUtil;
+    private PasswordEncoder passwordEncoder;
     
     @Override
     @Transactional
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
         // 2. 业务处理
         UserEntity entity = new UserEntity();
         entity.setUsername(request.getUsername());
-        entity.setPasswordHash(passwordUtil.hash(request.getPassword()));
+        entity.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         entity.setEmail(request.getEmail());
         
         // 3. 数据持久化

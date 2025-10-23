@@ -1,0 +1,226 @@
+---
+description: 数据初始化规范，定义data.sql文件编写和测试数据可用性要求
+layer: L4
+allowedReferences: [L4]
+---
+
+# 数据初始化编码约定
+
+## 适用范围
+定义`data.sql`测试数据初始化文件的编写规范，确保测试数据可用。
+
+## 核心规则
+
+### 数据可用性（强制）
+- ✅ 所有初始化数据必须真实可用
+- ✅ 所有加密/哈希值必须能通过验证
+- ✅ 关联数据必须完整（外键关系）
+- ❌ 禁止使用示例值/占位符
+- ❌ 禁止使用无效的哈希值
+
+### 文件组织
+- DDL语句放在 `schema.sql`
+- DML语句放在 `data.sql`
+- 顺序：先执行schema.sql，再执行data.sql
+
+## data.sql 文件规范
+
+### 基本结构
+
+```sql
+-- {项目名称}初始化数据
+-- 数据库：{database_name}
+-- 说明：此文件包含系统运行所需的初始化数据
+
+-- ========================================
+-- {数据块名称}
+-- ========================================
+-- 说明：{数据用途}
+-- 数据量：{记录条数}
+
+INSERT INTO table_name (column1, column2, ...) VALUES
+('value1', 'value2', ...),
+('value1', 'value2', ...)
+ON DUPLICATE KEY UPDATE column1=VALUES(column1);
+```
+
+### 注释规范
+
+**必需注释**：
+1. 文件头部：项目名、数据库名、文件说明
+2. 数据块：数据用途、记录条数
+3. 特殊字段：加密值、哈希值需注明原始值
+
+**示例**：
+```sql
+-- ========================================
+-- 初始化用户数据
+-- ========================================
+-- 说明：系统默认管理员和测试用户
+-- 数据量：5条记录
+```
+
+## 特殊数据处理
+
+### 1. 密码哈希（当项目使用密码认证时）
+
+**要求**：
+- 使用真实的BCrypt哈希
+- 在注释中注明原始密码
+- 确保哈希值能通过验证
+
+**示例**：
+```sql
+-- ========================================
+-- 初始化用户数据
+-- ========================================
+-- 说明：所有用户密码均为 Pass@1234
+-- 哈希算法：BCrypt（轮次10）
+-- 验证：BCryptPasswordEncoder.matches("Pass@1234", hash) = true
+
+INSERT INTO t_users (username, password_hash, role) VALUES
+-- 管理员账号（密码：Pass@1234）
+('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMye...', 'admin'),
+-- 教师账号（密码：Pass@1234）
+('teacher01', '$2a$10$N9qo8uLOickgx2ZMRZoMye...', 'teacher')
+ON DUPLICATE KEY UPDATE username=VALUES(username);
+```
+
+**生成哈希的方式**：
+```java
+// 方式1：通过工具类生成
+BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+String hash = encoder.encode("Pass@1234");
+System.out.println(hash);
+
+// 方式2：使用在线工具
+// 访问：https://bcrypt-generator.com/
+// 轮次选择：10
+```
+
+### 2. JWT Token（当项目使用JWT时）
+
+**要求**：
+- 不在data.sql中预生成token
+- Token由登录接口动态生成
+
+### 3. 时间戳
+
+**要求**：
+- 使用SQL函数：`CURRENT_TIMESTAMP`、`NOW()`
+- 或使用固定格式：`'2024-01-01 00:00:00'`
+
+**示例**：
+```sql
+INSERT INTO t_orders (order_no, create_time, update_time) VALUES
+('ORD20240101001', NOW(), NOW());
+```
+
+### 4. 枚举值
+
+**要求**：
+- 使用数据库定义的枚举值
+- 在注释中说明枚举含义
+
+**示例**：
+```sql
+-- status: 0=草稿, 1=发布, 2=下线
+INSERT INTO t_courses (name, status) VALUES
+('Java编程', 1),  -- 发布状态
+('Python编程', 0);  -- 草稿状态
+```
+
+### 5. 关联数据
+
+**要求**：
+- 按照外键依赖顺序插入
+- 确保关联ID存在
+
+**示例**：
+```sql
+-- 1. 先插入用户
+INSERT INTO t_users (id, username) VALUES (1, 'admin');
+
+-- 2. 再插入课程（包含用户ID）
+INSERT INTO t_courses (id, name, teacher_id) VALUES (1, 'Java', 1);
+
+-- 3. 最后插入成绩（包含用户ID和课程ID）
+INSERT INTO t_grades (student_id, course_id, score) VALUES (1, 1, 90);
+```
+
+## 数据可用性验证
+
+### 生成后验证
+
+**1. SQL语法验证**：
+```bash
+# 执行SQL检查语法
+mysql -u root -p {database} < src/main/resources/sql/data.sql
+```
+
+**2. 密码验证**（如适用）：
+```java
+@Test
+public void testPasswordHash() {
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    String hash = "$2a$10$N9qo8uLOickgx2ZMRZoMye...";
+    assertTrue(encoder.matches("Pass@1234", hash));
+}
+```
+
+**3. 登录验证**（如适用）：
+```bash
+# 启动应用后测试登录
+curl -X POST http://localhost:8080/api/v1/users/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "Pass@1234"}'
+
+# 期望：返回成功响应和token
+```
+
+## 最佳实践
+
+### 1. 数据分组
+```sql
+-- 按业务模块分组
+-- ========== 用户模块 ==========
+INSERT INTO t_users ...
+
+-- ========== 课程模块 ==========
+INSERT INTO t_courses ...
+
+-- ========== 成绩模块 ==========
+INSERT INTO t_grades ...
+```
+
+### 2. 幂等性
+```sql
+-- 使用 ON DUPLICATE KEY UPDATE
+INSERT INTO t_users (id, username) VALUES (1, 'admin')
+ON DUPLICATE KEY UPDATE username=VALUES(username);
+
+-- 或者先删除
+DELETE FROM t_users WHERE id = 1;
+INSERT INTO t_users (id, username) VALUES (1, 'admin');
+```
+
+### 3. 数据量控制
+- 测试环境：适量数据（每个表5-20条）
+- 开发环境：可适当增加
+- 生产环境：仅必要的基础数据
+
+### 4. 敏感数据
+- 不在data.sql中包含真实用户信息
+- 不在data.sql中包含生产环境密钥
+
+## 禁止行为
+
+1. ❌ 禁止使用示例哈希值/占位符
+2. ❌ 禁止密码与哈希不匹配
+3. ❌ 禁止省略关键注释
+4. ❌ 禁止使用明文密码
+5. ❌ 禁止在data.sql中包含DDL语句
+6. ❌ 禁止在schema.sql中包含DML语句
+
+## 相关规则
+本规则为L4层具体约定，已内化上层规范要求。

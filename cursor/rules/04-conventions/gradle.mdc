@@ -102,21 +102,62 @@ rootProject.name = 'your-project-name'
 
 ```
 project/
-├── build.gradle          # 构建脚本（必需）
-├── settings.gradle       # 项目设置（必需）
-├── gradle.properties     # Gradle属性（可选）
-└── gradle/               # Gradle Wrapper（可选）
+├── build.gradle              # 构建脚本（必需）
+├── settings.gradle           # 项目设置（必需）
+├── gradle.properties         # Gradle属性（可选）
+├── gradlew                   # Unix/Mac启动脚本（必需）
+├── gradlew.bat               # Windows启动脚本（必需）
+└── gradle/                   # Gradle Wrapper（必需）
     └── wrapper/
-        ├── gradle-wrapper.jar
-        └── gradle-wrapper.properties
+        ├── gradle-wrapper.jar         # Wrapper执行器（必需）
+        └── gradle-wrapper.properties  # Wrapper配置（必需）
+```
+
+## Gradle Wrapper 完整性要求
+
+### AI生成时必须创建
+1. ✅ `settings.gradle` - 项目设置
+2. ✅ `build.gradle` - 构建配置
+3. ✅ `gradle/wrapper/gradle-wrapper.properties` - Wrapper配置文件
+4. ✅ `gradlew` - Unix/Mac可执行脚本
+5. ✅ `gradlew.bat` - Windows可执行脚本
+
+### gradle-wrapper.jar 自动化下载
+
+**优先自动下载**：
+```bash
+# 方式1：直接下载（推荐）
+curl -L -o gradle/wrapper/gradle-wrapper.jar \
+  https://github.com/gradle/gradle/raw/v8.10.2/gradle/wrapper/gradle-wrapper.jar
+
+# 方式2：使用系统Gradle（如果已安装）
+gradle wrapper --gradle-version=8.10.2
+```
+
+**如果自动下载失败，提示用户手动完成**：
+```markdown
+⚠️  自动下载 gradle-wrapper.jar 失败，请选择以下方式之一完成：
+
+方式1：使用 IntelliJ IDEA（最简单）
+- 用 IDEA 打开项目
+- IDEA 会自动检测并下载缺失的 gradle-wrapper.jar
+
+方式2：手动下载
+- 执行: curl -L -o gradle/wrapper/gradle-wrapper.jar \
+  https://github.com/gradle/gradle/raw/v8.10.2/gradle/wrapper/gradle-wrapper.jar
+
+方式3：使用系统 Gradle
+- 安装: brew install gradle
+- 执行: gradle wrapper --gradle-version=8.10.2
 ```
 
 ## 禁止行为
 
-1. 禁止同时生成`pom.xml`和`build.gradle`
-2. 禁止只生成`build.gradle`而不生成`settings.gradle`
-3. 禁止在group中包含项目名（如`group = 'com.edu.soop'`应为`group = 'com.edu'`）
+1. ❌ 禁止同时生成`pom.xml`和`build.gradle`
+2. ❌ 禁止只生成`build.gradle`而不生成`settings.gradle`
+3. ❌ 禁止在group中包含项目名（如`group = 'com.edu.soop'`应为`group = 'com.edu'`）
+4. ❌ 禁止生成不完整的Wrapper（至少要有properties和gradlew脚本）
+5. ❌ 禁止gradlew脚本参数传递错误
 
 ## 相关规则
-- 技术栈定义：`01-structure/tech-stack.mdc`
-- 代码生成框架：`00-interaction/generation-framework.mdc`
+本规则为L4层具体约定，已内化上层规范要求。

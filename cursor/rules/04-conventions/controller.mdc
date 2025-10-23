@@ -1,0 +1,52 @@
+---
+description: 定义RestController类的编码标准，包括API路由映射、HTTP方法注解、依赖注入和错误处理
+globs: **/src/main/java/**/controller/**Controller.java
+layer: L4
+allowedReferences: [L4]
+---
+
+# Controller 编码约定
+
+## 适用范围
+定义REST控制器类的实现规范，负责HTTP请求路由、参数接收和响应返回。
+
+## 核心规则
+
+### 类定义
+- `@RestController` 标记控制器
+- 类名以 `Controller` 结尾
+- `@RequestMapping("/api/v1/{resource}")` 定义基础路径
+- `@Autowired` 字段注入依赖
+
+### HTTP方法使用
+- 仅使用 @GetMapping 和 @PostMapping
+- 禁止使用 PUT/PATCH/DELETE
+- 简单查询（1-2个参数）：GET + PathVariable 或 RequestParam
+- 复杂查询（3个以上参数）：POST + RequestBody
+- 分页查询：POST + 继承CommonPageRequest的请求类
+- 所有修改操作：POST + RequestBody
+
+### 返回类型
+- 统一返回 CommonResponse<T>
+- 分页返回 CommonResponse<PageData<T>>
+- 禁止直接返回实体或VO
+
+### 参数校验
+- POST请求：@Valid @RequestBody
+- GET参数：@RequestParam(defaultValue = "...")
+- 路径参数：@PathVariable
+
+### 职责约束
+- 方法长度：小于20行
+- 职责单一：仅路由和参数接收
+- 禁止包含业务逻辑
+- 禁止处理业务异常（由GlobalExceptionHandler处理）
+
+## API文档
+- @Operation 注解说明接口功能
+- JavaDoc注释（摘要、参数、返回值）
+
+## 相关规则
+- 请求对象: `04-conventions/request.mdc`
+- 响应对象: `04-conventions/response.mdc`
+- 异常处理: `04-conventions/exception-handler.mdc`

@@ -18,12 +18,13 @@ allowedReferences: [L1, L2, L3, L4]
 - **如果目录中没有对应的文件，则不应该生成该目录**（按需创建原则）
 - **必须强制用户提供选择一个有意义的springboot项目的group名和项目名**
 - **group名和项目名，规则必须符合com.yourcompany.appname，其中group名=com.yourcompany，项目名=appname**
+- **test目录结构必须与main目录对应，遵循相同的包结构**
 ```
 src/
 ├── main/
 │   ├── java/
 │   │   └── com/example/app/
-│   │       ├── Application.java          # 主入口类
+│   │       ├── {AppName}Application.java # 主入口类（AppName首字母大写）
 │   │       ├── filter/                   # 过滤器类（按需创建）
 │   │       ├── interceptor/              # 拦截器类（按需创建）
 │   │       ├── validator/                # 验证器类（按需创建）
@@ -39,7 +40,13 @@ src/
 │   │       ├── constants/                # 常量类（按需创建，错误码必须用枚举）
 │   │       ├── vo/                       # 视图对象
 │   │       │   ├── request/              # 请求对象
+│   │       │   │   ├── CommonRequest.java        # 通用请求基类（必须）
+│   │       │   │   ├── CommonPageRequest.java    # 分页请求基类（必须）
+│   │       │   │   └── CreateUserRequest.java    # 具体请求对象示例
 │   │       │   └── response/             # 响应对象
+│   │       │       ├── CommonResponse.java       # 通用响应基类（必须）
+│   │       │       ├── PageData.java             # 分页数据封装（必须）
+│   │       │       └── UserResponse.java         # 具体响应对象示例
 │   │       ├── exception/                # 自定义异常
 │   │       ├── task/                     # 定时任务（按需创建）
 │   │       ├── util/                     # 工具类
@@ -57,42 +64,36 @@ src/
 └── test/
     ├── java/
     │   └── com/example/app/
-    │       ├── controller/               # 控制器测试
-    │       ├── service/                  # 服务测试
-    │       └── mapper/                   # Mapper测试
+    │       ├── controller/               # 控制器测试（必须创建）
+    │       ├── service/                  # 服务测试（必须创建）
+    │       └── mapper/                   # Mapper测试（必须创建）
     └── resources/
-        ├── application-test.yml          # 测试环境配置
-        └── test-data/                    # 测试数据文件
+        └── application-test.yml          # 测试环境配置（必须创建）
 ```
 
-### 创建顺序（必须遵守）
-1. **创建 `vo/response/CommonResponse.java`** - 通用响应基类
-2. **创建 `vo/request/CommonRequest.java`** - 通用请求基类
-3. **创建 `vo/response/PageData.java`** - 分页数据封装类（作为CommonResponse的data字段值）
-4. **创建 `vo/request/CommonPageRequest.java`** - 分页请求类（继承CommonRequest）
-5. **创建 `dao/entity/` 目录和实体类** - 数据访问层实体
-6. **创建 `dao/mapper/` 目录和Mapper接口** - 数据访问层接口
-7. **创建具体的请求响应类** - 继承基础类的具体类
+### 测试目录创建要求
+- **必须创建test目录结构**，即使暂时为空
+- test/java包结构必须与main/java完全对应
+- 必须创建 `application-test.yml` 配置文件
+- 每个核心模块（controller、service、mapper）都应有对应的测试目录
 
-### 基础类创建验证
-- [ ] 是否按顺序创建了所有基础类
-- [ ] CommonPageRequest 是否继承了 CommonRequest
-- [ ] PageData 是否为独立类（不继承任何类，只包含分页字段）
-- [ ] PageData 是否只包含 total、pageNumber、pageSize、list 字段
-- [ ] 是否跳过了任何基础类
+### 文件位置规则
+- Request结尾的类：必须放在 vo/request/ 目录（包括CommonRequest、CommonPageRequest）
+- Response结尾的类：必须放在 vo/response/ 目录（包括CommonResponse）
+- PageData类：必须放在 vo/response/ 目录（作为响应数据封装）
 
 ### 禁止行为
-- **禁止创建 `common/` 目录**
-- **禁止将 `entity/` 放在 `dao/` 目录下**（必须与controller同级）
-- **禁止将 `mapper/` 放在 `dao/` 目录下**（必须与controller同级）
-- **禁止将 `response/` 放在 `common/` 目录下**
-- **禁止跳过基础类直接创建具体类**
-- **禁止创建不继承基础类的请求类**
-- **禁止让 PageData 继承 CommonResponse**
-- **禁止在 PageData 中包含 code 和 msg 字段**
-- **禁止创建空目录**（只有当需要在目录中创建文件时才创建该目录）
-- **禁止在 `enums/` 目录下创建不以 `Enum.java` 结尾的文件**
-- **禁止在 `constants/` 目录下创建错误码常量类（必须使用 ErrorCodeEnum 枚举）**
+- 禁止创建 common/ 目录
+- 禁止将Request类放在response目录，或将Response类放在request目录
+- 禁止将 entity/ 放在 dao/ 目录下（必须与controller同级）
+- 禁止将 mapper/ 放在 dao/ 目录下（必须与controller同级）
+- 禁止跳过基础类直接创建具体类
+- 禁止创建不继承基础类的请求类
+- 禁止让 PageData 继承 CommonResponse
+- 禁止在 PageData 中包含 code 和 msg 字段
+- 禁止创建空目录（只有当需要在目录中创建文件时才创建该目录）
+- 禁止在 enums/ 目录下创建不以 Enum.java 结尾的文件
+- 禁止在 constants/ 目录下创建错误码常量类（必须使用 ErrorCodeEnum 枚举）
 
 ## SQL文件规范
 
@@ -141,7 +142,7 @@ src/main/resources/sql/
 com.{company}.{project}.{layer}
 
 // 示例（基于目录结构）
-com.example.app.Application                         # 主入口类
+com.example.app.{AppName}Application                # 主入口类（如SsmApplication）
 com.example.app.config.DatabaseConfig               # 配置类
 com.example.app.controller.UserController           # 控制器
 com.example.app.service.UserService                 # 服务接口
@@ -149,8 +150,12 @@ com.example.app.service.impl.UserServiceImpl        # 服务实现
 com.example.app.entity.UserEntity                   # 实体类
 com.example.app.mapper.UserMapper                   # Mapper接口
 com.example.app.dto.UserDto                         # 数据传输对象
-com.example.app.vo.request.CreateUserRequest        # 请求对象
-com.example.app.vo.response.UserResponse            # 响应对象
+com.example.app.vo.request.CommonRequest            # 通用请求基类
+com.example.app.vo.request.CommonPageRequest        # 分页请求基类
+com.example.app.vo.request.CreateUserRequest        # 具体请求对象
+com.example.app.vo.response.CommonResponse          # 通用响应基类
+com.example.app.vo.response.PageData                # 分页数据封装
+com.example.app.vo.response.UserResponse            # 具体响应对象
 com.example.app.exception.UserNotFoundException     # 自定义异常
 com.example.app.task.ScheduledTask                  # 定时任务
 com.example.app.util.DateUtils                      # 工具类

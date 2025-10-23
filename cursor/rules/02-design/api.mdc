@@ -18,8 +18,15 @@ allowedReferences: [L2, L3, L4]
 - 路径结构：`/api/{version}/{resource}/{id}/sub-resources/{subId}`
 
 ## HTTP 方法
-- GET：用于简单查询（幂等）。当查询参数较多、需要复杂过滤或传输结构化条件时，改用 POST 并在请求体中提交查询条件
+
+### 基本规则
+- GET：用于简单查询（幂等），1-2个参数的简单查询
 - POST：用于所有修改类操作（创建、更新、部分更新、删除），以及复杂查询
+
+### 查询方法选择标准
+- 简单查询（1-2个参数）：使用GET + PathVariable或RequestParam
+- 复杂查询（3个以上参数）：使用POST + RequestBody
+- 分页查询：必须使用POST + 继承CommonPageRequest的请求类
 
 ## 状态码
 - 2xx：成功（`200 OK`、`201 Created`、`204 No Content`）
@@ -27,9 +34,20 @@ allowedReferences: [L2, L3, L4]
 - 5xx：服务端错误（`500 Internal Server Error` 等）
 
 ## 请求与响应
-- 统一响应模型（`CommonResponse<T>`），字段：`code:String(13)`、`msg:String`、`data:T`
-- 分页响应模型（`CommonPageResponse<T>`），字段：`total:long`、`pageNumber:int`、`pageSize:int`、`list:List<T>`
-- Header 规范：`Accept`、`Authorization` 等明确必选/可选
+
+### 响应格式
+- 所有接口必须返回 CommonResponse<T>
+- 字段：code（String，13位）、msg（String）、data（泛型T）
+- 分页接口返回 CommonResponse<PageData<T>>
+- PageData字段：total、pageNumber、pageSize、list
+
+### 请求格式
+- 分页请求必须继承 CommonPageRequest
+- CommonPageRequest包含：pageNumber、pageSize、sortBy、sortDirection
+- 自定义筛选字段添加在子类中
+
+### Header 规范
+- Accept、Authorization 等明确必选/可选
 
 ## 错误处理
 - 错误码体系：通用码 + 业务码，枚举集中管理（码值为 13 位字符串）
