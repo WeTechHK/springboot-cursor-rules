@@ -12,86 +12,115 @@ allowedReferences: [L4]
 
 ## 核心规则
 
-### 命名规范
-- 类名：必须以 `Enum` 结尾
-- 示例：`UserRoleEnum`, `CourseStatusEnum`, `ErrorCodeEnum`
-- **禁止**：不带后缀（UserRole, CourseStatus等）
-
-### 位置规范
-- 文件位置：`{package}.enums.*Enum`
-- 包名示例：`com.example.app.enums`
-
-### 结构要求
-- 使用 `@Getter` 注解（Lombok）
+### 强制要求（MUST）
+- 必须使用 `@Getter` 注解
+- 必须包含 `code` 和 `desc` 字段
+- 必须提供完整的构造器
+- 类名必须以 `Enum` 结尾
 - 字段声明为 `private final`
 - 枚举值使用大写字母和下划线
-- 每个枚举值提供JavaDoc注释
+- 必须添加 JavaDoc 注释
 
-## 标准结构模板
+### 禁止要求（MUST NOT）
+- 禁止不带后缀（UserRole, CourseStatus等）
+- 禁止在枚举中包含复杂业务逻辑
+- 禁止修改已定义的枚举值
 
-### 基础枚举（仅code）
+### 可选要求（MAY）
+- 可以添加 `fromCode(String)` 方法
+- 可以添加 `isValid(String)` 方法
+- 可以添加自定义方法
+
+## 完整代码模板
+
+### 文件结构
+- 包声明
+- 导入语句
+- 类声明
+- 枚举值定义
+- 字段定义
+- 构造器
+- 方法实现
+
+### 完整实现模板
 ```java
-@Getter
-public enum StatusEnum {
-    ACTIVE("1", "激活"),
-    INACTIVE("0", "未激活");
-    
-    private final String code;
-    private final String desc;
-    
-    StatusEnum(String code, String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
-}
-```
+package com.edu.soop.enums;
 
-### 扩展枚举（带业务方法）
-```java
+import lombok.Getter;
+
+/**
+ * 用户角色枚举
+ * 
+ * @author system
+ * @since 1.0.0
+ */
 @Getter
 public enum UserRoleEnum {
+    
     ADMIN("admin", "管理员"),
     TEACHER("teacher", "教师"),
     STUDENT("student", "学生");
     
     private final String code;
-    private final String name;
+    private final String desc;
     
-    UserRoleEnum(String code, String name) {
+    UserRoleEnum(String code, String desc) {
         this.code = code;
-        this.name = name;
+        this.desc = desc;
     }
     
+    /**
+     * 根据角色代码查找枚举值
+     * 
+     * @param code 角色代码
+     * @return 对应的枚举值
+     * @throws IllegalArgumentException 如果找不到对应的枚举值
+     */
     public static UserRoleEnum fromCode(String code) {
         for (UserRoleEnum role : values()) {
             if (role.code.equals(code)) {
                 return role;
             }
         }
-        throw new IllegalArgumentException("Invalid code: " + code);
+        throw new IllegalArgumentException("Invalid role code: " + code);
+    }
+    
+    /**
+     * 验证角色代码是否有效
+     * 
+     * @param code 角色代码
+     * @return 是否有效
+     */
+    public static boolean isValid(String code) {
+        for (UserRoleEnum role : values()) {
+            if (role.code.equals(code)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 ```
 
-## 推荐方法
+## 规则执行检查清单
 
-### 查找方法（fromCode）
-- **可选**：提供根据code查找枚举的静态方法
-- **可选**：找不到时抛出IllegalArgumentException
+### 生成前检查
+- [ ] 是否使用了 `@Getter` 注解
+- [ ] 是否包含了 `code` 和 `desc` 字段
+- [ ] 是否提供了完整的构造器
+- [ ] 类名是否以 `Enum` 结尾
 
-### 验证方法（isValid）
-```java
-public static boolean isValid(String code) {
-    return Arrays.stream(values())
-        .anyMatch(e -> e.code.equals(code));
-}
-```
+### 生成中检查
+- [ ] 是否按照规范定义枚举值
+- [ ] 是否添加了必要的注释
+- [ ] 是否包含了 `fromCode` 方法
+- [ ] 是否遵循命名规范
 
-## 维护约定
-- 枚举值一旦定义避免修改
-- 新增枚举值添加在末尾
-- 按业务逻辑分组，组内排序
-- **禁止**：在枚举中包含复杂业务逻辑
+### 生成后检查
+- [ ] 是否通过编译检查
+- [ ] 是否包含了所有必要的枚举值
+- [ ] 是否符合命名规范
+- [ ] 是否满足功能要求
 
 ## 相关规则
 - 特定枚举: `04-conventions/error-code-enum.mdc`

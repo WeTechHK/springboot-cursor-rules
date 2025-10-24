@@ -11,216 +11,119 @@ allowedReferences: [L4]
 
 ## 核心规则
 
-### 数据可用性（强制）
-- ✅ 所有初始化数据必须真实可用
-- ✅ 所有加密/哈希值必须能通过验证
-- ✅ 关联数据必须完整（外键关系）
-- ❌ 禁止使用示例值/占位符
-- ❌ 禁止使用无效的哈希值
+### 强制要求（MUST）
+- 所有初始化数据必须真实可用
+- 所有加密/哈希值必须能通过验证
+- 关联数据必须完整（外键关系）
+- 必须使用真实的BCrypt哈希
+- 位置：`src/main/resources/sql/` 目录下
 
-### 文件组织
-- DDL语句放在 `schema.sql`
-- DML语句放在 `data.sql`
-- 顺序：先执行schema.sql，再执行data.sql
+### 禁止要求（MUST NOT）
+- 禁止使用示例值/占位符
+- 禁止使用无效的哈希值
+- 禁止在data.sql中包含DDL语句
+- 禁止在schema.sql中包含DML语句
+- 禁止使用明文密码
 
-## data.sql 文件规范
+### 可选要求（MAY）
+- 可以使用ON DUPLICATE KEY UPDATE
+- 可以按业务模块分组
+- 可以使用SQL函数生成时间戳
 
-### 基本结构
+## 完整代码模板
 
+### 文件结构
+- `schema.sql` - DDL语句（建表语句）
+- `data.sql` - DML语句（初始化数据）
+
+### 完整实现模板
 ```sql
--- {项目名称}初始化数据
--- 数据库：{database_name}
+-- data.sql
+-- 学生管理系统初始化数据
+-- 数据库：soop
 -- 说明：此文件包含系统运行所需的初始化数据
 
--- ========================================
--- {数据块名称}
--- ========================================
--- 说明：{数据用途}
--- 数据量：{记录条数}
-
-INSERT INTO table_name (column1, column2, ...) VALUES
-('value1', 'value2', ...),
-('value1', 'value2', ...)
-ON DUPLICATE KEY UPDATE column1=VALUES(column1);
-```
-
-### 注释规范
-
-**必需注释**：
-1. 文件头部：项目名、数据库名、文件说明
-2. 数据块：数据用途、记录条数
-3. 特殊字段：加密值、哈希值需注明原始值
-
-**示例**：
-```sql
 -- ========================================
 -- 初始化用户数据
 -- ========================================
 -- 说明：系统默认管理员和测试用户
 -- 数据量：5条记录
-```
-
-## 特殊数据处理
-
-### 1. 密码哈希（当项目使用密码认证时）
-
-**要求**：
-- 使用真实的BCrypt哈希
-- 在注释中注明原始密码
-- 确保哈希值能通过验证
-
-**示例**：
-```sql
--- ========================================
--- 初始化用户数据
--- ========================================
--- 说明：所有用户密码均为 Pass@1234
+-- 所有用户密码均为 Pass@1234
 -- 哈希算法：BCrypt（轮次10）
--- 验证：BCryptPasswordEncoder.matches("Pass@1234", hash) = true
 
-INSERT INTO t_users (username, password_hash, role) VALUES
+INSERT INTO t_users (id, username, password_hash, email, role, is_enabled, create_time, update_time) VALUES
 -- 管理员账号（密码：Pass@1234）
-('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMye...', 'admin'),
+(1, 'admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'admin@example.com', 'ADMIN', 1, NOW(), NOW()),
 -- 教师账号（密码：Pass@1234）
-('teacher01', '$2a$10$N9qo8uLOickgx2ZMRZoMye...', 'teacher')
+(2, 'teacher01', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'teacher01@example.com', 'TEACHER', 1, NOW(), NOW()),
+-- 学生账号（密码：Pass@1234）
+(3, 'student01', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'student01@example.com', 'STUDENT', 1, NOW(), NOW()),
+(4, 'student02', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'student02@example.com', 'STUDENT', 1, NOW(), NOW()),
+(5, 'student03', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'student03@example.com', 'STUDENT', 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE username=VALUES(username);
-```
 
-**生成哈希的方式**：
-```java
-// 方式1：通过工具类生成
-BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-String hash = encoder.encode("Pass@1234");
-System.out.println(hash);
-
-// 方式2：使用在线工具
-// 访问：https://bcrypt-generator.com/
-// 轮次选择：10
-```
-
-### 2. JWT Token（当项目使用JWT时）
-
-**要求**：
-- 不在data.sql中预生成token
-- Token由登录接口动态生成
-
-### 3. 时间戳
-
-**要求**：
-- 使用SQL函数：`CURRENT_TIMESTAMP`、`NOW()`
-- 或使用固定格式：`'2024-01-01 00:00:00'`
-
-**示例**：
-```sql
-INSERT INTO t_orders (order_no, create_time, update_time) VALUES
-('ORD20240101001', NOW(), NOW());
-```
-
-### 4. 枚举值
-
-**要求**：
-- 使用数据库定义的枚举值
-- 在注释中说明枚举含义
-
-**示例**：
-```sql
+-- ========================================
+-- 初始化课程数据
+-- ========================================
+-- 说明：系统默认课程数据
+-- 数据量：3条记录
 -- status: 0=草稿, 1=发布, 2=下线
-INSERT INTO t_courses (name, status) VALUES
-('Java编程', 1),  -- 发布状态
-('Python编程', 0);  -- 草稿状态
+
+INSERT INTO t_courses (id, name, description, teacher_id, status, create_time, update_time) VALUES
+(1, 'Java编程基础', 'Java编程语言基础课程', 2, 1, NOW(), NOW()),
+(2, 'Python编程基础', 'Python编程语言基础课程', 2, 1, NOW(), NOW()),
+(3, '数据结构与算法', '计算机科学基础课程', 2, 0, NOW(), NOW())
+ON DUPLICATE KEY UPDATE name=VALUES(name);
+
+-- ========================================
+-- 初始化选课数据
+-- ========================================
+-- 说明：学生选课关系数据
+-- 数据量：6条记录
+
+INSERT INTO t_enrollments (id, student_id, course_id, enrollment_date, status, create_time, update_time) VALUES
+(1, 3, 1, NOW(), 1, NOW(), NOW()),
+(2, 3, 2, NOW(), 1, NOW(), NOW()),
+(3, 4, 1, NOW(), 1, NOW(), NOW()),
+(4, 4, 2, NOW(), 1, NOW(), NOW()),
+(5, 5, 1, NOW(), 1, NOW(), NOW()),
+(6, 5, 3, NOW(), 1, NOW(), NOW())
+ON DUPLICATE KEY UPDATE student_id=VALUES(student_id);
+
+-- ========================================
+-- 初始化成绩数据
+-- ========================================
+-- 说明：学生课程成绩数据
+-- 数据量：4条记录
+
+INSERT INTO t_grades (id, student_id, course_id, score, exam_date, create_time, update_time) VALUES
+(1, 3, 1, 85, NOW(), NOW(), NOW()),
+(2, 3, 2, 90, NOW(), NOW(), NOW()),
+(3, 4, 1, 78, NOW(), NOW(), NOW()),
+(4, 5, 1, 92, NOW(), NOW(), NOW())
+ON DUPLICATE KEY UPDATE score=VALUES(score);
 ```
 
-### 5. 关联数据
+## 规则执行检查清单
 
-**要求**：
-- 按照外键依赖顺序插入
-- 确保关联ID存在
+### 生成前检查
+- [ ] 所有初始化数据是否真实可用
+- [ ] 所有加密/哈希值是否能通过验证
+- [ ] 关联数据是否完整（外键关系）
+- [ ] 是否使用了真实的BCrypt哈希
+- [ ] 是否避免了使用示例值/占位符
 
-**示例**：
-```sql
--- 1. 先插入用户
-INSERT INTO t_users (id, username) VALUES (1, 'admin');
+### 生成中检查
+- [ ] 是否按照规范定义数据
+- [ ] 是否包含了必要的注释
+- [ ] 是否遵循命名规范
+- [ ] 是否避免了禁止的操作
 
--- 2. 再插入课程（包含用户ID）
-INSERT INTO t_courses (id, name, teacher_id) VALUES (1, 'Java', 1);
-
--- 3. 最后插入成绩（包含用户ID和课程ID）
-INSERT INTO t_grades (student_id, course_id, score) VALUES (1, 1, 90);
-```
-
-## 数据可用性验证
-
-### 生成后验证
-
-**1. SQL语法验证**：
-```bash
-# 执行SQL检查语法
-mysql -u root -p {database} < src/main/resources/sql/data.sql
-```
-
-**2. 密码验证**（如适用）：
-```java
-@Test
-public void testPasswordHash() {
-    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-    String hash = "$2a$10$N9qo8uLOickgx2ZMRZoMye...";
-    assertTrue(encoder.matches("Pass@1234", hash));
-}
-```
-
-**3. 登录验证**（如适用）：
-```bash
-# 启动应用后测试登录
-curl -X POST http://localhost:8080/api/v1/users/login \
-  -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "Pass@1234"}'
-
-# 期望：返回成功响应和token
-```
-
-## 最佳实践
-
-### 1. 数据分组
-```sql
--- 按业务模块分组
--- ========== 用户模块 ==========
-INSERT INTO t_users ...
-
--- ========== 课程模块 ==========
-INSERT INTO t_courses ...
-
--- ========== 成绩模块 ==========
-INSERT INTO t_grades ...
-```
-
-### 2. 幂等性
-```sql
--- 使用 ON DUPLICATE KEY UPDATE
-INSERT INTO t_users (id, username) VALUES (1, 'admin')
-ON DUPLICATE KEY UPDATE username=VALUES(username);
-
--- 或者先删除
-DELETE FROM t_users WHERE id = 1;
-INSERT INTO t_users (id, username) VALUES (1, 'admin');
-```
-
-### 3. 数据量控制
-- 测试环境：适量数据（每个表5-20条）
-- 开发环境：可适当增加
-- 生产环境：仅必要的基础数据
-
-### 4. 敏感数据
-- 不在data.sql中包含真实用户信息
-- 不在data.sql中包含生产环境密钥
-
-## 禁止行为
-
-1. ❌ 禁止使用示例哈希值/占位符
-2. ❌ 禁止密码与哈希不匹配
-3. ❌ 禁止省略关键注释
-4. ❌ 禁止使用明文密码
-5. ❌ 禁止在data.sql中包含DDL语句
-6. ❌ 禁止在schema.sql中包含DML语句
+### 生成后检查
+- [ ] 是否通过SQL语法检查
+- [ ] 是否包含了所有必要的数据
+- [ ] 是否符合命名规范
+- [ ] 是否满足功能要求
 
 ## 相关规则
 本规则为L4层具体约定，已内化上层规范要求。

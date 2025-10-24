@@ -7,96 +7,53 @@ allowedReferences: [L4]
 
 # PageData 编码约定
 
-## 适用范围
-定义分页数据封装类 `PageData<T>`，作为 `CommonResponse<PageData<T>>` 中 `data` 字段的值类型。
+## 固定代码
+以下代码是标准实现，不允许修改：
 
-## 核心规则
-
-### 类型定位（重要）
-- PageData是数据封装类，不是完整响应类
-- 它作为CommonResponse的data字段值
-- 它只包含分页字段：total, pageNumber, pageSize, list
-- **禁止**：包含code和msg字段（这些属于CommonResponse）
-- **禁止**：继承任何类
-
-### 字段定义
-- `total` (long): 总记录数
-- `pageNumber` (int): 当前页码
-- `pageSize` (int): 每页数量
-- `list` (List\<T>): 数据列表，使用泛型
-
-### 注解要求
-- `@Data` 生成getter/setter
-- `@NoArgsConstructor` 无参构造器
-- `@AllArgsConstructor` 全参构造器
-- `@Builder` 建造者模式
-- `@Accessors(chain = true)` 链式调用
-- **可选**：`@Schema` 提供API文档
-
-## 响应结构说明
-```json
-{
-  "code": "0",           // ← CommonResponse字段
-  "msg": "success",      // ← CommonResponse字段
-  "data": {              // ← data字段的值是PageData对象
-    "total": 100,        // ↓ PageData字段
-    "pageNumber": 1,     // ↓
-    "pageSize": 10,      // ↓
-    "list": [...]        // ↓
-  }
-}
-```
-
-## 使用方式
-
-### 方式1：使用工具方法（推荐）
 ```java
-@GetMapping
-public CommonResponse<PageData<UserResponse>> getUsers(
-    @RequestParam(defaultValue = "1") int page,
-    @RequestParam(defaultValue = "10") int size
-) {
-    List<UserResponse> users = userService.listUsers(page, size);
-    long total = userService.countUsers();
-    
-    return CommonResponse.successPage(total, page, size, users);
-}
-```
+package com.edu.soop.vo.response;
 
-### 方式2：手动构建PageData
-```java
-@PostMapping("/search")
-public CommonResponse<PageData<UserResponse>> searchUsers(
-    @Valid @RequestBody SearchUserRequest request
-) {
-    List<UserResponse> users = userService.search(request);
-    long total = userService.count(request);
-    
-    PageData<UserResponse> pageData = PageData.<UserResponse>builder()
-        .total(total)
-        .pageNumber(request.getPageNumber())
-        .pageSize(request.getPageSize())
-        .list(users)
-        .build();
-    
-    return CommonResponse.success(pageData);
-}
-```
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-## 最小示例
-```java
+import java.util.List;
+
+/**
+ * 分页数据封装类
+ * 
+ * @author system
+ * @since 1.0.0
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Accessors(chain = true)
+@Builder
+@Schema(description = "分页数据封装类")
 public class PageData<T> {
-    private long total;
-    private int pageNumber;
-    private int pageSize;
+    
+    @Schema(description = "总条数", example = "100")
+    private Long total;
+    
+    @Schema(description = "当前页码", example = "1")
+    private Integer pageNumber;
+    
+    @Schema(description = "每页数量", example = "10")
+    private Integer pageSize;
+    
+    @Schema(description = "数据列表")
     private List<T> list;
 }
 ```
+
+## 使用说明
+- 直接复制上述代码到项目中
+- 不允许修改任何内容
+- 所有项目必须使用相同的实现
 
 ## 相关规则
 - 响应封装: `04-conventions/common-response.mdc`

@@ -32,8 +32,11 @@ allowedReferences: [L0, L1, L2, L3, L4]
 - **强制检查**：每步检查规范符合性
 - **规则优先级最高**：高于任何其他考虑
 
+### 规则执行优先级
+规则执行优先级和冲突解决机制详见：`00-interaction/generation-framework.mdc`
+
 ### 执行流程
-1. 读取规则文件
+1. 读取规则文件（按优先级顺序）
 2. 创建目录结构
 3. 创建基础类
 4. 创建具体类
@@ -92,6 +95,9 @@ allowedReferences: [L0, L1, L2, L3, L4]
 
 详细步骤和检查清单请参见：`00-interaction/generation-framework.mdc`
 
+### 规则执行检查清单
+规则执行检查清单详见：`00-interaction/generation-framework.mdc`
+
 ### 响应格式
 ```markdown
 ## 当前状态
@@ -122,6 +128,9 @@ allowedReferences: [L0, L1, L2, L3, L4]
 - 安全性（校验、防注入、脱敏）
 - 性能（避免N+1、缓存、优化）
 - 测试覆盖（核心≥80%，工具≥90%）
+
+### 规则符合性检查
+规则符合性检查详见：`00-interaction/generation-framework.mdc`
 
 ## 相关规则
 - 生成框架: `00-interaction/generation-framework.mdc`

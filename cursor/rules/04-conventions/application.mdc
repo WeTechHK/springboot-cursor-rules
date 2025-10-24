@@ -12,119 +12,89 @@ allowedReferences: [L4]
 
 ## 核心规则
 
-### 类定义
-- `@SpringBootApplication` 标记启动类
-- 类名格式：`{AppName}Application`，其中 AppName 为项目名首字母大写的驼峰形式
-- 示例：项目名 `ssm` → 类名 `SsmApplication`；项目名 `user-service` → 类名 `UserServiceApplication`
+### 强制要求（MUST）
+- 必须使用 `@SpringBootApplication` 标记启动类
+- 类名格式必须为 `{AppName}Application`
+- 必须添加 JavaDoc 注释
 - 位置：根包或主包下（`com.{company}.{project}` 包下）
-- 提供 `main` 方法
-- **禁止**：使用通用名称 `Application`（必须包含项目名）
+- 必须提供 `main` 方法
 
-### 必须启用的功能
-- `@MapperScan` 扫描Mapper接口
-- `@EnableTransactionManagement` 启用事务
-- `@EnableAspectJAutoProxy` 启用AOP
+### 禁止要求（MUST NOT）
+- 禁止使用通用名称 `Application`（必须包含项目名）
+- 禁止在启动类中定义@Bean
+- 禁止包含业务逻辑
 
-### 可选启用的功能
-- **可选**：`@EnableScheduling` 启用定时任务
-- **可选**：`@EnableAsync` 启用异步
-- **可选**：`@EnableCaching` 启用缓存
-- **可选**：`@EnableConfigurationProperties` 绑定配置类
+### 可选要求（MAY）
+- 可以使用 `@MapperScan` 扫描Mapper接口
+- 可以使用 `@EnableTransactionManagement` 启用事务
+- 可以使用 `@EnableAspectJAutoProxy` 启用AOP
+- 可以使用 `@EnableScheduling` 启用定时任务
+- 可以使用 `@EnableAsync` 启用异步
+- 可以使用 `@EnableCaching` 启用缓存
+- 可以使用 `@EnableConfigurationProperties` 绑定配置类
 
-## 最小示例
+## 完整代码模板
+
+### 文件结构
+- 包声明
+- 导入语句
+- 类声明
+- 方法定义
+
+### 完整实现模板
 ```java
-package com.edu.ssm;
+package com.edu.soop;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * 学生管理系统启动类
+ * 负责应用启动和功能配置
+ *
+ * @author system
+ * @since 1.0.0
  */
 @SpringBootApplication
-@MapperScan("com.edu.ssm.mapper")
+@MapperScan("com.edu.soop.mapper")
 @EnableTransactionManagement
-public class SsmApplication {
-    
+@EnableScheduling
+public class SoopApplication {
+
+    /**
+     * 应用启动入口
+     *
+     * @param args 启动参数
+     */
     public static void main(String[] args) {
-        SpringApplication.run(SsmApplication.class, args);
+        SpringApplication.run(SoopApplication.class, args);
     }
 }
 ```
 
-## 带定时任务示例
-```java
-@SpringBootApplication
-@MapperScan("com.edu.ssm.mapper")
-@EnableTransactionManagement
-@EnableScheduling  // 启用定时任务
-public class SsmApplication {
-    
-    public static void main(String[] args) {
-        SpringApplication.run(SsmApplication.class, args);
-    }
-}
-```
+## 规则执行检查清单
 
-## 带配置属性示例
-```java
-@SpringBootApplication
-@MapperScan("com.edu.ssm.mapper")
-@EnableTransactionManagement
-@EnableConfigurationProperties({
-    JwtProperties.class,
-    AppProperties.class
-})
-public class SsmApplication {
-    
-    public static void main(String[] args) {
-        SpringApplication.run(SsmApplication.class, args);
-    }
-}
-```
+### 生成前检查
+- [ ] 是否使用了 `@SpringBootApplication` 标记启动类
+- [ ] 类名格式是否为 `{AppName}Application`
+- [ ] 是否添加了 JavaDoc 注释
+- [ ] 是否避免了使用通用名称 `Application`
+- [ ] 是否避免了在启动类中定义@Bean
 
-## 注解说明
+### 生成中检查
+- [ ] 是否按照规范定义类
+- [ ] 是否包含了必要的注解
+- [ ] 是否遵循命名规范
+- [ ] 是否避免了禁止的操作
 
-### @SpringBootApplication
-- 包含 `@Configuration`, `@EnableAutoConfiguration`, `@ComponentScan`
-- 自动扫描当前包及子包
-
-### @MapperScan
-- 扫描MyBatis Mapper接口
-- 参数：`"com.{company}.{project}.mapper"`
-- 必须与mapper包路径一致
-
-### @EnableTransactionManagement
-- 启用声明式事务
-- 支持 `@Transactional` 注解
-
-### @EnableAspectJAutoProxy
-- 启用AOP代理
-- 支持 `@Aspect` 切面
-
-## 命名规范详解
-
-### 项目名到类名转换规则
-1. 单词项目名（如 `ssm`）：首字母大写 → `SsmApplication`
-2. 多词连字符（如 `user-service`）：驼峰化首字母大写 → `UserServiceApplication`
-3. 多词下划线（如 `student_management`）：驼峰化首字母大写 → `StudentManagementApplication`
-
-### 转换示例
-| 项目名 | 类名 |
-|--------|------|
-| ssm | SsmApplication |
-| sms | SmsApplication |
-| user-service | UserServiceApplication |
-| order_system | OrderSystemApplication |
-
-## 最佳实践
-- 保持启动类简洁，不包含业务逻辑
-- 按需启用功能，避免不必要的注解
-- MapperScan路径必须正确
-- 类名必须体现项目特征，禁止使用通用名 `Application`
-- **禁止**：在启动类中定义@Bean
+### 生成后检查
+- [ ] 是否通过编译检查
+- [ ] 是否包含了所有必要的功能
+- [ ] 是否符合命名规范
+- [ ] 是否满足功能要求
 
 ## 相关规则
 - Mapper接口: `04-conventions/mapper.mdc`

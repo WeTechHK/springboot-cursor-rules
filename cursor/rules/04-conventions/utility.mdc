@@ -10,83 +10,37 @@ allowedReferences: [L4]
 ## 适用范围
 定义工具类的实现规范，提供通用的工具方法或服务。
 
-## 工具类生成原则
-
-### 根据项目需求决定
-- **分析设计文档**：根据设计文档明确要求的功能生成工具类
-- **分析技术选型**：根据技术栈生成相应工具类
-- **行业最佳实践**：根据项目类型添加常见工具类
-
-### 示例
-- 如设计文档要求"JWT认证" → 生成 `JwtUtil`
-- 如设计文档要求"密码加密" → 使用Spring Security的 `PasswordEncoder`（通过@Bean配置）
-- 如项目需要"日期处理" → 生成 `DateUtil` 或使用Hutool
-- 如项目需要"Redis缓存" → 生成 `RedisUtil`
-
 ## 核心规则
 
-### 类型选择
+### 强制要求（MUST）
+- 类名必须以 `Util` 结尾
+- 必须添加 JavaDoc 注释
+- 必须进行参数验证
+- 位置：`util` 或 `utils` 包下
 
-**1. Spring组件型工具类（推荐）**
-- 使用场景：需要注入配置、依赖其他Bean
-- 注解：`@Component` 或 `@Service`
-- 方法：非静态实例方法
-- 示例：JwtUtil（需要读取配置）、RedisUtil（需要注入RedisTemplate）
+### 禁止要求（MUST NOT）
+- 禁止重复造轮子（优先使用成熟库）
+- 禁止过度设计
+- 禁止缺少异常处理
 
-**2. 纯静态工具类**
-- 使用场景：无状态、纯函数计算
-- 类修饰符：`final class`
-- 构造器：`private`
-- 方法：`public static`
-- 示例：StringUtil、DateUtil
+### 可选要求（MAY）
+- 可以使用 `@Component` 注解（Spring组件型）
+- 可以使用静态工具类（纯静态型）
+- 可以注入配置和依赖
 
-### 类定义规范
+## 完整代码模板
 
-**Spring组件型**：
+### 文件结构
+- 包声明
+- 导入语句
+- 类声明
+- 方法定义
+
+### 完整实现模板
 ```java
-@Component
-@Slf4j
-public class JwtUtil {
-    @Value("${jwt.secret}")
-    private String secret;
-    
-    public String generateToken(User user) { ... }
-}
-```
+package com.edu.soop.util;
 
-**纯静态型**：
-```java
-public final class StringUtil {
-    private StringUtil() {}
-    
-    public static boolean isEmpty(String str) { ... }
-}
-```
-
-### 方法设计
-- 方法名清晰表达功能
-- 参数验证（开始处）
-- 返回类型明确（避免Object）
-- 考虑线程安全
-- 提供重载方法
-
-### 异常处理
-- 无效参数抛出 `IllegalArgumentException`
-- 提供清晰的错误消息
-- **可选**：必要时记录日志
-
-### JavaDoc要求
-- 类级别：说明工具类用途
-- 方法级别：参数、返回值、异常、示例
-
-## 常见工具类示例
-
-### 1. JwtUtil（Spring组件型 - 推荐）
-
-```java
-package com.edu.spt.util;
-
-import com.edu.spt.entity.UserEntity;
+import com.edu.soop.entity.UserEntity;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -95,31 +49,43 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
  * JWT工具类
  * 用于JWT令牌的生成、验证和信息提取
+ *
+ * @author system
+ * @since 1.0.0
  */
 @Component
 @Slf4j
 public class JwtUtil {
-    
+
     @Value("${jwt.secret}")
     private String secret;
-    
+
     @Value("${jwt.expiration:3600}")
     private Long expiration;
-    
+
     /**
      * 生成JWT令牌
+     *
+     * @param user 用户实体
+     * @return JWT令牌
      */
     public String generateToken(UserEntity user) {
+        if (user == null || user.getId() == null) {
+            throw new IllegalArgumentException("用户信息不能为空");
+        }
+
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + expiration * 1000);
-        
+
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        
+
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim("username", user.getUsername())
@@ -129,11 +95,18 @@ public class JwtUtil {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
-    
+
     /**
      * 验证JWT令牌
+     *
+     * @param token JWT令牌
+     * @return 是否有效
      */
     public boolean validateToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            return false;
+        }
+
         try {
             SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
             Jwts.parserBuilder()
@@ -146,148 +119,154 @@ public class JwtUtil {
             return false;
         }
     }
-    
+
     /**
      * 从token获取用户ID
+     *
+     * @param token JWT令牌
+     * @return 用户ID
      */
     public Long getUserIdFromToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new IllegalArgumentException("Token不能为空");
+        }
+
         Claims claims = getClaimsFromToken(token);
         return Long.parseLong(claims.getSubject());
     }
-    
+
+    /**
+     * 从token获取用户名
+     *
+     * @param token JWT令牌
+     * @return 用户名
+     */
+    public String getUsernameFromToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new IllegalArgumentException("Token不能为空");
+        }
+
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("username", String.class);
+    }
+
+    /**
+     * 从token获取用户角色
+     *
+     * @param token JWT令牌
+     * @return 用户角色
+     */
+    public String getRoleFromToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new IllegalArgumentException("Token不能为空");
+        }
+
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("role", String.class);
+    }
+
+    /**
+     * 从token获取Claims
+     *
+     * @param token JWT令牌
+     * @return Claims对象
+     */
     private Claims getClaimsFromToken(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            log.error("解析JWT令牌失败", e);
+            throw new IllegalArgumentException("无效的JWT令牌");
+        }
     }
 }
 ```
 
-**配置文件（application.yml）**：
-```yaml
-jwt:
-  secret: your-secret-key-at-least-256-bits-long
-  expiration: 3600  # 1小时
-```
-
-### 2. DateUtil（静态工具类）
-
+### 静态工具类模板
 ```java
+package com.edu.soop.util;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * 日期工具类
+ * 提供日期格式化和解析功能
+ *
+ * @author system
+ * @since 1.0.0
  */
 public final class DateUtil {
-    
+
     private static final DateTimeFormatter DEFAULT_FORMATTER = 
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    
-    private DateUtil() {}
-    
+
     /**
-     * 格式化日期
+     * 私有构造器，防止实例化
+     */
+    private DateUtil() {
+        // 防止实例化
+    }
+
+    /**
+     * 格式化日期为字符串
+     *
+     * @param dateTime 日期时间
+     * @return 格式化后的字符串
      */
     public static String format(LocalDateTime dateTime) {
         return dateTime != null ? dateTime.format(DEFAULT_FORMATTER) : null;
     }
-    
+
     /**
      * 解析日期字符串
+     *
+     * @param dateStr 日期字符串
+     * @return 解析后的日期时间
      */
     public static LocalDateTime parse(String dateStr) {
-        return dateStr != null ? LocalDateTime.parse(dateStr, DEFAULT_FORMATTER) : null;
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return null;
+        }
+        return LocalDateTime.parse(dateStr, DEFAULT_FORMATTER);
+    }
+
+    /**
+     * 获取当前时间字符串
+     *
+     * @return 当前时间字符串
+     */
+    public static String now() {
+        return format(LocalDateTime.now());
     }
 }
 ```
 
-### 3. RedisUtil（Spring组件型）
+## 规则执行检查清单
 
-```java
-/**
- * Redis工具类
- * 当项目使用Redis时生成此工具类
- */
-@Component
-@Slf4j
-public class RedisUtil {
-    
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-    
-    /**
-     * 设置缓存
-     */
-    public void set(String key, Object value, long timeout, TimeUnit unit) {
-        redisTemplate.opsForValue().set(key, value, timeout, unit);
-    }
-    
-    /**
-     * 获取缓存
-     */
-    public Object get(String key) {
-        return redisTemplate.opsForValue().get(key);
-    }
-}
-```
+### 生成前检查
+- [ ] 类名是否以 `Util` 结尾
+- [ ] 是否添加了 JavaDoc 注释
+- [ ] 是否进行了参数验证
+- [ ] 是否避免了重复造轮子
+- [ ] 是否避免了过度设计
 
-## 最佳实践
+### 生成中检查
+- [ ] 是否按照规范定义方法
+- [ ] 是否包含了必要的异常处理
+- [ ] 是否遵循命名规范
+- [ ] 是否避免了禁止的操作
 
-### 1. 优先使用成熟库
-- 字符串处理：使用 Hutool 的 `StrUtil`
-- 日期处理：使用 Hutool 的 `DateUtil` 或 Java 8 Time API
-- JSON处理：使用 Jackson 或 Gson
-- HTTP请求：使用 Spring RestTemplate 或 Hutool HttpUtil
-
-### 2. 单一职责
-- 一个工具类只处理一类问题
-- JWT工具只处理JWT，不要混入其他功能
-
-### 3. 避免过度设计
-- **禁止**：重复造轮子
-- 只在确实需要时才创建工具类
-
-### 4. 性能考虑
-- 避免重复创建对象（使用静态实例或Spring单例）
-- 考虑缓存计算结果
-- 注意线程安全
-
-### 5. 测试
-- 工具类必须有完整的单元测试
-- 目标覆盖率 ≥ 90%
-
-## 工具类决策树
-
-```
-需要工具类？
-├─ 是否需要配置/依赖注入？
-│  ├─ 是 → 使用 @Component（JwtUtil、RedisUtil）
-│  └─ 否 → 使用静态工具类（StringUtil、DateUtil）
-├─ 是否有成熟库可用？
-│  ├─ 是 → 直接使用（Hutool、Apache Commons）
-│  └─ 否 → 自己实现
-└─ 是否符合项目需求？
-   ├─ 设计文档要求 → 必须生成
-   └─ 可选功能 → 按需生成
-```
-
-## 常见工具类参考
-
-| 工具类 | 类型 | 使用场景 | 示例 |
-|-------|------|---------|------|
-| JwtUtil | @Component | JWT认证项目 | 见上方示例 |
-| RedisUtil | @Component | 使用Redis缓存 | 见上方示例 |
-| DateUtil | static | 日期格式化 | 见上方示例 |
-| StringUtil | static | 字符串处理 | 或使用Hutool |
-| FileUtil | static | 文件操作 | 或使用Hutool |
-| JsonUtil | static | JSON处理 | 或使用Jackson |
-| ValidationUtil | static | 自定义验证逻辑 | 复杂业务校验 |
-| EncryptUtil | static | 加密解密 | AES/RSA加密 |
-| ImageUtil | static | 图片处理 | 压缩、裁剪、水印 |
-| ExcelUtil | static | Excel导入导出 | 或使用EasyExcel |
-| HttpClientUtil | static | HTTP请求 | 或使用RestTemplate |
-| IdGeneratorUtil | static | ID生成 | 雪花算法、UUID |
+### 生成后检查
+- [ ] 是否通过编译检查
+- [ ] 是否包含了所有必要的功能
+- [ ] 是否符合命名规范
+- [ ] 是否满足功能要求
 
 ## 相关规则
 - 常量类: `04-conventions/constants.mdc`

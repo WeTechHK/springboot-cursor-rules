@@ -12,26 +12,34 @@ allowedReferences: [L4]
 
 ## 核心规则
 
-### 类定义
-- `@Configuration` 标记配置类
-- 类名：`OpenApiConfig`
+### 强制要求（MUST）
+- 必须使用 `@Configuration` 标记配置类
+- 类名必须为 `OpenApiConfig`
+- 必须添加 JavaDoc 注释
 - 位置：`config` 包下
-- 使用 Springdoc OpenAPI 3.x
+- 必须使用 Springdoc OpenAPI 3.x
 
-### 必需配置
-- API基本信息（标题、描述、版本）
-- 联系信息（可选）
-- 全局安全配置（JWT Token）
+### 禁止要求（MUST NOT）
+- 禁止缺少API基本信息配置
+- 禁止缺少安全配置
+- 禁止缺少必要的注解
 
-### 可选配置
-- API分组
-- 自定义路径过滤
-- 全局响应示例
+### 可选要求（MAY）
+- 可以配置API分组
+- 可以配置自定义路径过滤
+- 可以配置全局响应示例
 
-## 最小示例
+## 完整代码模板
 
+### 文件结构
+- 包声明
+- 导入语句
+- 类声明
+- 方法定义
+
+### 完整实现模板
 ```java
-package com.edu.ssm.config;
+package com.edu.soop.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -40,16 +48,25 @@ import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.Components;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * OpenAPI配置类
  * 配置Swagger UI和API文档
+ *
+ * @author system
+ * @since 1.0.0
  */
 @Configuration
 public class OpenApiConfig {
-    
+
+    /**
+     * 配置OpenAPI基本信息
+     *
+     * @return OpenAPI配置
+     */
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
@@ -72,15 +89,12 @@ public class OpenApiConfig {
                                         .bearerFormat("JWT")
                                         .description("请输入JWT令牌")));
     }
-}
-```
 
-## 带分组示例
-
-```java
-@Configuration
-public class OpenApiConfig {
-    
+    /**
+     * 配置公开API分组
+     *
+     * @return 公开API分组
+     */
     @Bean
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
@@ -88,7 +102,12 @@ public class OpenApiConfig {
                 .pathsToMatch("/api/v1/auth/**")
                 .build();
     }
-    
+
+    /**
+     * 配置用户API分组
+     *
+     * @return 用户API分组
+     */
     @Bean
     public GroupedOpenApi userApi() {
         return GroupedOpenApi.builder()
@@ -96,7 +115,12 @@ public class OpenApiConfig {
                 .pathsToMatch("/api/v1/users/**")
                 .build();
     }
-    
+
+    /**
+     * 配置课程API分组
+     *
+     * @return 课程API分组
+     */
     @Bean
     public GroupedOpenApi courseApi() {
         return GroupedOpenApi.builder()
@@ -104,81 +128,29 @@ public class OpenApiConfig {
                 .pathsToMatch("/api/v1/courses/**")
                 .build();
     }
-    
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("学生管理系统 API")
-                        .version("1.0.0"))
-                .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
-                .components(new Components()
-                        .addSecuritySchemes("Bearer Authentication",
-                                new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")));
-    }
 }
 ```
 
-## 配置项说明
+## 规则执行检查清单
 
-### Info配置
-- `title`：API文档标题（必需）
-- `description`：API描述（推荐）
-- `version`：API版本号（必需）
-- `contact`：联系信息（可选）
-- `license`：许可证信息（可选）
+### 生成前检查
+- [ ] 是否使用了 `@Configuration` 标记配置类
+- [ ] 类名是否为 `OpenApiConfig`
+- [ ] 是否添加了 JavaDoc 注释
+- [ ] 是否避免了缺少API基本信息配置
+- [ ] 是否避免了缺少安全配置
 
-### SecurityScheme配置
-- `type`：认证类型（HTTP、API Key、OAuth2等）
-- `scheme`：认证方案（bearer、basic等）
-- `bearerFormat`：令牌格式（JWT）
-- `description`：认证说明
+### 生成中检查
+- [ ] 是否按照规范定义配置
+- [ ] 是否包含了必要的配置项
+- [ ] 是否遵循命名规范
+- [ ] 是否避免了禁止的操作
 
-### GroupedOpenApi配置
-- `group`：分组名称
-- `pathsToMatch`：匹配路径模式
-- `pathsToExclude`：排除路径模式（可选）
-
-## application.yml配置
-
-```yaml
-springdoc:
-  api-docs:
-    path: /api-docs
-    enabled: true
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
-    tags-sorter: alpha
-    operations-sorter: alpha
-    display-request-duration: true
-```
-
-## 访问地址
-- Swagger UI：`http://localhost:8080/swagger-ui.html`
-- API Docs：`http://localhost:8080/api-docs`
-- API Docs (JSON)：`http://localhost:8080/api-docs.json`
-
-## 最佳实践
-- 提供清晰的API标题和描述
-- 配置JWT认证支持
-- 生产环境可通过配置禁用Swagger UI
-- 使用分组组织大型API
-- 在Controller和方法上使用 `@Tag` 和 `@Operation` 注解
-
-## 生产环境禁用
-
-```yaml
-# application-prod.yml
-springdoc:
-  api-docs:
-    enabled: false
-  swagger-ui:
-    enabled: false
-```
+### 生成后检查
+- [ ] 是否通过编译检查
+- [ ] 是否包含了所有必要的配置
+- [ ] 是否符合命名规范
+- [ ] 是否满足功能要求
 
 ## 相关规则
 - 控制器注解: `04-conventions/controller.mdc`

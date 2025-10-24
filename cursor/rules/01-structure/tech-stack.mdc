@@ -48,17 +48,12 @@ allowedReferences: [L1, L2, L3, L4]
 
 ## 数据访问
 
-- Spring Data JPA（Hibernate）
-  - 用途：ORM 持久化、Repository 抽象、分页与审计
-  - 文档：`https://docs.spring.io/spring-data/jpa/docs/current/reference/html/`
-  - Hibernate 文档：`https://docs.jboss.org/hibernate/orm/current/userguide/html_single/`
 - MyBatis / MyBatis-Spring
   - 用途：半自动化 SQL 映射、细粒度 SQL 控制（注解模式）
   - 文档：`https://mybatis.org/mybatis-3/` | `https://mybatis.org/spring/`
   - 使用规范：参考 `04-conventions/mapper.mdc`
 - 数据库驱动
   - MySQL：`https://dev.mysql.com/doc/` | 驱动 `mysql-connector-j`
-  - PostgreSQL：`https://www.postgresql.org/docs/` | 驱动 `postgresql`
 - 数据库设计规范
   - 表结构设计：参考 `02-design/database.mdc`
   - 实体类映射：参考 `04-conventions/entity.mdc`
@@ -102,10 +97,6 @@ allowedReferences: [L1, L2, L3, L4]
 
 - Spring Boot Configuration（外部化配置）
   - 文档：`https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#features.external-config`
-- Flyway / Liquibase（可选）
-  - 用途：数据库版本管理与迁移
-  - Flyway：`https://documentation.red-gate.com/fd/`
-  - Liquibase：`https://docs.liquibase.com/`
 
 ## 日志与观测性
 
@@ -115,24 +106,18 @@ allowedReferences: [L1, L2, L3, L4]
 - Spring Boot Actuator
   - 用途：健康检查、指标、环境信息
   - 文档：`https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html`
-- Micrometer / Prometheus / Grafana（可选）
-  - 用途：指标采集与可视化
-  - 文档：`https://micrometer.io/docs` | `https://prometheus.io/docs/` | `https://grafana.com/docs/`
 
 ## 测试
 
 - JUnit 5
   - 用途：单元测试标准框架
   - 文档：`https://junit.org/junit5/docs/current/user-guide/`
-- Mockito / MockK（JVM）
+- Mockito
   - 用途：Mock 依赖、交互验证
   - 文档：`https://site.mockito.org/`
 - Spring Boot Test / MockMvc
   - 用途：集成测试、Web 层测试
   - 文档：`https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#features.testing`
-- Testcontainers（可选）
-  - 用途：基于容器的集成测试（数据库、消息中间件）
-  - 文档：`https://www.testcontainers.org/`
 
 ## 部署与容器化（可选）
 
@@ -145,9 +130,9 @@ allowedReferences: [L1, L2, L3, L4]
 
 ## 版本与兼容性建议
 
-- 版本策略：遵循 Spring Boot LTS 或最新稳定版；优先使用与 Spring Boot 版本兼容的 Spring Cloud 与依赖版本（参见 Spring 官方兼容矩阵）。
-- Java 版本：优先使用 LTS（如 17/21），并与 Spring Boot 要求匹配。
-- 数据库驱动与中间件客户端：选择与服务器端主版本兼容的最新稳定版本。
+- 版本策略：遵循 Spring Boot LTS 或最新稳定版
+- Java 版本：优先使用 LTS（如 17/21），并与 Spring Boot 要求匹配
+- 数据库驱动与中间件客户端：选择与服务器端主版本兼容的最新稳定版本
 
 参考：
 - Spring 兼容性（Releases & Support）：`https://spring.io/projects/spring-boot#support`

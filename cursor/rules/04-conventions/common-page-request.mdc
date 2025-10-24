@@ -7,74 +7,58 @@ allowedReferences: [L4]
 
 # CommonPageRequest 编码约定
 
-## 适用范围
-定义统一分页请求基类 `CommonPageRequest`，继承自 `CommonRequest`，用于所有分页查询场景。
+## 固定代码
+以下代码是标准实现，不允许修改：
 
-## 核心规则
-
-### 继承关系
-- 必须继承 `CommonRequest`
-- **禁止**：创建不继承CommonRequest的分页基类
-
-### 字段定义
-- `pageNumber` (Integer, 必填): 页码，最小值1
-- `pageSize` (Integer, 必填): 每页数量，最小值1
-- `sortBy` (String, 可选): 排序字段，支持多字段（逗号分隔）
-- `sortDirection` (String, 可选): 排序方向，ASC/DESC
-- **禁止**：在基类中添加业务查询字段
-
-### 注解要求
-- `@Data` 生成getter/setter
-- `@NoArgsConstructor` 无参构造器
-- `@Accessors(chain = true)` 链式调用
-- `@NotNull` 验证pageNumber和pageSize
-- `@Min(1)` 限制最小值
-
-### 默认值建议
-- **可选**：pageNumber默认值: 1
-- **可选**：pageSize默认值: 10
-- **可选**：sortDirection默认值: ASC
-
-## 使用示例
-
-### 定义具体分页请求
 ```java
-public class SearchUserRequest extends CommonPageRequest {
-    private String keyword;
-    private String role;
-}
-```
+package com.edu.soop.vo.request;
 
-### Controller接收参数
-```java
-@PostMapping("/search")
-public CommonResponse<PageData<UserResponse>> searchUsers(
-    @Valid @RequestBody SearchUserRequest request
-) {
-    // request自动包含: traceId, pageNumber, pageSize, sortBy, sortDirection
-    return userService.searchUsers(request);
-}
-```
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-## 最小示例
-```java
+/**
+ * 通用分页请求基类
+ * 
+ * @author system
+ * @since 1.0.0
+ */
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-public class CommonPageRequest extends CommonRequest {
+@Schema(description = "通用分页请求基类")
+public abstract class CommonPageRequest extends CommonRequest {
     
+    @Schema(description = "页码", example = "1", minimum = "1")
     @NotNull(message = "页码不能为空")
     @Min(value = 1, message = "页码最小为1")
-    private Integer pageNumber;
+    private Integer pageNumber = 1;
     
+    @Schema(description = "每页数量", example = "10", minimum = "1", maximum = "100")
     @NotNull(message = "每页数量不能为空")
     @Min(value = 1, message = "每页数量最小为1")
-    private Integer pageSize;
+    @Max(value = 100, message = "每页数量不能超过100")
+    private Integer pageSize = 10;
     
+    @Schema(description = "排序字段", example = "createTime")
     private String sortBy;
-    private String sortDirection;
+    
+    @Schema(description = "排序方向", example = "asc", allowableValues = {"asc", "desc"})
+    private String sortDirection = "asc";
 }
 ```
+
+## 使用说明
+- 直接复制上述代码到项目中
+- 不允许修改任何内容
+- 所有项目必须使用相同的实现
 
 ## 相关规则
 - 父类: `04-conventions/common-request.mdc`

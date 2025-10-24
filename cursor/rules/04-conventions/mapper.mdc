@@ -5,118 +5,166 @@ layer: L4
 allowedReferences: [L4]
 ---
 
-# Mapper Interface 编码约定
+# Mapper 编码约定
 
 ## 适用范围
-定义MyBatis Mapper接口的实现规范，使用注解模式进行数据库操作（不使用XML）。
+定义MyBatis Mapper接口的实现规范，使用注解模式进行数据库操作。
 
 ## 核心规则
 
-### 接口定义
-- `@Mapper` 标记接口
-- 接口名以 `Mapper` 结尾
+### 强制要求（MUST）
+- 必须使用 `@Mapper` 注解
+- 接口名必须以 `Mapper` 结尾
+- 必须使用注解模式（禁止XML映射文件）
+- 必须使用 `@Param` 标注参数
+- 必须添加 JavaDoc 注释
 - 位置：`mapper` 包下
-- 包名：`com.{company}.{project}.mapper`
 
-### SQL注解
-- `@Select` 查询操作
-- `@Insert` 插入操作
-- `@Update` 更新操作
-- `@Delete` 删除操作
-- **禁止**：使用XML映射文件
+### 禁止要求（MUST NOT）
+- 禁止使用XML映射文件
+- 禁止在接口中包含业务逻辑
+- 禁止不带 `Mapper` 后缀
 
-### 参数映射
-- 使用 `@Param` 标注参数
-- 单参数也建议使用 `@Param`
-- 复杂查询使用 `<script>` 动态SQL
+### 可选要求（MAY）
+- 可以使用动态SQL（`<script>`标签）
+- 可以使用 `@Options` 获取自增ID
+- 可以使用 `@Results` + `@Result` 进行复杂映射
 
-### 结果映射
-- 简单映射：字段名一致时自动映射
-- 复杂映射：使用 `@Results` + `@Result`
-- 驼峰转换：自动支持 user_name → userName
+## 完整代码模板
 
-### 主键生成
-- 插入时获取自增ID：`@Options(useGeneratedKeys = true, keyProperty = "id")`
+### 文件结构
+- 包声明
+- 导入语句
+- 接口声明
+- 方法定义
+- SQL注解
 
-### 分页查询
-- 提供分页方法：使用 `LIMIT` 和 `OFFSET`
-- 提供计数方法：独立的 `count` 方法
-
-## 最小示例
+### 完整实现模板
 ```java
+package com.edu.soop.mapper;
+
+import com.edu.soop.entity.UserEntity;
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
+
+/**
+ * 用户数据访问接口
+ *
+ * @author system
+ * @since 1.0.0
+ */
 @Mapper
 public interface UserMapper {
-    
+
     /**
      * 插入用户
+     *
+     * @param user 用户实体
+     * @return 影响行数
      */
-    @Insert("INSERT INTO t_users (username, password_hash, email, role, enabled, create_time, update_time) " +
-            "VALUES (#{username}, #{passwordHash}, #{email}, #{role}, #{enabled}, NOW(), NOW())")
+    @Insert("INSERT INTO t_users (username, password_hash, email, role, is_enabled, create_time, update_time) " +
+            "VALUES (#{username}, #{passwordHash}, #{email}, #{role}, #{isEnabled}, NOW(), NOW())")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(UserEntity user);
-    
+
     /**
-     * 根据ID查询
+     * 根据ID查询用户
+     *
+     * @param id 用户ID
+     * @return 用户实体
      */
     @Select("SELECT * FROM t_users WHERE id = #{id}")
     UserEntity findById(@Param("id") Long id);
-    
+
     /**
-     * 根据用户名查询
+     * 根据用户名查询用户
+     *
+     * @param username 用户名
+     * @return 用户实体
      */
     @Select("SELECT * FROM t_users WHERE username = #{username}")
     UserEntity findByUsername(@Param("username") String username);
-    
+
     /**
      * 更新用户状态
+     *
+     * @param id 用户ID
+     * @param isEnabled 是否启用
+     * @return 影响行数
      */
-    @Update("UPDATE t_users SET enabled = #{enabled}, update_time = NOW() WHERE id = #{id}")
-    int updateEnabled(@Param("id") Long id, @Param("enabled") Boolean enabled);
-    
+    @Update("UPDATE t_users SET is_enabled = #{isEnabled}, update_time = NOW() WHERE id = #{id}")
+    int updateEnabled(@Param("id") Long id, @Param("isEnabled") Boolean isEnabled);
+
     /**
-     * 分页查询
+     * 分页查询用户
+     *
+     * @param role 角色
+     * @param pageSize 每页数量
+     * @param offset 偏移量
+     * @return 用户列表
      */
     @Select("SELECT * FROM t_users WHERE role = #{role} ORDER BY id DESC LIMIT #{pageSize} OFFSET #{offset}")
-    List<UserEntity> listByRole(@Param("role") String role, 
-                                @Param("pageSize") int pageSize, 
+    List<UserEntity> listByRole(@Param("role") String role,
+                                @Param("pageSize") int pageSize,
                                 @Param("offset") int offset);
-    
+
     /**
-     * 计数查询
+     * 统计用户数量
+     *
+     * @param role 角色
+     * @return 用户数量
      */
     @Select("SELECT COUNT(*) FROM t_users WHERE role = #{role}")
     long countByRole(@Param("role") String role);
+
+    /**
+     * 动态条件查询用户
+     *
+     * @param role 角色
+     * @param keyword 关键词
+     * @param isEnabled 是否启用
+     * @param pageSize 每页数量
+     * @param offset 偏移量
+     * @return 用户列表
+     */
+    @Select("<script>" +
+            "SELECT * FROM t_users " +
+            "<where>" +
+            "  <if test='role != null'>AND role = #{role}</if>" +
+            "  <if test='keyword != null'>AND username LIKE CONCAT('%', #{keyword}, '%')</if>" +
+            "  <if test='isEnabled != null'>AND is_enabled = #{isEnabled}</if>" +
+            "</where>" +
+            "ORDER BY id DESC " +
+            "LIMIT #{pageSize} OFFSET #{offset}" +
+            "</script>")
+    List<UserEntity> search(@Param("role") String role,
+                           @Param("keyword") String keyword,
+                           @Param("isEnabled") Boolean isEnabled,
+                           @Param("pageSize") int pageSize,
+                           @Param("offset") int offset);
 }
 ```
 
-## 动态SQL示例
-```java
-/**
- * 动态条件查询
- */
-@Select("<script>" +
-        "SELECT * FROM t_users " +
-        "<where>" +
-        "  <if test='role != null'>AND role = #{role}</if>" +
-        "  <if test='keyword != null'>AND username LIKE CONCAT('%', #{keyword}, '%')</if>" +
-        "  <if test='enabled != null'>AND enabled = #{enabled}</if>" +
-        "</where>" +
-        "ORDER BY id DESC " +
-        "LIMIT #{pageSize} OFFSET #{offset}" +
-        "</script>")
-List<UserEntity> search(@Param("role") String role,
-                       @Param("keyword") String keyword,
-                       @Param("enabled") Boolean enabled,
-                       @Param("pageSize") int pageSize,
-                       @Param("offset") int offset);
-```
+## 规则执行检查清单
 
-## 最佳实践
-- 表名使用 `t_` 前缀（如 `t_users`）
-- 使用参数化查询防止SQL注入
-- 分页查询offset计算：`(pageNumber - 1) * pageSize`
-- 更新时自动更新 `update_time = NOW()`
-- **可选**：考虑为查询字段添加索引
+### 生成前检查
+- [ ] 是否使用了 `@Mapper` 注解
+- [ ] 接口名是否以 `Mapper` 结尾
+- [ ] 是否使用了注解模式
+- [ ] 是否添加了 JavaDoc 注释
+
+### 生成中检查
+- [ ] 是否使用了 `@Param` 标注参数
+- [ ] 是否按照规范定义方法
+- [ ] 是否包含了必要的SQL注解
+- [ ] 是否遵循命名规范
+
+### 生成后检查
+- [ ] 是否通过编译检查
+- [ ] 是否包含了所有必要的方法
+- [ ] 是否符合命名规范
+- [ ] 是否满足功能要求
 
 ## 相关规则
 - 实体类: `04-conventions/entity.mdc`

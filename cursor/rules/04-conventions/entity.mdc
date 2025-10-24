@@ -12,39 +12,55 @@ allowedReferences: [L4]
 
 ## 核心规则
 
-### 类定义
-- 类名以 `Entity` 结尾
+### 强制要求（MUST）
+- 必须使用 `@Data` 注解
+- 必须使用 `@NoArgsConstructor` 注解
+- 必须使用 `@AllArgsConstructor` 注解
+- 必须使用 `@Builder` 注解
+- 必须包含 `id` 字段（主键）
+- 必须包含 `createTime` 和 `updateTime` 字段（审计字段）
+- 必须添加 JavaDoc 注释
+- 类名必须以 `Entity` 结尾
 - 位置：`entity` 包下
-- 包名：`com.{company}.{project}.entity`
 
-### 注解要求
-- `@Data` 生成getter/setter
-- `@NoArgsConstructor` 无参构造器
-- `@AllArgsConstructor` 全参构造器
-- `@Builder` 建造者模式
-- **可选**：`@Accessors(chain = true)` 链式调用（可选）
+### 禁止要求（MUST NOT）
+- 禁止在Entity中包含计算逻辑
+- 禁止在Entity中调用Service/Mapper
+- 禁止在Entity中包含业务逻辑
+- 禁止使用其他类名后缀
 
-### 字段类型规范
-- 主键：`Long id`（自增）
-- 时间：`LocalDateTime createTime/updateTime`
-- 金额：`BigDecimal`
-- 状态：`String` 或枚举类型
-- 布尔：`Boolean isDeleted/isEnabled`
+### 可选要求（MAY）
+- 可以添加 `@Accessors(chain = true)` 注解
+- 可以添加自定义方法
+- 可以添加验证注解
 
-### 审计字段（强制）
-- `createTime` (LocalDateTime) - 创建时间
-- `updateTime` (LocalDateTime) - 更新时间
+## 完整代码模板
 
-### 命名规范
-- 字段名：驼峰命名，对应数据库下划线字段
-- 布尔字段：使用 `is` 前缀
-- 示例：`userName` ↔ `user_name`, `isEnabled` ↔ `is_enabled`
+### 文件结构
+- 包声明
+- 导入语句
+- 类声明
+- 字段定义
+- 构造器
+- 方法实现
 
-## 最小示例
+### 完整实现模板
 ```java
+package com.edu.soop.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
 /**
  * 用户实体类
  * 对应数据库表 t_users
+ * 
+ * @author system
+ * @since 1.0.0
  */
 @Data
 @NoArgsConstructor
@@ -94,21 +110,26 @@ public class UserEntity {
 }
 ```
 
-## 字段映射关系
-| Java字段 | 数据库字段 | Java类型 | MySQL类型 |
-|---------|-----------|---------|-----------|
-| id | id | Long | BIGINT |
-| username | username | String | VARCHAR |
-| isEnabled | is_enabled | Boolean | TINYINT |
-| createTime | create_time | LocalDateTime | DATETIME |
-| totalAmount | total_amount | BigDecimal | DECIMAL |
+## 规则执行检查清单
 
-## 设计原则
-- 只包含数据字段，不包含业务逻辑
-- 字段对应数据库表列
-- 所有字段提供JavaDoc注释
-- **禁止**：在Entity中包含计算逻辑
-- **禁止**：在Entity中调用Service/Mapper
+### 生成前检查
+- [ ] 是否使用了 `@Data` 注解
+- [ ] 是否使用了 `@NoArgsConstructor` 注解
+- [ ] 是否使用了 `@AllArgsConstructor` 注解
+- [ ] 是否使用了 `@Builder` 注解
+
+### 生成中检查
+- [ ] 是否按照规范定义字段
+- [ ] 是否添加了必要的注释
+- [ ] 是否包含了 `id` 字段
+- [ ] 是否包含了审计字段
+- [ ] 是否遵循命名规范
+
+### 生成后检查
+- [ ] 是否通过编译检查
+- [ ] 是否包含了所有必要的字段
+- [ ] 是否符合命名规范
+- [ ] 是否满足功能要求
 
 ## 相关规则
 - Mapper接口: `04-conventions/mapper.mdc`

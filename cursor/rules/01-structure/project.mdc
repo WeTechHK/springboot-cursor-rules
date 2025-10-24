@@ -11,7 +11,7 @@ allowedReferences: [L1, L2, L3, L4]
 ## 目录结构
 
 ### 强制要求
-- **必须严格按照以下结构创建目录**
+- **必须严格按照以下结构创建目录和文件**
 - **不允许创建任何规则中未定义的目录**
 - **不允许将文件放置在规则中未定义的位置**
 - **必须按照指定的顺序创建目录和文件**
@@ -24,51 +24,50 @@ src/
 ├── main/
 │   ├── java/
 │   │   └── com/example/app/
-│   │       ├── {AppName}Application.java # 主入口类（AppName首字母大写）
-│   │       ├── filter/                   # 过滤器类（按需创建）
-│   │       ├── interceptor/              # 拦截器类（按需创建）
-│   │       ├── validator/                # 验证器类（按需创建）
-│   │       ├── component/                # 组件类（按需创建）
-│   │       ├── config/                   # 配置类
-│   │       ├── controller/               # REST控制器
-│   │       ├── service/                  # 业务逻辑服务
-│   │       │   └── impl/                 # 服务实现类
-│   │       ├── entity/                   # 实体类（对应数据库表结构）
-│   │       ├── mapper/                   # Mapper接口
-│   │       ├── dto/                      # 数据传输对象（按需创建）
-│   │       ├── enums/                    # 枚举类（按需创建，所有文件必须以Enum.java结尾）
-│   │       ├── constants/                # 常量类（按需创建，错误码必须用枚举）
-│   │       ├── vo/                       # 视图对象
-│   │       │   ├── request/              # 请求对象
-│   │       │   │   ├── CommonRequest.java        # 通用请求基类（必须）
-│   │       │   │   ├── CommonPageRequest.java    # 分页请求基类（必须）
-│   │       │   │   └── CreateUserRequest.java    # 具体请求对象示例
-│   │       │   └── response/             # 响应对象
-│   │       │       ├── CommonResponse.java       # 通用响应基类（必须）
-│   │       │       ├── PageData.java             # 分页数据封装（必须）
-│   │       │       └── UserResponse.java         # 具体响应对象示例
-│   │       ├── exception/                # 自定义异常
-│   │       ├── task/                     # 定时任务（按需创建）
-│   │       ├── util/                     # 工具类
-│   │       └── security/                 # 安全相关类（按需创建）
+│   │       ├── {AppName}Application.java # 主入口类文件（AppName首字母大写）
+│   │       ├── filter/                   # 过滤器类目录（按需创建）
+│   │       ├── interceptor/              # 拦截器类目录（按需创建）
+│   │       ├── validator/                # 验证器类目录（按需创建）
+│   │       ├── component/                # 组件类目录（按需创建）
+│   │       ├── config/                   # 配置类目录
+│   │       ├── controller/               # REST控制器目录
+│   │       ├── service/                  # 业务逻辑服务目录
+│   │       │   └── impl/                 # 服务实现类目录
+│   │       ├── entity/                   # 实体类目录（对应数据库表结构）
+│   │       ├── mapper/                   # Mapper接口目录
+│   │       ├── dto/                      # 数据传输对象目录（按需创建）
+│   │       ├── enums/                    # 枚举类目录（按需创建，所有文件必须以Enum.java结尾）
+│   │       ├── constants/                # 常量类目录（按需创建，错误码必须用枚举）
+│   │       ├── vo/                       # 视图对象目录
+│   │       │   ├── request/              # 请求对象目录
+│   │       │   │   ├── CommonRequest.java        # 通用请求基类文件（必须）
+│   │       │   │   ├── CommonPageRequest.java    # 分页请求基类文件（必须）
+│   │       │   │   └── CreateUserRequest.java    # 具体请求对象示例文件
+│   │       │   └── response/             # 响应对象目录
+│   │       │       ├── CommonResponse.java       # 通用响应基类文件（必须）
+│   │       │       ├── PageData.java             # 分页数据封装文件（必须）
+│   │       │       └── UserResponse.java         # 具体响应对象示例文件
+│   │       ├── exception/                # 自定义异常目录
+│   │       ├── task/                     # 定时任务目录（按需创建）
+│   │       ├── util/                     # 工具类目录
+│   │       └── security/                 # 安全相关类目录（按需创建）
 │   └── resources/
-│       ├── application.properties        # 应用配置（Properties格式）
-│       ├── application.yml               # 应用配置（YAML格式）
-│       ├── application-dev.yml           # 开发环境配置
-│       ├── application-prod.yml          # 生产环境配置
+│       ├── application.yml               # 应用配置文件（YAML格式）
+│       ├── application-dev.yml           # 开发环境配置文件
+│       ├── application-prod.yml          # 生产环境配置文件
 │       ├── sql/                          # SQL脚本目录
-│       │   ├── schema.sql                # DDL建表语句
-│       │   └── data.sql                  # DML初始化数据
-│       ├── static/                       # 静态资源（HTML、CSS、JS）
-│       └── templates/                    # 视图模板（如Thymeleaf）
+│       │   ├── schema.sql                # DDL建表语句文件
+│       │   └── data.sql                  # DML初始化数据文件
+│       ├── static/                       # 静态资源目录（HTML、CSS、JS）
+│       └── templates/                    # 视图模板目录（如Thymeleaf）
 └── test/
     ├── java/
     │   └── com/example/app/
-    │       ├── controller/               # 控制器测试（必须创建）
-    │       ├── service/                  # 服务测试（必须创建）
-    │       └── mapper/                   # Mapper测试（必须创建）
+    │       ├── controller/               # 控制器测试目录（必须创建）
+    │       ├── service/                  # 服务测试目录（必须创建）
+    │       └── mapper/                   # Mapper测试目录（必须创建）
     └── resources/
-        └── application-test.yml          # 测试环境配置（必须创建）
+        └── application-test.yml          # 测试环境配置文件（必须创建）
 ```
 
 ### 测试目录创建要求
@@ -77,23 +76,6 @@ src/
 - 必须创建 `application-test.yml` 配置文件
 - 每个核心模块（controller、service、mapper）都应有对应的测试目录
 
-### 文件位置规则
-- Request结尾的类：必须放在 vo/request/ 目录（包括CommonRequest、CommonPageRequest）
-- Response结尾的类：必须放在 vo/response/ 目录（包括CommonResponse）
-- PageData类：必须放在 vo/response/ 目录（作为响应数据封装）
-
-### 禁止行为
-- 禁止创建 common/ 目录
-- 禁止将Request类放在response目录，或将Response类放在request目录
-- 禁止将 entity/ 放在 dao/ 目录下（必须与controller同级）
-- 禁止将 mapper/ 放在 dao/ 目录下（必须与controller同级）
-- 禁止跳过基础类直接创建具体类
-- 禁止创建不继承基础类的请求类
-- 禁止让 PageData 继承 CommonResponse
-- 禁止在 PageData 中包含 code 和 msg 字段
-- 禁止创建空目录（只有当需要在目录中创建文件时才创建该目录）
-- 禁止在 enums/ 目录下创建不以 Enum.java 结尾的文件
-- 禁止在 constants/ 目录下创建错误码常量类（必须使用 ErrorCodeEnum 枚举）
 
 ## SQL文件规范
 
@@ -125,12 +107,6 @@ src/main/resources/sql/
 ├── schema.sql          # CREATE TABLE t_users ...
 └── data.sql            # INSERT INTO t_users ...
 ```
-
-### 禁止行为
-- **禁止将SQL文件直接放在 resources 根目录**
-- **禁止将建表语句和初始化数据混在同一个文件**
-- **禁止在 schema.sql 中包含 INSERT 语句**
-- **禁止在 data.sql 中包含 CREATE TABLE 语句**
 
 ## 包结构约定
 

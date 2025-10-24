@@ -8,51 +8,27 @@ allowedReferences: [L2, L3, L4]
 
 # API 设计规范
 
-## RESTful 原则
-- 资源导向：面向资源建模，避免动词化路径（如 `/api/v1/users` 而非 `/getUsers`）
-- 统一接口：仅使用 GET 和 POST 两种 HTTP 方法（团队规范）
-- 版本控制：推荐 URL 路径版本（`/api/v1/...`），必要时支持 Header 版本
+## 适用范围
+定义所有Spring Boot项目的API设计标准，包括RESTful原则、HTTP方法、状态码和响应格式。
 
-## URL 设计
-- 资源命名：名词、复数、小写、连字符（`/api/v1/user-profiles`）
-- 路径结构：`/api/{version}/{resource}/{id}/sub-resources/{subId}`
+## 核心规则
 
-## HTTP 方法
+### 强制要求（MUST）
+- 必须使用RESTful原则设计API
+- 仅使用GET和POST两种HTTP方法
+- 所有接口必须返回CommonResponse<T>
+- 分页查询必须使用POST + 继承CommonPageRequest的请求类
+- 复杂查询（参数超过两个）必须使用POST + 继承CommonRequest的请求类
 
-### 基本规则
-- GET：用于简单查询（幂等），1-2个参数的简单查询
-- POST：用于所有修改类操作（创建、更新、部分更新、删除），以及复杂查询
+### 禁止要求（MUST NOT）
+- 禁止使用动词化路径
+- 禁止使用其他HTTP方法（PUT、DELETE等）
+- 禁止直接返回业务数据（必须使用CommonResponse包装）
 
-### 查询方法选择标准
-- 简单查询（1-2个参数）：使用GET + PathVariable或RequestParam
-- 复杂查询（3个以上参数）：使用POST + RequestBody
-- 分页查询：必须使用POST + 继承CommonPageRequest的请求类
-
-## 状态码
-- 2xx：成功（`200 OK`、`201 Created`、`204 No Content`）
-- 4xx：客户端错误（`400 Bad Request`、`401`、`403`、`404`）
-- 5xx：服务端错误（`500 Internal Server Error` 等）
-
-## 请求与响应
-
-### 响应格式
-- 所有接口必须返回 CommonResponse<T>
-- 字段：code（String，13位）、msg（String）、data（泛型T）
-- 分页接口返回 CommonResponse<PageData<T>>
-- PageData字段：total、pageNumber、pageSize、list
-
-### 请求格式
-- 分页请求必须继承 CommonPageRequest
-- CommonPageRequest包含：pageNumber、pageSize、sortBy、sortDirection
-- 自定义筛选字段添加在子类中
-
-### Header 规范
-- Accept、Authorization 等明确必选/可选
-
-## 错误处理
-- 错误码体系：通用码 + 业务码，枚举集中管理（码值为 13 位字符串）
-- 错误响应：与统一响应模型一致（`code`、`msg`）
-- 全局异常处理：捕获并映射为标准错误响应，记录上下文与追踪信息
+### 可选要求（MAY）
+- 可以使用URL路径版本控制
+- 可以使用Header版本控制
+- 可以使用自定义筛选字段
 
 ## 进一步阅读
 - 详细规范与示例：`common/03-api.mdc`

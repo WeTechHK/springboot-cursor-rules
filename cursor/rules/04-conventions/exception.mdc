@@ -12,33 +12,47 @@ allowedReferences: [L4]
 
 ## 核心规则
 
-### 异常类定义
-- 继承 `RuntimeException`
-- 类名以 `Exception` 结尾
+### 强制要求（MUST）
+- 必须继承 `RuntimeException`
+- 必须使用 `@Getter` 注解
+- 必须包含 `code` 和 `msg` 字段
+- 必须提供基于 `ErrorCodeEnum` 的构造器
+- 必须提供 code + msg 的构造器
+- 类名必须以 `Exception` 结尾
 - 位置：`exception` 包下
 
-### 字段要求
-- `code` (String): 13位错误码
-- `msg` (String): 错误消息
-- **可选**：`cause` (Throwable): 原始异常（可选）
+### 禁止要求（MUST NOT）
+- 禁止包含敏感信息（密码、token）
+- 禁止暴露实现细节（SQL、堆栈）
+- 禁止使用其他父类
 
-### 构造器
-- 提供基于 `ErrorCodeEnum` 的构造器
-- 提供 code + msg 的构造器
-- **可选**：提供带 cause 的构造器
+### 可选要求（MAY）
+- 可以添加带 `cause` 的构造器
+- 可以添加 JavaDoc 注释
+- 可以添加自定义方法
 
-### 消息原则
-- 用户友好的错误描述
-- **禁止**：包含敏感信息（密码、token）
-- **禁止**：暴露实现细节（SQL、堆栈）
+## 完整代码模板
 
-## 最小示例
+### 文件结构
+- 包声明
+- 导入语句
+- 类声明
+- 字段定义
+- 构造器
+- 方法实现
 
-### BusinessException（业务异常）
+### 完整实现模板
 ```java
+package com.edu.soop.exception;
+
+import com.edu.soop.enums.ErrorCodeEnum;
+import lombok.Getter;
+
 /**
- * 业务异常
- * 用于业务规则验证失败的场景
+ * 业务异常类
+ * 
+ * @author system
+ * @since 1.0.0
  */
 @Getter
 public class BusinessException extends RuntimeException {
@@ -75,36 +89,25 @@ public class BusinessException extends RuntimeException {
 }
 ```
 
-## 使用示例
+## 规则执行检查清单
 
-### 在Service中抛出
-```java
-// 方式1：使用枚举（推荐）
-if (existingUser != null) {
-    throw new BusinessException(ErrorCodeEnum.USERNAME_EXISTS);
-}
+### 生成前检查
+- [ ] 是否继承了 `RuntimeException`
+- [ ] 是否使用了 `@Getter` 注解
+- [ ] 是否包含了 `code` 和 `msg` 字段
+- [ ] 是否提供了基于 `ErrorCodeEnum` 的构造器
 
-// 方式2：自定义消息
-if (user == null) {
-    throw new BusinessException(
-        ErrorCodeEnum.USER_NOT_FOUND.getCode(),
-        "用户ID " + userId + " 不存在"
-    );
-}
+### 生成中检查
+- [ ] 是否按照规范定义字段
+- [ ] 是否添加了必要的注释
+- [ ] 是否包含了所有必要的构造器
+- [ ] 是否遵循命名规范
 
-// 方式3：包装原始异常
-try {
-    // 外部调用
-} catch (IOException e) {
-    throw new BusinessException(ErrorCodeEnum.INTERNAL_ERROR, e);
-}
-```
-
-### 异常分类建议
-- **BusinessException**: 业务规则验证失败（用户名重复、余额不足）
-- **SystemException**: 系统级错误（配置缺失、依赖不可用）
-- **AuthenticationException**: 认证失败
-- **AuthorizationException**: 权限不足
+### 生成后检查
+- [ ] 是否通过编译检查
+- [ ] 是否包含了所有必要的构造器
+- [ ] 是否符合命名规范
+- [ ] 是否满足功能要求
 
 ## 相关规则
 - 错误码枚举: `04-conventions/error-code-enum.mdc`

@@ -12,82 +12,103 @@ allowedReferences: [L4]
 
 ## 核心规则
 
-### 类型定位
-- 响应类是数据封装类，不是完整响应
-- 作为 `CommonResponse<T>` 的泛型T
-- **禁止**：包含code和msg字段（这些属于CommonResponse）
-- **禁止**：继承CommonResponse
+### 强制要求（MUST）
+- 必须使用 `@Data` 注解
+- 必须使用 `@NoArgsConstructor` 注解
+- 必须使用 `@Accessors(chain = true)` 注解
+- 类名必须以 `Response` 结尾
+- 必须添加 JavaDoc 注释
+- 位置：`vo.response` 包下
 
-### 注解要求
-- `@Data` 生成getter/setter
-- `@NoArgsConstructor` 无参构造器
-- `@Accessors(chain = true)` 链式调用
-- **可选**：`@Builder` 建造者模式（可选）
-- **可选**：`@Schema` 提供API文档
+### 禁止要求（MUST NOT）
+- 禁止包含code和msg字段（这些属于CommonResponse）
+- 禁止继承CommonResponse
+- 禁止暴露敏感信息（密码、内部ID）
+- 禁止不带 `Response` 后缀
 
-### 命名规范
-- 类名以 `Response` 结尾
-- 示例：`UserResponse`, `CourseResponse`, `LoginResponse`
+### 可选要求（MAY）
+- 可以使用 `@Builder` 注解建造者模式
+- 可以使用 `@Schema` 注解提供API文档
+- 可以嵌套其他Response对象
 
-## 响应结构说明
-```json
-{
-  "code": "0",           // ← CommonResponse字段
-  "msg": "success",      // ← CommonResponse字段
-  "data": {              // ← data字段的值是Response对象
-    "id": 1,             // ↓ UserResponse字段
-    "username": "admin", // ↓
-    "email": "..."       // ↓
-  }
-}
-```
+## 完整代码模板
 
-## 使用示例
+### 文件结构
+- 包声明
+- 导入语句
+- 类声明
+- 字段定义
 
-### 单条数据响应
+### 完整实现模板
 ```java
+package com.edu.soop.vo.response;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
+
+/**
+ * 用户响应对象
+ *
+ * @author system
+ * @since 1.0.0
+ */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Accessors(chain = true)
+@Schema(description = "用户响应对象")
 public class UserResponse {
+
+    @Schema(description = "用户ID", example = "1")
     private Long id;
+
+    @Schema(description = "用户名", example = "john_doe")
     private String username;
+
+    @Schema(description = "邮箱", example = "john@example.com")
     private String email;
+
+    @Schema(description = "角色", example = "STUDENT")
     private String role;
+
+    @Schema(description = "是否启用", example = "true")
+    private Boolean isEnabled;
+
+    @Schema(description = "创建时间")
     private LocalDateTime createTime;
-}
 
-// Controller使用
-return CommonResponse.success(userResponse);
-```
-
-### 分页数据响应
-```java
-// Controller使用
-return CommonResponse.successPage(total, pageNum, pageSize, userList);
-
-// 响应JSON
-{
-  "code": "0",
-  "msg": "success",
-  "data": {
-    "total": 100,
-    "pageNumber": 1,
-    "pageSize": 10,
-    "list": [  // List<UserResponse>
-      { "id": 1, "username": "..." },
-      { "id": 2, "username": "..." }
-    ]
-  }
+    @Schema(description = "更新时间")
+    private LocalDateTime updateTime;
 }
 ```
 
-## 字段设计原则
-- 只包含前端需要的字段
-- 避免暴露敏感信息（密码、内部ID）
-- 使用合适的数据类型（LocalDateTime而非String）
-- **可选**：复杂对象可嵌套其他Response
+## 规则执行检查清单
+
+### 生成前检查
+- [ ] 是否使用了 `@Data` 注解
+- [ ] 是否使用了 `@NoArgsConstructor` 注解
+- [ ] 是否使用了 `@Accessors(chain = true)` 注解
+- [ ] 类名是否以 `Response` 结尾
+- [ ] 是否添加了 JavaDoc 注释
+
+### 生成中检查
+- [ ] 是否按照规范定义字段
+- [ ] 是否包含了必要的数据字段
+- [ ] 是否遵循命名规范
+- [ ] 是否避免了禁止的操作
+
+### 生成后检查
+- [ ] 是否通过编译检查
+- [ ] 是否包含了所有必要的字段
+- [ ] 是否符合命名规范
+- [ ] 是否满足功能要求
 
 ## 相关规则
 - 响应封装: `04-conventions/common-response.mdc`

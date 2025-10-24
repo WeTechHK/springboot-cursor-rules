@@ -8,39 +8,27 @@ allowedReferences: [L3, L4]
 
 # 命名规范
 
-## 包命名
-- 格式：全小写字母，使用点分隔符
-- 规则：`com.{company}.{project}.{layer}`
-- 示例：`com.example.app.controller`、`com.example.app.service.impl`、`com.example.app.mapper`
+## 适用范围
+定义所有Spring Boot项目的命名规范，包括包、类、方法、变量和常量的命名规则。
 
-## 类命名
-- 实体类（MyBatis/持久化对象）：`{Domain}Entity`（如：`UserEntity`）
-- Mapper 接口：`{Domain}Mapper`（如：`UserMapper`）
-- 服务接口/实现：`{Domain}Service`、`{Domain}ServiceImpl`
-- 控制器：`{Domain}Controller`
-- DTO：`{Domain}Dto`（如：`UserDto`）
-- VO 请求/响应：`{Action}{Domain}Request`、`{Domain}Response`（如：`CreateUserRequest`、`UserResponse`）
-- 配置类：`{Domain}Config`（如：`DatabaseConfig`）
-- 自定义异常：`{Domain}Exception`（如：`UserNotFoundException`）
-- 定时任务：`{Domain}Task`/`{Action}{Domain}Task`（如：`ScheduledTask`、`SyncUserTask`）
+## 核心规则
 
-## 方法命名
-- 查询：`get{Domain}ById`、`list{Domain}s`、`find{Domain}s`
-- 变更：`create{Domain}`、`update{Domain}`、`delete{Domain}ById`
-- 业务：`process{Domain}`、`validate{Domain}`、`convert{Domain}`
+### 强制要求（MUST）
+- 包名必须使用全小写字母，使用点分隔符
+- 类名必须使用帕斯卡命名法（PascalCase）
+- 方法名必须使用驼峰命名法（camelCase）
+- 变量名必须使用驼峰命名法（camelCase）
+- 常量名必须使用全大写，下划线分隔
 
-## 变量命名
-- 字段：驼峰命名（如：`userName`、`createTime`）
-- 局部变量：驼峰命名（如：`userList`、`isValid`）
-- 方法参数：驼峰命名（如：`userId`、`request`）
-- 常量：全大写，下划线分隔（如：`MAX_RETRY_COUNT`）
+### 禁止要求（MUST NOT）
+- 禁止使用中文命名
+- 禁止使用特殊字符
+- 禁止使用保留字
 
-## VO 包命名补充
-- 基本规则：`com.{company}.{project}.vo.request`、`com.{company}.{project}.vo.response`
-- 当对象较多时，可按Domain再分一层：
-  - 请求：`com.{company}.{project}.vo.request.{Domain}.{Action}{Domain}Request`
-  - 响应：`com.{company}.{project}.vo.response.{Domain}.{Domain}Response`
-  - 示例：`com.example.app.vo.request.user.CreateUserRequest`、`com.example.app.vo.response.user.UserResponse`
+### 可选要求（MAY）
+- 可以使用有意义的命名
+- 可以使用缩写（但要有意义）
+- 可以使用下划线分隔（仅在常量中）
 
 ## 进一步阅读
 - 命名在具体类型中的体现：

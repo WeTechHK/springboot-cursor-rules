@@ -7,113 +7,61 @@ allowedReferences: [L4]
 
 # CommonResponse 编码约定
 
-## 适用范围
-定义统一API响应结构 `CommonResponse<T>` 的实现规范，所有REST接口必须使用此类封装响应。
+## 固定代码
+以下代码是标准实现，不允许修改：
 
-## 核心规则
-
-### 字段定义
-- `code` (String): 状态码，成功为`"0"`，失败为13位错误码
-- `msg` (String): 消息，成功为`"success"`，失败为错误描述
-- `data` (T): 响应数据，使用泛型
-- **禁止**：添加其他字段
-
-### 注解要求
-- `@Data` 生成getter/setter
-- `@NoArgsConstructor` 无参构造器
-- `@Accessors(chain = true)` 链式调用
-- **可选**：`@Schema` 提供API文档描述
-
-### 静态方法（强制）
 ```java
-// 成功响应
-CommonResponse<T> success()                    // code="0", msg="success"
-CommonResponse<T> success(T data)              // code="0", msg="success", data=data
+package com.edu.soop.vo.response;
 
-// 失败响应
-CommonResponse<T> error(String code, String msg)
-CommonResponse<T> error(ErrorCodeEnum errorCode)  // 从枚举获取code和msg
+import com.edu.soop.enums.ErrorCodeEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-// 分页响应
-CommonResponse<PageData<E>> successPage(long total, int pageNumber, int pageSize, List<E> list)
-```
-
-## 成功响应规范
-- `code` 固定为 `"0"` (字符串)
-- `msg` 固定为 `"success"`
-- `data` 可以为null或具体数据
-
-**JSON示例**：
-```json
-{
-  "code": "0",
-  "msg": "success",
-  "data": { "id": 1, "name": "张三" }
-}
-```
-
-## 错误响应规范
-- 支持基于 `ErrorCodeEnum` 的错误响应
-- `error(ErrorCodeEnum errorCode)` 从枚举获取code和msg
-- `error(String code, String msg)` 允许自定义错误
-
-**JSON示例**：
-```json
-{
-  "code": "1001B00000001",
-  "msg": "用户名已存在",
-  "data": null
-}
-```
-
-## 分页响应规范
-- 使用 `PageData<T>` 作为data的类型
-- 返回类型：`CommonResponse<PageData<T>>`
-- 提供便捷方法 `successPage(...)`
-
-**JSON示例**：
-```json
-{
-  "code": "0",
-  "msg": "success",
-  "data": {
-    "total": 100,
-    "pageNumber": 1,
-    "pageSize": 10,
-    "list": [...]
-  }
-}
-```
-
-## 最小示例
-```java
+/**
+ * 通用响应基类
+ * 
+ * @author system
+ * @since 1.0.0
+ */
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
+@Schema(description = "通用响应基类")
 public class CommonResponse<T> {
+    
+    @Schema(description = "响应状态码", example = "0")
     private String code;
+    
+    @Schema(description = "响应消息", example = "success")
     private String msg;
+    
+    @Schema(description = "响应数据")
     private T data;
     
     public static <T> CommonResponse<T> success() {
-        CommonResponse<T> response = new CommonResponse<>();
-        response.setCode("0");
-        response.setMsg("success");
-        return response;
+        return new CommonResponse<T>().setCode("0").setMsg("success");
+    }
+    
+    public static <T> CommonResponse<T> success(T data) {
+        return new CommonResponse<T>().setCode("0").setMsg("success").setData(data);
     }
     
     public static <T> CommonResponse<T> error(ErrorCodeEnum errorCode) {
-        return error(errorCode.getCode(), errorCode.getMsg());
+        return new CommonResponse<T>().setCode(errorCode.getCode()).setMsg(errorCode.getMsg());
     }
     
     public static <T> CommonResponse<T> error(String code, String msg) {
-        CommonResponse<T> response = new CommonResponse<>();
-        response.setCode(code);
-        response.setMsg(msg);
-        return response;
+        return new CommonResponse<T>().setCode(code).setMsg(msg);
     }
 }
 ```
+
+## 使用说明
+- 直接复制上述代码到项目中
+- 不允许修改任何内容
+- 所有项目必须使用相同的实现
 
 ## 相关规则
 - 错误码枚举: `04-conventions/error-code-enum.mdc`
